@@ -1,0 +1,48 @@
+ashcan
+beer bottle
+beer glass
+bottlecap
+candle
+cannon
+canoe
+can opener
+carton
+container ship
+garbage truck
+hourglass
+mailbag
+mailbox
+measuring cup
+milk can
+pencil box
+pill bottle
+plastic bag
+pop bottle
+punching bag
+sleeping bag
+sunglass
+sunglasses
+water bottle
+wine bottle
+bagel
+head cabbage
+cup
+volcano
+bottle
+can
+bag
+container
+box
+packaging
+wrapper
+paper
+cardboard
+plastic_container
+food_container
+aluminum_can
+tin_can
+shopping_bag
+glass_bottle
+plastic_bottle
+paper_bag
+unknown
