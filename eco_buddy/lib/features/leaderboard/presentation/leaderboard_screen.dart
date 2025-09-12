@@ -321,22 +321,29 @@ class LeaderboardScreen extends ConsumerWidget {
   Widget _buildPodium(List<LeaderboardUser> topUsers) {
     if (topUsers.length < 3) return Container();
 
-    return Container(
-      height: 200,
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          // Second place
-          Expanded(child: _buildPodiumPosition(topUsers[1], 2, 120)),
-          const SizedBox(width: 8),
-          // First place
-          Expanded(child: _buildPodiumPosition(topUsers[0], 1, 150)),
-          const SizedBox(width: 8),
-          // Third place
-          if (topUsers.length > 2)
-            Expanded(child: _buildPodiumPosition(topUsers[2], 3, 100)),
-        ],
+    return ConstrainedBox(
+      constraints: const BoxConstraints(
+        minHeight: 160,
+        maxHeight: 200,
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        child: IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              // Second place
+              _buildPodiumPosition(topUsers[1], 2, 40),
+              const SizedBox(width: 6),
+              // First place  
+              _buildPodiumPosition(topUsers[0], 1, 60),
+              const SizedBox(width: 6),
+              // Third place
+              if (topUsers.length > 2)
+                _buildPodiumPosition(topUsers[2], 3, 30),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -363,81 +370,85 @@ class LeaderboardScreen extends ConsumerWidget {
         crownIcon = Icons.emoji_events;
     }
 
-    return Column(
-      children: [
-        // User avatar and crown
-        Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Container(
-              width: 60,
-              height: 60,
-              margin: const EdgeInsets.only(top: 15),
-              decoration: BoxDecoration(
-                color: rankColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(30),
-                border: Border.all(color: rankColor, width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  user.username.substring(0, 1).toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: rankColor,
+    return Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          // User avatar and crown
+          Stack(
+            alignment: Alignment.topCenter,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                margin: const EdgeInsets.only(top: 12),
+                decoration: BoxDecoration(
+                  color: rankColor.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(color: rankColor, width: 2),
+                ),
+                child: Center(
+                  child: Text(
+                    user.username.substring(0, 1).toUpperCase(),
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: rankColor,
+                    ),
                   ),
                 ),
               ),
-            ),
-            Icon(crownIcon, color: rankColor, size: 24),
-          ],
-        ),
-        const SizedBox(height: 8),
-
-        // Username
-        Text(
-          user.username,
-          style: const TextStyle(
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+              Icon(crownIcon, color: rankColor, size: 20),
+            ],
           ),
-          textAlign: TextAlign.center,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-        ),
-        const SizedBox(height: 4),
+          const SizedBox(height: 6),
 
-        // Points
-        Text(
-          '${user.points} pts',
-          style: TextStyle(fontSize: 11, color: Colors.grey[600]),
-        ),
-        const Spacer(),
-
-        // Podium base
-        Container(
-          height: height,
-          decoration: BoxDecoration(
-            color: rankColor.withValues(alpha: 0.3),
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-            border: Border.all(
-              color: rankColor.withValues(alpha: 0.5),
-              width: 1,
+          // Username
+          Text(
+            user.username,
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
+            textAlign: TextAlign.center,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
           ),
-          child: Center(
-            child: Text(
-              rank.toString(),
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: rankColor,
+          const SizedBox(height: 2),
+
+          // Points
+          Text(
+            '${user.points} pts',
+            style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+          ),
+          const Spacer(),
+
+          // Podium base
+          Container(
+            height: height.clamp(30.0, 80.0),
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: rankColor.withValues(alpha: 0.3),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              border: Border.all(
+                color: rankColor.withValues(alpha: 0.5),
+                width: 1,
+              ),
+            ),
+            child: Center(
+              child: Text(
+                rank.toString(),
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: rankColor,
+                ),
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -795,32 +806,34 @@ class LeaderboardScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
 
                       // Stats grid
-                      Row(
-                        children: [
-                          Expanded(
-                            child: _buildStatItem(
-                              'Défis',
-                              '${user.challengesCompleted ?? 0}',
-                              Icons.emoji_events,
+                      IntrinsicHeight(
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: _buildStatItem(
+                                'Défis',
+                                '${user.challengesCompleted ?? 0}',
+                                Icons.emoji_events,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildStatItem(
-                              'Scans',
-                              '${user.scansCompleted ?? 0}',
-                              Icons.camera_alt,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildStatItem(
+                                'Scans',
+                                '${user.scansCompleted ?? 0}',
+                                Icons.camera_alt,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: 16),
-                          Expanded(
-                            child: _buildStatItem(
-                              'Histoires',
-                              '${user.storiesCompleted ?? 0}',
-                              Icons.auto_stories,
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: _buildStatItem(
+                                'Histoires',
+                                '${user.storiesCompleted ?? 0}',
+                                Icons.auto_stories,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                       const SizedBox(height: 24),
 
@@ -835,35 +848,41 @@ class LeaderboardScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 16),
 
-                      Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        children: user.badges != null && user.badges!.isNotEmpty
-                            ? user.badges!
-                                  .map(
-                                    (badge) => _buildBadge(
-                                      badge,
-                                      _getBadgeIcon(badge),
-                                      const Color(AppConstants.accentColor),
+                      ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: double.infinity,
+                        ),
+                        child: Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          alignment: WrapAlignment.center,
+                          children: user.badges != null && user.badges!.isNotEmpty
+                              ? user.badges!
+                                    .map(
+                                      (badge) => _buildBadge(
+                                        badge,
+                                        _getBadgeIcon(badge),
+                                        const Color(AppConstants.accentColor),
+                                      ),
+                                    )
+                                    .toList()
+                              : [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: Colors.grey[100],
+                                      borderRadius: BorderRadius.circular(8),
                                     ),
-                                  )
-                                  .toList()
-                            : [
-                                Container(
-                                  padding: const EdgeInsets.all(16),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey[100],
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: Text(
-                                    'Aucun badge pour le moment',
-                                    style: TextStyle(
-                                      color: Colors.grey[600],
-                                      fontSize: 14,
+                                    child: Text(
+                                      'Aucun badge pour le moment',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                        fontSize: 14,
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                        ),
                       ),
                     ],
                   ),
@@ -878,44 +897,60 @@ class LeaderboardScreen extends ConsumerWidget {
 
   Widget _buildStatItem(String title, String value, IconData icon) {
     return CustomCard(
-      child: Column(
-        children: [
-          Icon(icon, color: const Color(AppConstants.primaryColor), size: 24),
-          const SizedBox(height: 8),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, color: const Color(AppConstants.primaryColor), size: 20),
+            const SizedBox(height: 6),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
-          ),
-          const SizedBox(height: 4),
-          Text(title, style: TextStyle(fontSize: 12, color: Colors.grey[600])),
-        ],
+            const SizedBox(height: 2),
+            Text(
+              title, 
+              style: TextStyle(fontSize: 11, color: Colors.grey[600]),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildBadge(String title, IconData icon, Color color) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 16),
-          const SizedBox(width: 6),
-          Text(
-            title,
-            style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-              color: color,
+          Icon(icon, color: color, size: 14),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: color,
+              ),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ],

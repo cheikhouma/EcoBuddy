@@ -2,14 +2,12 @@ package sn.codiallo.ecoBuddy.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import sn.codiallo.ecoBuddy.model.Scan;
 import sn.codiallo.ecoBuddy.model.User;
 
 @Repository
-public interface ScanRepository extends JpaRepository<Object, Long> {
+public interface ScanRepository extends JpaRepository<Scan, Long> {
     
-    // Cette méthode sera implémentée quand le modèle Scan sera créé
-    // Pour l'instant, on retourne 0 par défaut
-    default Long countByUser(User user) {
-        return 0L;
-    }
+    // Compte le nombre de scans pour un utilisateur donné
+    Long countByUser(User user);
 }

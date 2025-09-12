@@ -70,9 +70,19 @@ public class NarrativeService {
         try {
             // Utiliser GeminiService pour démarrer l'histoire
             String responseText = geminiService.generateStoryStart();
-            StoryResponse storyResponse = parseGeminiStoryResponse(responseText);
+            String jsonResponse = geminiService.extractJsonFromResponse(responseText);
             
-            session.setCurrentStory(storyResponse.getStory());
+            StoryResponse storyResponse;
+            if (jsonResponse != null) {
+                // Parser la réponse JSON
+                storyResponse = parseJsonStoryResponse(jsonResponse);
+            } else {
+                // Fallback vers l'ancien parsing si JSON échoue
+                log.warn("JSON parsing failed, using fallback parsing");
+                storyResponse = parseGeminiStoryResponse(responseText);
+            }
+            
+            session.setCurrentStory(jsonResponse != null ? jsonResponse : responseText);
             session.setConversationHistory(updateConversationHistory("[]", "Start story", responseText));
             
             narrativeSessionRepository.save(session);
@@ -80,18 +90,17 @@ public class NarrativeService {
             // Générer un ID unique pour cette étape
             String storyId = UUID.randomUUID().toString();
             
-            // Séparer titre et contenu
-            String[] titleAndContent = separateTitleAndContent(storyResponse.getStory());
-            
             return new NarrativeStartResponse(
                     storyId,
                     sessionId,
-                    titleAndContent[0], // title
-                    titleAndContent[1], // content
+                    storyResponse.getTitle(),
+                    storyResponse.getContent(),
                     storyResponse.getChoices(),
                     session.getStepCount() + 1, // chapterNumber (commence à 1)
-                    user.getPoints(), // points actuels de l'utilisateur
-                    false // isCompleted - false au début
+                    storyResponse.getPoints(), // points gagnés pour cette étape
+                    user.getPoints(), // points totaux de l'utilisateur
+                    storyResponse.getIsCompleted(),
+                    "success" // statut
             );
 
         } catch (Exception e) {
@@ -119,9 +128,19 @@ public class NarrativeService {
         try {
             // Utiliser GeminiService pour générer la suite de l'histoire
             String responseText = geminiService.generateNarrative(session.getCurrentStory(), List.of(choice));
-            ChoiceResponse choiceResponse = parseGeminiChoiceResponse(responseText);
+            String jsonResponse = geminiService.extractJsonFromResponse(responseText);
             
-            session.setCurrentStory(choiceResponse.getStory());
+            ChoiceResponse choiceResponse;
+            if (jsonResponse != null) {
+                // Parser la réponse JSON
+                choiceResponse = parseJsonChoiceResponse(jsonResponse);
+            } else {
+                // Fallback vers l'ancien parsing si JSON échoue
+                log.warn("JSON parsing failed for choice response, using fallback parsing");
+                choiceResponse = parseGeminiChoiceResponse(responseText);
+            }
+            
+            session.setCurrentStory(jsonResponse != null ? jsonResponse : responseText);
             session.setStepCount(session.getStepCount() + 1);
             session.setConversationHistory(updateConversationHistory(session.getConversationHistory(), choice, responseText));
 
@@ -144,18 +163,17 @@ public class NarrativeService {
             // Générer un ID unique pour cette étape
             String storyId = UUID.randomUUID().toString();
             
-            // Séparer titre et contenu
-            String[] titleAndContent = separateTitleAndContent(choiceResponse.getStory());
-            
             return new NarrativeChoiceResponse(
                     storyId,
                     sessionId,
-                    titleAndContent[0], // title
-                    titleAndContent[1], // content
+                    choiceResponse.getTitle(),
+                    choiceResponse.getContent(),
                     choiceResponse.getChoices(),
                     session.getStepCount(), // chapterNumber
+                    pointsEarned, // points gagnés pour ce choix
                     user.getPoints(), // points totaux actualisés
-                    choiceResponse.getIsCompleted()
+                    choiceResponse.getIsCompleted(),
+                    "success" // status
             );
 
         } catch (Exception e) {
@@ -435,16 +453,82 @@ public class NarrativeService {
         }
     }
 
+    // Nouveau parsing JSON robuste
+    private StoryResponse parseJsonStoryResponse(String jsonResponse) {
+        try {
+            StoryResponse response = new StoryResponse();
+            
+            // Parse JSON avec Jackson
+            var jsonNode = objectMapper.readTree(jsonResponse);
+            
+            response.setTitle(jsonNode.path("title").asText("Aventure Écologique"));
+            response.setContent(jsonNode.path("content").asText(""));
+            response.setPoints(jsonNode.path("points").asInt(0));
+            response.setIsCompleted(jsonNode.path("isCompleted").asBoolean(false));
+            
+            // Parser les choix
+            List<String> choices = new ArrayList<>();
+            var choicesArray = jsonNode.path("choices");
+            if (choicesArray.isArray()) {
+                choicesArray.forEach(choice -> choices.add(choice.asText()));
+            }
+            response.setChoices(choices);
+            
+            return response;
+        } catch (JsonProcessingException e) {
+            log.error("Error parsing JSON story response: ", e);
+            throw new RuntimeException("Invalid JSON response from AI service");
+        }
+    }
+
+    private ChoiceResponse parseJsonChoiceResponse(String jsonResponse) {
+        try {
+            ChoiceResponse response = new ChoiceResponse();
+            
+            // Parse JSON avec Jackson
+            var jsonNode = objectMapper.readTree(jsonResponse);
+            
+            response.setTitle(jsonNode.path("title").asText("Suite de l'Histoire"));
+            response.setContent(jsonNode.path("content").asText(""));
+            response.setPointsEarned(jsonNode.path("points").asInt(15));
+            response.setIsCompleted(jsonNode.path("isCompleted").asBoolean(false));
+            
+            // Parser les choix
+            List<String> choices = new ArrayList<>();
+            var choicesArray = jsonNode.path("choices");
+            if (choicesArray.isArray()) {
+                choicesArray.forEach(choice -> choices.add(choice.asText()));
+            }
+            response.setChoices(choices);
+            
+            return response;
+        } catch (JsonProcessingException e) {
+            log.error("Error parsing JSON choice response: ", e);
+            throw new RuntimeException("Invalid JSON response from AI service");
+        }
+    }
+
     // Classes internes pour parser les réponses JSON
     private static class StoryResponse {
-        private String story;
+        private String title;
+        private String content;
         private List<String> choices;
+        private Integer points = 0;
+        private Boolean isCompleted = false;
 
         // Getters et setters
-        public String getStory() { return story; }
-        public void setStory(String story) { this.story = story; }
+        public String getTitle() { return title != null ? title : "Aventure Écologique"; }
+        public void setTitle(String title) { this.title = title; }
+        public String getContent() { return content; }
+        public void setContent(String content) { this.content = content; }
+        public String getStory() { return content; } // Compatibilité
+        public void setStory(String story) { this.content = story; } // Compatibilité
         public List<String> getChoices() { return choices != null ? choices : Arrays.asList("Continuer", "Explorer", "Réfléchir"); }
         public void setChoices(List<String> choices) { this.choices = choices; }
+        public Integer getPoints() { return points != null ? points : 0; }
+        public void setPoints(Integer points) { this.points = points; }
+        public Boolean getIsCompleted() { return isCompleted != null ? isCompleted : false; }
+        public void setIsCompleted(Boolean isCompleted) { this.isCompleted = isCompleted; }
     }
 
     private static class ChoiceResponse extends StoryResponse {

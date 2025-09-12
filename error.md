@@ -1,0 +1,1 @@
+_AssertionError ('package:flutter/src/widgets/basic.dart': Failed assertion: line 340 pos 15: 'opacity >= 0.0 && opacity <= 1.0': is not true.) : login_screen : 118

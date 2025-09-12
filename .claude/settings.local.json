@@ -8,7 +8,8 @@
       "Bash(python test:*)",
       "Bash(find:*)",
       "Bash(flutter analyze:*)",
-      "Bash(flutter build:*)"
+      "Bash(flutter build:*)",
+      "Bash(flutter gen-l10n:*)"
     ],
     "deny": [],
     "ask": []

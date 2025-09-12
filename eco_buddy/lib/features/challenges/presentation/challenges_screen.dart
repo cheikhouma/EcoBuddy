@@ -1,4 +1,5 @@
 import 'package:eco_buddy/features/challenges/domain/models/challenge_model.dart';
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/providers/challenges_provider.dart';
@@ -17,17 +18,24 @@ class ChallengesScreen extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            automaticallyImplyLeading: false,
+            centerTitle: true,
             expandedHeight: 200,
             floating: false,
             pinned: true,
             backgroundColor: const Color(AppConstants.primaryColor),
             flexibleSpace: FlexibleSpaceBar(
-              title: const Text(
-                'Défis Écologiques',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+              title: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLocalizations.of(context)!.ecologicalChallenges,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
               background: Container(
                 decoration: const BoxDecoration(
@@ -55,11 +63,23 @@ class ChallengesScreen extends ConsumerWidget {
             sliver: SliverList(
               delegate: SliverChildListDelegate([
                 // Stats overview
-                _buildStatsOverview(ref),
                 const SizedBox(height: 20),
-
+                challengesState.when(
+                  data: (state) => _buildStatsOverview(
+                    context,
+                    ref,
+                    state.activeChallenges.length,
+                    state.completedChallenges.length,
+                  ),
+                  loading: () => _buildLoadingChallenges(),
+                  error: (error, _) =>
+                      _buildErrorWidget(context, error.toString()),
+                ),
+                const SizedBox(height: 22),
                 // Active challenges section
-                _buildSectionHeader('Défis actifs'),
+                _buildSectionHeader(
+                  AppLocalizations.of(context)!.activeChallenges,
+                ),
                 const SizedBox(height: 12),
                 challengesState.when(
                   data: (state) => _buildActiveChallenges(
@@ -68,12 +88,15 @@ class ChallengesScreen extends ConsumerWidget {
                     state.activeChallenges,
                   ),
                   loading: () => _buildLoadingChallenges(),
-                  error: (error, _) => _buildErrorWidget(error.toString()),
+                  error: (error, _) =>
+                      _buildErrorWidget(context, error.toString()),
                 ),
                 const SizedBox(height: 24),
 
                 // Completed challenges section
-                _buildSectionHeader('Défis terminés'),
+                _buildSectionHeader(
+                  AppLocalizations.of(context)!.challengeCompleted,
+                ),
                 const SizedBox(height: 12),
                 challengesState.when(
                   data: (state) => _buildCompletedChallenges(
@@ -82,14 +105,17 @@ class ChallengesScreen extends ConsumerWidget {
                     state.completedChallenges,
                   ),
                   loading: () => _buildLoadingChallenges(),
-                  error: (error, _) => _buildErrorWidget(error.toString()),
+                  error: (error, _) =>
+                      _buildErrorWidget(context, error.toString()),
                 ),
                 const SizedBox(height: 24),
 
                 // Mini leaderboard
-                _buildSectionHeader('Classement des défis'),
+                _buildSectionHeader(
+                  AppLocalizations.of(context)!.challengesLeaderboard,
+                ),
                 const SizedBox(height: 12),
-                _buildMiniLeaderboard(ref),
+                _buildMiniLeaderboard(context, ref),
               ]),
             ),
           ),
@@ -101,18 +127,23 @@ class ChallengesScreen extends ConsumerWidget {
         backgroundColor: const Color(AppConstants.accentColor),
         foregroundColor: Colors.white,
         icon: const Icon(Icons.refresh),
-        label: const Text('Actualiser'),
+        label: Text(AppLocalizations.of(context)!.refresh),
       ),
     );
   }
 
-  Widget _buildStatsOverview(WidgetRef ref) {
+  Widget _buildStatsOverview(
+    BuildContext context,
+    WidgetRef ref,
+    int active,
+    int success,
+  ) {
     return Row(
       children: [
         Expanded(
           child: StatCard(
-            title: 'Défis actifs',
-            value: '5',
+            title: AppLocalizations.of(context)!.activeChallenges,
+            value: active.toString(),
             icon: Icons.pending_actions,
             color: const Color(AppConstants.warningColor),
           ),
@@ -120,8 +151,8 @@ class ChallengesScreen extends ConsumerWidget {
         const SizedBox(width: 16),
         Expanded(
           child: StatCard(
-            title: 'Défis réussis',
-            value: '12',
+            title: AppLocalizations.of(context)!.successfulChallenges,
+            value: success.toString(),
             icon: Icons.check_circle,
             color: const Color(AppConstants.accentColor),
           ),
@@ -148,8 +179,8 @@ class ChallengesScreen extends ConsumerWidget {
   ) {
     if (challenges.isEmpty) {
       return _buildEmptyState(
-        'Aucun défi actif',
-        'Tous vos défis sont terminés !',
+        AppLocalizations.of(context)!.noActiveChallenges,
+        AppLocalizations.of(context)!.allChallengesCompleted,
       );
     }
 
@@ -170,8 +201,8 @@ class ChallengesScreen extends ConsumerWidget {
   ) {
     if (challenges.isEmpty) {
       return _buildEmptyState(
-        'Aucun défi terminé',
-        'Commencez vos premiers défis !',
+        AppLocalizations.of(context)!.noCompletedChallenges,
+        AppLocalizations.of(context)!.startYourFirstChallenges,
       );
     }
 
@@ -271,7 +302,7 @@ class ChallengesScreen extends ConsumerWidget {
                     if (isActive) ...[
                       const SizedBox(height: 4),
                       Text(
-                        _getTimeRemaining(challenge.endDate),
+                        _getTimeRemaining(context, challenge.endDate),
                         style: TextStyle(fontSize: 11, color: Colors.grey[500]),
                       ),
                     ],
@@ -288,7 +319,7 @@ class ChallengesScreen extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Progression',
+                        AppLocalizations.of(context)!.progress,
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
@@ -328,15 +359,15 @@ class ChallengesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildMiniLeaderboard(WidgetRef ref) {
+  Widget _buildMiniLeaderboard(BuildContext context, WidgetRef ref) {
     return CustomCard(
       child: Column(
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Top défis cette semaine',
+              Text(
+                AppLocalizations.of(context)!.topChallengesThisWeek,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -347,7 +378,7 @@ class ChallengesScreen extends ConsumerWidget {
                 onPressed: () => {
                   // Navigate to full leaderboard (tab 4)
                 },
-                child: const Text('Voir tout'),
+                child: Text(AppLocalizations.of(context)!.seeAll),
               ),
             ],
           ),
@@ -478,7 +509,7 @@ class ChallengesScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildErrorWidget(String error) {
+  Widget _buildErrorWidget(BuildContext context, String error) {
     return CustomCard(
       child: Center(
         child: Padding(
@@ -492,7 +523,7 @@ class ChallengesScreen extends ConsumerWidget {
               ),
               const SizedBox(height: 16),
               Text(
-                'Erreur de chargement',
+                AppLocalizations.of(context)!.loadingError,
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -557,8 +588,8 @@ class ChallengesScreen extends ConsumerWidget {
                     size: 28,
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    'Défi terminé !',
+                  Text(
+                    AppLocalizations.of(context)!.challengeCompleted,
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
@@ -566,8 +597,8 @@ class ChallengesScreen extends ConsumerWidget {
               content: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Félicitations ! Vous avez terminé ce défi écologique.',
+                  Text(
+                    AppLocalizations.of(context)!.congratulationsChallenge,
                     style: TextStyle(fontSize: 16),
                   ),
                   const SizedBox(height: 16),
@@ -588,7 +619,9 @@ class ChallengesScreen extends ConsumerWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          '+$pointsEarned points gagnés !',
+                          AppLocalizations.of(
+                            context,
+                          )!.pointsEarned(pointsEarned),
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
@@ -600,7 +633,7 @@ class ChallengesScreen extends ConsumerWidget {
                   ),
                   const SizedBox(height: 12),
                   Text(
-                    'Total : $totalPoints points',
+                    AppLocalizations.of(context)!.totalPoints_(totalPoints),
                     style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   ),
                 ],
@@ -608,8 +641,8 @@ class ChallengesScreen extends ConsumerWidget {
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    'Continuer',
+                  child: Text(
+                    AppLocalizations.of(context)!.continue_,
                     style: TextStyle(
                       color: Color(AppConstants.primaryColor),
                       fontWeight: FontWeight.bold,
@@ -627,7 +660,9 @@ class ChallengesScreen extends ConsumerWidget {
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Erreur : ${e.toString()}'),
+            content: Text(
+              AppLocalizations.of(context)!.errorMessage(e.toString()),
+            ),
             backgroundColor: const Color(AppConstants.errorColor),
             behavior: SnackBarBehavior.floating,
             shape: RoundedRectangleBorder(
@@ -656,18 +691,20 @@ class ChallengesScreen extends ConsumerWidget {
     }
   }
 
-  String _getTimeRemaining(DateTime endDate) {
+  String _getTimeRemaining(BuildContext context, DateTime endDate) {
     final now = DateTime.now();
     final difference = endDate.difference(now);
 
-    if (difference.isNegative) return 'Expiré';
+    if (difference.isNegative) return AppLocalizations.of(context)!.expired;
 
     if (difference.inDays > 0) {
-      return '${difference.inDays}j restants';
+      return AppLocalizations.of(context)!.daysRemaining(difference.inDays);
     } else if (difference.inHours > 0) {
-      return '${difference.inHours}h restantes';
+      return AppLocalizations.of(context)!.hoursRemaining(difference.inHours);
     } else {
-      return '${difference.inMinutes}min restantes';
+      return AppLocalizations.of(
+        context,
+      )!.minutesRemaining(difference.inMinutes);
     }
   }
 
@@ -753,7 +790,7 @@ class ChallengesScreen extends ConsumerWidget {
                       ),
                       const SizedBox(height: 24),
                       Text(
-                        'Description',
+                        AppLocalizations.of(context)!.description,
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -772,7 +809,7 @@ class ChallengesScreen extends ConsumerWidget {
                       const SizedBox(height: 24),
                       if (challenge.progress != null) ...[
                         Text(
-                          'Progression',
+                          AppLocalizations.of(context)!.progress,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -793,7 +830,9 @@ class ChallengesScreen extends ConsumerWidget {
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          '${(challenge.progress! * 100).toInt()}% complété',
+                          AppLocalizations.of(
+                            context,
+                          )!.percentCompleted(challenge.points),
                           style: TextStyle(
                             fontSize: 14,
                             color: Colors.grey[600],
@@ -824,8 +863,8 @@ class ChallengesScreen extends ConsumerWidget {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
-                              child: const Text(
-                                'Progression',
+                              child: Text(
+                                AppLocalizations.of(context)!.progress,
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
@@ -873,8 +912,8 @@ class ChallengesScreen extends ConsumerWidget {
                                   Text(
                                     challenge.progress != null &&
                                             challenge.progress! >= 1.0
-                                        ? 'Terminer'
-                                        : 'Verrouillé',
+                                        ? AppLocalizations.of(context)!.finish
+                                        : AppLocalizations.of(context)!.locked,
                                     style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.bold,

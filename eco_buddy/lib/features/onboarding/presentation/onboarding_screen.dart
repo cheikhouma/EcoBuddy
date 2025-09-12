@@ -1,7 +1,6 @@
+import 'package:eco_buddy/core/widgets/floating_particles.dart';
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-import '../../../core/constants/app_constants.dart';
-import '../../../core/widgets/custom_button.dart';
-import '../../../core/widgets/floating_particles.dart';
 
 class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
@@ -25,47 +24,62 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     )..repeat(reverse: true);
   }
 
-  final List<OnboardingPage> _pages = [
-    OnboardingPage(
-      icon: Icons.camera_enhance_rounded,
-      emoji: '📱',
-      title: 'Scanner AR\nIntelligent',
-      description:
-          'Découvrez instantanément l\'impact écologique de n\'importe quel objet grâce à l\'intelligence artificielle !',
-      color: const Color(0xFF2E7D32),
-      features: ['IA Gemini', 'Temps réel', 'Alternatives'],
-    ),
-    OnboardingPage(
-      icon: Icons.auto_stories_rounded,
-      emoji: '📚',
-      title: 'Histoires\nInteractives',
-      description:
-          'Vivez des aventures écologiques captivantes où chaque choix compte pour sauver la planète !',
-      color: const Color(0xFF1565C0),
-      features: ['Choix multiples', 'Points', 'Suspense'],
-    ),
-    OnboardingPage(
-      icon: Icons.eco_rounded,
-      emoji: '🌱',
-      title: 'Défis Verts\nQuotidiens',
-      description:
-          'Transformez votre quotidien avec des défis écologiques amusants et devenez un héros de l\'environnement !',
-      color: const Color(0xFF388E3C),
-      features: ['Gamification', 'Récompenses', 'Progress'],
-    ),
-    OnboardingPage(
-      icon: Icons.groups_rounded,
-      emoji: '🌍',
-      title: 'Communauté\nÉco-citoyens',
-      description:
-          'Rejoignez des milliers d\'éco-warriors et participez au plus grand mouvement écologique mondial !',
-      color: const Color(0xFF00695C),
-      features: ['Classement', 'Partage', 'Impact'],
-    ),
-  ];
+  List<OnboardingPage> _getPages(BuildContext context) {
+    return [
+      OnboardingPage(
+        icon: Icons.camera_enhance_rounded,
+        emoji: '📱',
+        title: AppLocalizations.of(context)!.smartARScanner,
+        description: AppLocalizations.of(context)!.discoverEcologicalImpact,
+        color: const Color(0xFF2E7D32),
+        features: [
+          AppLocalizations.of(context)!.geminiAI,
+          AppLocalizations.of(context)!.realTime,
+          AppLocalizations.of(context)!.alternatives,
+        ],
+      ),
+      OnboardingPage(
+        icon: Icons.auto_stories_rounded,
+        emoji: '📚',
+        title: AppLocalizations.of(context)!.interactiveStories,
+        description: AppLocalizations.of(context)!.liveEcologicalAdventures,
+        color: const Color(0xFF1565C0),
+        features: [
+          AppLocalizations.of(context)!.multipleChoices,
+          AppLocalizations.of(context)!.points,
+          AppLocalizations.of(context)!.suspense,
+        ],
+      ),
+      OnboardingPage(
+        icon: Icons.eco_rounded,
+        emoji: '🌱',
+        title: AppLocalizations.of(context)!.dailyGreenChallenges,
+        description: AppLocalizations.of(context)!.transformYourDaily,
+        color: const Color(0xFF388E3C),
+        features: [
+          AppLocalizations.of(context)!.gamification,
+          AppLocalizations.of(context)!.rewards,
+          AppLocalizations.of(context)!.progress,
+        ],
+      ),
+      OnboardingPage(
+        icon: Icons.groups_rounded,
+        emoji: '🌍',
+        title: AppLocalizations.of(context)!.ecoCitizensCommunity,
+        description: AppLocalizations.of(context)!.joinThousandsOfEcoWarriors,
+        color: const Color(0xFF00695C),
+        features: [
+          AppLocalizations.of(context)!.ranking,
+          AppLocalizations.of(context)!.sharing,
+          AppLocalizations.of(context)!.impact,
+        ],
+      ),
+    ];
+  }
 
-  void _nextPage() {
-    if (_currentPage < _pages.length - 1) {
+  void _nextPage(BuildContext context) {
+    final pages = _getPages(context);
+    if (_currentPage < pages.length - 1) {
       _pageController.nextPage(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
@@ -84,10 +98,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
     }
   }
 
-  void _skipToLogin() {
-    _goToLogin();
-  }
-
   void _goToLogin() {
     Navigator.of(context).pushReplacementNamed('/login');
   }
@@ -101,6 +111,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
   @override
   Widget build(BuildContext context) {
+    final pages = _getPages(context);
     return Scaffold(
       body: AnimatedContainer(
         duration: const Duration(milliseconds: 800),
@@ -109,9 +120,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              _pages[_currentPage].color.withValues(alpha: 0.9),
-              _pages[_currentPage].color,
-              _pages[_currentPage].color.withValues(alpha: 0.8),
+              pages[_currentPage].color.withValues(alpha: 0.9),
+              pages[_currentPage].color,
+              pages[_currentPage].color.withValues(alpha: 0.8),
             ],
             stops: const [0.0, 0.5, 1.0],
           ),
@@ -130,28 +141,6 @@ class _OnboardingScreenState extends State<OnboardingScreen>
             SafeArea(
               child: Column(
                 children: [
-                  // Skip button
-                  // Padding(
-                  //   padding: const EdgeInsets.all(16.0),
-                  //   child: Row(
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       if (_currentPage < _pages.length - 1)
-                  //         TextButton(
-                  //           onPressed: _skipToLogin,
-                  //           child: const Text(
-                  //             'Ignorer',
-                  //             style: TextStyle(
-                  //               color: Colors.white,
-                  //               fontSize: 16,
-                  //               fontWeight: FontWeight.w500,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //     ],
-                  //   ),
-                  // ),
-
                   // PageView
                   Expanded(
                     child: PageView.builder(
@@ -161,9 +150,9 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                           _currentPage = index;
                         });
                       },
-                      itemCount: _pages.length,
+                      itemCount: pages.length,
                       itemBuilder: (context, index) {
-                        return _buildPage(_pages[index]);
+                        return _buildPage(pages[index]);
                       },
                     ),
                   ),
@@ -174,7 +163,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: List.generate(
-                        _pages.length,
+                        pages.length,
                         (index) => GestureDetector(
                           onTap: () {
                             _pageController.animateToPage(
@@ -220,7 +209,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                       width: 4,
                                       height: 4,
                                       decoration: BoxDecoration(
-                                        color: _pages[_currentPage].color,
+                                        color: pages[_currentPage].color,
                                         shape: BoxShape.circle,
                                       ),
                                     ),
@@ -265,7 +254,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                     size: 20,
                                   ),
                                   label: Text(
-                                    'Précédent',
+                                    AppLocalizations.of(context)!.previous,
                                     style: TextStyle(
                                       color: Colors.white,
                                       fontSize:
@@ -287,7 +276,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
 
                         // Next/Get Started button
                         Expanded(
-                          flex: _currentPage == _pages.length - 1 ? 1 : 0,
+                          flex: _currentPage == pages.length - 1 ? 1 : 0,
                           child: AnimatedContainer(
                             duration: const Duration(milliseconds: 400),
                             height: MediaQuery.of(context).size.height < 700
@@ -319,7 +308,7 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                     onPressed: () {
                                       // Petit effet de bounce
                                       setState(() {});
-                                      _nextPage();
+                                      _nextPage(context);
                                     },
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: Colors.transparent,
@@ -330,25 +319,27 @@ class _OnboardingScreenState extends State<OnboardingScreen>
                                       ),
                                     ),
                                     icon: Icon(
-                                      _currentPage == _pages.length - 1
+                                      _currentPage == pages.length - 1
                                           ? Icons.rocket_launch_rounded
                                           : Icons.arrow_forward_ios_rounded,
-                                      color: _pages[_currentPage].color,
+                                      color: pages[_currentPage].color,
                                       size: 22,
                                     ),
                                     label: Text(
-                                      _currentPage == _pages.length - 1
-                                          ? 'Commencer'
-                                          : 'Suivant',
+                                      _currentPage == pages.length - 1
+                                          ? AppLocalizations.of(
+                                              context,
+                                            )!.getStarted
+                                          : AppLocalizations.of(context)!.next,
                                       style: TextStyle(
-                                        color: _pages[_currentPage].color,
+                                        color: pages[_currentPage].color,
                                         fontSize:
                                             MediaQuery.of(context).size.width <
                                                 350
-                                            ? (_currentPage == _pages.length - 1
+                                            ? (_currentPage == pages.length - 1
                                                   ? 14
                                                   : 13)
-                                            : (_currentPage == _pages.length - 1
+                                            : (_currentPage == pages.length - 1
                                                   ? 17
                                                   : 16),
                                         fontWeight: FontWeight.w700,

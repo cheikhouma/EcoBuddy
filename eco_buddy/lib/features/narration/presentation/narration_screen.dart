@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/services.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/providers/narration_provider.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/card_widget.dart';
+import 'widgets/choice_result_dialog.dart';
 
 class NarrationScreen extends ConsumerWidget {
   const NarrationScreen({super.key});
@@ -15,8 +17,9 @@ class NarrationScreen extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Histoires interactives',
+        automaticallyImplyLeading: false,
+        title: Text(
+          AppLocalizations.of(context)!.interactiveStories,
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: const Color(AppConstants.primaryColor),
@@ -37,7 +40,14 @@ class NarrationScreen extends ConsumerWidget {
         ),
       ),
       body: narrationState.when(
-        data: (state) => _buildNarrationContent(context, ref, state),
+        data: (state) => Stack(
+          children: [
+            _buildNarrationContent(context, ref, state),
+            // Afficher le dialogue si nécessaire
+            if (state.showChoiceDialog)
+              _buildChoiceResultDialog(context, ref, state),
+          ],
+        ),
         loading: () => Center(
           child: Container(
             padding: const EdgeInsets.all(32),
@@ -61,8 +71,8 @@ class NarrationScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'Génération de l\'histoire...',
+                Text(
+                  AppLocalizations.of(context)!.generatingStory,
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
@@ -71,7 +81,7 @@ class NarrationScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Création d\'une aventure écologique unique pour vous',
+                  AppLocalizations.of(context)!.creatingUniqueEcoAdventure,
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                   textAlign: TextAlign.center,
                 ),
@@ -107,7 +117,7 @@ class NarrationScreen extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Story progress indicator
-            _buildProgressIndicator(state),
+            _buildProgressIndicator(context, state),
             const SizedBox(height: 20),
 
             // Story content
@@ -205,8 +215,8 @@ class NarrationScreen extends ConsumerWidget {
                       ),
                     ),
                     const SizedBox(width: 12),
-                    const Text(
-                      'Que voulez-vous faire ?',
+                    Text(
+                      AppLocalizations.of(context)!.whatDoYouWantToDo,
                       style: TextStyle(
                         fontSize: 20,
                         fontWeight: FontWeight.bold,
@@ -256,8 +266,8 @@ class NarrationScreen extends ConsumerWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
-                  'Bienvenue dans les histoires interactives !',
+                Text(
+                  AppLocalizations.of(context)!.welcomeToInteractiveStories,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -266,8 +276,8 @@ class NarrationScreen extends ConsumerWidget {
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  'Vivez des aventures écologiques captivantes où vos choix façonnent l\'histoire et impactent l\'environnement.',
+                Text(
+                  AppLocalizations.of(context)!.liveEcologicalAdventures,
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
@@ -291,8 +301,8 @@ class NarrationScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Text(
-                'Commencer une nouvelle histoire',
+              child: Text(
+                AppLocalizations.of(context)!.startNewStory,
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
             ),
@@ -302,7 +312,7 @@ class NarrationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressIndicator(NarrationState state) {
+  Widget _buildProgressIndicator(BuildContext context, NarrationState state) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
@@ -347,8 +357,8 @@ class NarrationScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    'Progression de l\'histoire',
+                  Text(
+                    AppLocalizations.of(context)!.storyProgress,
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -361,7 +371,9 @@ class NarrationScreen extends ConsumerWidget {
                       Icon(Icons.book, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 6),
                       Text(
-                        'Chapitre ${state.currentStory!.chapterNumber}',
+                        AppLocalizations.of(
+                          context,
+                        )!.chapter(state.currentStory!.chapterNumber),
                         style: TextStyle(
                           fontSize: 14,
                           color: Colors.grey[600],
@@ -556,8 +568,8 @@ class NarrationScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 20),
-            const Text(
-              'Félicitations !',
+            Text(
+              AppLocalizations.of(context)!.congratulations,
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -565,8 +577,8 @@ class NarrationScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
-              'Histoire terminée avec succès',
+            Text(
+              AppLocalizations.of(context)!.storyCompletedSuccessfully,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black54,
@@ -592,7 +604,9 @@ class NarrationScreen extends ConsumerWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '${state.totalPointsEarned} points écologiques gagnés !',
+                    AppLocalizations.of(
+                      context,
+                    )!.ecologicalPointsEarned(state.totalPointsEarned),
                     style: const TextStyle(
                       fontSize: 16,
                       color: Color(AppConstants.accentColor),
@@ -618,13 +632,13 @@ class NarrationScreen extends ConsumerWidget {
                       ),
                       elevation: 2,
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.auto_stories, size: 20),
                         SizedBox(width: 8),
                         Text(
-                          'Nouvelle histoire',
+                          AppLocalizations.of(context)!.newStory,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -647,13 +661,13 @@ class NarrationScreen extends ConsumerWidget {
                         width: 1.5,
                       ),
                     ),
-                    child: const Row(
+                    child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.home, size: 20),
                         SizedBox(width: 8),
                         Text(
-                          'Menu principal',
+                          AppLocalizations.of(context)!.mainMenu,
                           style: TextStyle(fontWeight: FontWeight.w600),
                         ),
                       ],
@@ -681,8 +695,8 @@ class NarrationScreen extends ConsumerWidget {
               color: Color(AppConstants.errorColor),
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Oops ! Une erreur s\'est produite',
+            Text(
+              AppLocalizations.of(context)!.oopsAnErrorOccurred,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -710,11 +724,22 @@ class NarrationScreen extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Réessayer'),
+              child: Text(AppLocalizations.of(context)!.retry),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildChoiceResultDialog(BuildContext context, WidgetRef ref, NarrationState state) {
+    return ChoiceResultDialog(
+      pointsEarned: state.lastPointsEarned,
+      totalPoints: state.totalPointsEarned,
+      choiceMade: state.lastChoiceMade ?? '',
+      isStoryCompleted: state.isCompleted,
+      onContinue: () => ref.read(narrationProvider.notifier).continueStory(),
+      onFinish: () => ref.read(narrationProvider.notifier).finishStory(),
     );
   }
 }

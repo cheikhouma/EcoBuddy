@@ -39,19 +39,47 @@ class NarrationNotifier extends StateNotifier<AsyncValue<NarrationState>> {
     state = const AsyncValue.loading();
 
     try {
+      final choiceMade = currentState!.currentStory!.choices[choiceIndex];
       final nextStory = await _repository.makeChoice(
-        currentState!.sessionId!,
+        currentState.sessionId!,
         choiceIndex,
       );
 
+      // Afficher d'abord le dialogue avec les points gagnés
       state = AsyncValue.data(currentState.copyWith(
-        currentStory: nextStory,
+        showChoiceDialog: true,
+        lastPointsEarned: nextStory.points,
+        lastChoiceMade: choiceMade,
         totalPointsEarned: currentState.totalPointsEarned + nextStory.points,
+        currentStory: nextStory, // Garde la nouvelle histoire en mémoire
         isCompleted: nextStory.choices.isEmpty,
       ));
     } catch (error, stackTrace) {
       state = AsyncValue.error(error, stackTrace);
     }
+  }
+
+  void continueStory() {
+    final currentState = state.value;
+    if (currentState == null) return;
+
+    // Si l'histoire est terminée, on affiche juste un récapitulatif final
+    if (currentState.isCompleted) {
+      // L'histoire est terminée, on garde le dialogue ouvert mais on change le contenu
+      return;
+    }
+
+    // Fermer le dialogue et afficher la suite de l'histoire
+    state = AsyncValue.data(currentState.copyWith(
+      showChoiceDialog: false,
+      lastPointsEarned: 0,
+      lastChoiceMade: null,
+    ));
+  }
+
+  void finishStory() {
+    // Réinitialiser complètement l'état pour revenir à l'écran de démarrage
+    state = const AsyncValue.data(NarrationState());
   }
 
   void reset() {
@@ -64,12 +92,18 @@ class NarrationState {
   final String? sessionId;
   final int totalPointsEarned;
   final bool isCompleted;
+  final bool showChoiceDialog;
+  final int lastPointsEarned;
+  final String? lastChoiceMade;
 
   const NarrationState({
     this.currentStory,
     this.sessionId,
     this.totalPointsEarned = 0,
     this.isCompleted = false,
+    this.showChoiceDialog = false,
+    this.lastPointsEarned = 0,
+    this.lastChoiceMade,
   });
 
   NarrationState copyWith({
@@ -77,12 +111,18 @@ class NarrationState {
     String? sessionId,
     int? totalPointsEarned,
     bool? isCompleted,
+    bool? showChoiceDialog,
+    int? lastPointsEarned,
+    String? lastChoiceMade,
   }) {
     return NarrationState(
       currentStory: currentStory ?? this.currentStory,
       sessionId: sessionId ?? this.sessionId,
       totalPointsEarned: totalPointsEarned ?? this.totalPointsEarned,
       isCompleted: isCompleted ?? this.isCompleted,
+      showChoiceDialog: showChoiceDialog ?? this.showChoiceDialog,
+      lastPointsEarned: lastPointsEarned ?? this.lastPointsEarned,
+      lastChoiceMade: lastChoiceMade ?? this.lastChoiceMade,
     );
   }
 }

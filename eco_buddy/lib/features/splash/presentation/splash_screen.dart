@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/widgets/floating_particles.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -15,6 +17,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
   late AnimationController _logoController;
   late AnimationController _textController;
   late AnimationController _progressController;
+  late AnimationController _pulseController;
 
   late Animation<double> _logoScale;
   late Animation<double> _logoRotation;
@@ -47,6 +50,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
+
+    // Pulse animation controller for background effect
+    _pulseController = AnimationController(
+      duration: const Duration(seconds: 2),
+      vsync: this,
+    )..repeat(reverse: true);
 
     // Logo animations
     _logoScale = Tween<double>(begin: 0.5, end: 1.0).animate(
@@ -110,13 +119,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
     _logoController.dispose();
     _textController.dispose();
     _progressController.dispose();
+    _pulseController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
+      body: AnimatedContainer(
+        duration: const Duration(milliseconds: 800),
         decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
@@ -129,81 +140,253 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
             stops: [0.0, 0.6, 1.0],
           ),
         ),
-        child: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    // Animated Logo
-                    AnimatedBuilder(
-                      animation: _logoController,
-                      builder: (context, child) {
-                        return Transform.scale(
-                          scale: _logoScale.value,
-                          child: Transform.rotate(
-                            angle: _logoRotation.value * 0.1,
-                            child: Container(
-                              width: 120,
-                              height: 120,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.2),
-                                borderRadius: BorderRadius.circular(30),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.white.withValues(alpha: 0.1),
-                                    blurRadius: 20,
-                                    spreadRadius: 5,
-                                  ),
-                                ],
+        child: Stack(
+          children: [
+            // Floating particles background
+            Positioned.fill(
+              child: FloatingParticles(
+                color: Colors.white.withValues(alpha: 0.3),
+                particleCount: MediaQuery.of(context).size.height < 700
+                    ? 8
+                    : 12,
+              ),
+            ),
+            SafeArea(
+              child: Column(
+                children: [
+                  Expanded(
+                    flex: 3,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        // Animated Logo with pulse effect
+                        TweenAnimationBuilder(
+                          tween: Tween<double>(begin: 0.0, end: 1.0),
+                          duration: const Duration(milliseconds: 1000),
+                          curve: Curves.easeOutBack,
+                          builder: (context, double value, child) {
+                            return Transform.scale(
+                              scale: value.clamp(0.0, 1.5),
+                              child: AnimatedBuilder(
+                                animation: _logoController,
+                                builder: (context, child) {
+                                  return Transform.scale(
+                                    scale: _logoScale.value,
+                                    child: Transform.rotate(
+                                      angle: _logoRotation.value * 0.1,
+                                      child: Stack(
+                                        alignment: Alignment.center,
+                                        children: [
+                                          // Background pulse circle
+                                          AnimatedBuilder(
+                                            animation: _pulseController,
+                                            builder: (context, child) {
+                                              final pulseValue =
+                                                  _pulseController.value.clamp(
+                                                    0.0,
+                                                    1.0,
+                                                  );
+                                              return Container(
+                                                width: 200 + (pulseValue * 20),
+                                                height: 200 + (pulseValue * 20),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: Colors.white.withValues(
+                                                    alpha:
+                                                        (0.1 +
+                                                                (pulseValue *
+                                                                    0.05))
+                                                            .clamp(0.0, 1.0),
+                                                  ),
+                                                  boxShadow: [
+                                                    BoxShadow(
+                                                      color: Colors.white.withValues(
+                                                        alpha:
+                                                            (0.2 +
+                                                                    (pulseValue *
+                                                                        0.1))
+                                                                .clamp(
+                                                                  0.0,
+                                                                  1.0,
+                                                                ),
+                                                      ),
+                                                      blurRadius:
+                                                          30 +
+                                                          (pulseValue * 10),
+                                                      spreadRadius:
+                                                          10 + (pulseValue * 5),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                          // Main logo container
+                                          Container(
+                                            width: 140,
+                                            height: 140,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              color: Colors.white.withValues(
+                                                alpha: 0.15,
+                                              ),
+                                              border: Border.all(
+                                                color: Colors.white.withValues(
+                                                  alpha: 0.3,
+                                                ),
+                                                width: 2,
+                                              ),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.1),
+                                                  blurRadius: 20,
+                                                  spreadRadius: 5,
+                                                ),
+                                              ],
+                                            ),
+                                            child: Stack(
+                                              alignment: Alignment.center,
+                                              children: [
+                                                // Main eco icon
+                                                const Icon(
+                                                  Icons.eco,
+                                                  size: 70,
+                                                  color: Colors.white,
+                                                ),
+                                                // Small overlay icon
+                                                Positioned(
+                                                  bottom: 15,
+                                                  right: 15,
+                                                  child: Container(
+                                                    padding:
+                                                        const EdgeInsets.all(8),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.white
+                                                          .withValues(
+                                                            alpha: 0.9,
+                                                          ),
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black
+                                                              .withValues(
+                                                                alpha: 0.1,
+                                                              ),
+                                                          blurRadius: 8,
+                                                          spreadRadius: 2,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: const Icon(
+                                                      Icons.stars,
+                                                      size: 20,
+                                                      color: Color(
+                                                        AppConstants
+                                                            .primaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
                               ),
-                              child: const Icon(
-                                Icons.eco,
-                                size: 60,
-                                color: Colors.white,
+                            );
+                          },
+                        ),
+
+                        const SizedBox(height: 30),
+
+                        // Animated Text
+                        AnimatedBuilder(
+                          animation: _textController,
+                          builder: (context, child) {
+                            return SlideTransition(
+                              position: _textSlide,
+                              child: FadeTransition(
+                                opacity: _textOpacity,
+                                child: Column(
+                                  children: [
+                                    Text(
+                                      AppConstants.appName,
+                                      style: TextStyle(
+                                        fontSize: 32,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white.withValues(
+                                          alpha: _textOpacity.value,
+                                        ),
+                                        letterSpacing: 1.2,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      )!.ecologicalAssistant,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.white70.withValues(
+                                          alpha: _textOpacity.value,
+                                        ),
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ),
-                        );
-                      },
+                            );
+                          },
+                        ),
+                      ],
                     ),
+                  ),
 
-                    const SizedBox(height: 30),
-
-                    // Animated Text
-                    AnimatedBuilder(
+                  // Features Preview
+                  Expanded(
+                    flex: 2,
+                    child: AnimatedBuilder(
                       animation: _textController,
                       builder: (context, child) {
-                        return SlideTransition(
-                          position: _textSlide,
-                          child: FadeTransition(
-                            opacity: _textOpacity,
+                        return FadeTransition(
+                          opacity: _textOpacity,
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 40),
                             child: Column(
                               children: [
-                                Text(
-                                  AppConstants.appName,
-                                  style: TextStyle(
-                                    fontSize: 32,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white.withValues(
-                                      alpha: _textOpacity.value,
-                                    ),
-                                    letterSpacing: 1.2,
-                                  ),
+                                const SizedBox(height: 20),
+                                _buildFeatureItem(
+                                  Icons.camera_enhance_rounded,
+                                  AppLocalizations.of(context)!.arScanner,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.scanObjectsDiscoverImpact,
                                 ),
-                                const SizedBox(height: 8),
-                                Text(
-                                  'Votre assistant écologique intelligent',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    color: Colors.white70.withValues(
-                                      alpha: _textOpacity.value,
-                                    ),
-                                    fontWeight: FontWeight.w300,
-                                  ),
-                                  textAlign: TextAlign.center,
+                                const SizedBox(height: 16),
+                                _buildFeatureItem(
+                                  Icons.auto_stories_rounded,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.interactiveStories,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.learnEcologyThroughAdventures,
+                                ),
+                                const SizedBox(height: 16),
+                                _buildFeatureItem(
+                                  Icons.emoji_events_rounded,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.ecologicalChallenges,
+                                  AppLocalizations.of(
+                                    context,
+                                  )!.takeChallengesEarnPoints,
                                 ),
                               ],
                             ),
@@ -211,105 +394,69 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
                         );
                       },
                     ),
-                  ],
-                ),
-              ),
+                  ),
 
-              // Features Preview
-              Expanded(
-                flex: 2,
-                child: AnimatedBuilder(
-                  animation: _textController,
-                  builder: (context, child) {
-                    return FadeTransition(
-                      opacity: _textOpacity,
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 40),
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            _buildFeatureItem(
-                              Icons.camera_alt,
-                              'Scanner AR',
-                              'Scannez vos objets et découvrez leur impact environnemental',
-                            ),
-                            const SizedBox(height: 16),
-                            _buildFeatureItem(
-                              Icons.auto_stories,
-                              'Histoires interactives',
-                              'Apprenez l\'écologie à travers des aventures captivantes',
-                            ),
-                            const SizedBox(height: 16),
-                            _buildFeatureItem(
-                              Icons.emoji_events,
-                              'Défis écologiques',
-                              'Relevez des défis et gagnez des points',
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-
-              // Loading Progress
-              Expanded(
-                flex: 1,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    AnimatedBuilder(
-                      animation: _progressController,
-                      builder: (context, child) {
-                        return Column(
-                          children: [
-                            Container(
-                              width: 200,
-                              height: 4,
-                              decoration: BoxDecoration(
-                                color: Colors.white.withValues(alpha: 0.3),
-                                borderRadius: BorderRadius.circular(2),
-                              ),
-                              child: Stack(
-                                children: [
-                                  Container(
-                                    width: 200 * _progressValue.value,
-                                    height: 4,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(2),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withValues(
-                                            alpha: 0.5,
-                                          ),
-                                          blurRadius: 8,
-                                        ),
-                                      ],
-                                    ),
+                  // Loading Progress
+                  Expanded(
+                    flex: 1,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        AnimatedBuilder(
+                          animation: _progressController,
+                          builder: (context, child) {
+                            return Column(
+                              children: [
+                                Container(
+                                  width: 200,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.3),
+                                    borderRadius: BorderRadius.circular(2),
                                   ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'Chargement...',
-                              style: TextStyle(
-                                color: Colors.white.withValues(alpha: 0.8),
-                                fontSize: 14,
-                                fontWeight: FontWeight.w300,
-                              ),
-                            ),
-                          ],
-                        );
-                      },
+                                  child: Stack(
+                                    children: [
+                                      Container(
+                                        width: 200 * _progressValue.value,
+                                        height: 4,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius: BorderRadius.circular(
+                                            2,
+                                          ),
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.white.withValues(
+                                                alpha: 0.5,
+                                              ),
+                                              blurRadius: 8,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  AppLocalizations.of(context)!.loadingText,
+                                  style: TextStyle(
+                                    color: Colors.white.withValues(alpha: 0.8),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

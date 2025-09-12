@@ -17,6 +17,8 @@ public class NarrativeChoiceResponse {
     private String content;
     private List<String> choices;
     private int chapterNumber;
-    private int points; // Total cumulé des points
+    private int pointsEarned; // Points gagnés pour ce choix
+    private int totalPoints;  // Total cumulé des points
     private boolean isCompleted;
+    private String status = "success"; // Statut de la réponse
 }

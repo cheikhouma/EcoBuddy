@@ -17,6 +17,8 @@ public class NarrativeStartResponse {
     private String content;
     private List<String> choices;
     private int chapterNumber;
-    private int points;
+    private int pointsEarned; // Points gagnés pour cette étape
+    private int totalPoints;  // Points totaux de l'utilisateur
     private boolean isCompleted;
+    private String status = "success"; // Nouveau: statut de la réponse
 }

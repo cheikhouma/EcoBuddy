@@ -5,6 +5,7 @@ import 'package:eco_buddy/shared/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/app_localizations.dart';
 
 class SignupScreen extends ConsumerStatefulWidget {
   const SignupScreen({super.key});
@@ -45,64 +46,64 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
 
   String? _validateUsername(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Nom d\'utilisateur requis';
+      return AppLocalizations.of(context)!.usernameRequired;
     }
     if (value.length < 3) {
-      return 'Minimum 3 caractères';
+      return AppLocalizations.of(context)!.usernameMinLength;
     }
     if (value.length > 50) {
-      return 'Maximum 50 caractères';
+      return AppLocalizations.of(context)!.usernameMaxLength;
     }
     // autorise uniquement lettres, chiffres et _
     if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(value)) {
-      return 'Seuls les lettres, chiffres et _ sont autorisés';
+      return AppLocalizations.of(context)!.onlyLettersNumbersUnderscore;
     }
     return null;
   }
 
   String? _validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Email requis';
+      return AppLocalizations.of(context)!.emailRequired;
     }
     if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-      return 'Format d\'email invalide';
+      return AppLocalizations.of(context)!.invalidEmailFormat;
     }
     return null;
   }
 
   String? _validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Mot de passe requis';
+      return AppLocalizations.of(context)!.passwordRequired;
     }
     if (value.length < 6) {
-      return 'Minimum 6 caractères';
+      return AppLocalizations.of(context)!.passwordMinLength;
     }
     return null;
   }
 
   String? _validateConfirmPassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Confirmation requise';
+      return AppLocalizations.of(context)!.confirmationRequired;
     }
     if (value != _passwordController.text) {
-      return 'Les mots de passe ne correspondent pas';
+      return AppLocalizations.of(context)!.passwordsDoNotMatch;
     }
     return null;
   }
 
   String? _validateAge(String? value) {
     if (value == null || value.isEmpty) {
-      return 'Âge requis';
+      return AppLocalizations.of(context)!.ageRequired;
     }
     final age = int.tryParse(value);
     if (age == null) {
-      return 'Âge invalide';
+      return AppLocalizations.of(context)!.invalidAge;
     }
     if (age < 13) {
-      return 'Âge minimum 13 ans';
+      return AppLocalizations.of(context)!.minimumAge;
     }
     if (age > 120) {
-      return 'Âge maximum 120 ans';
+      return AppLocalizations.of(context)!.invalidAgeRange;
     }
     return null;
   }
@@ -126,7 +127,9 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Inscription échouée: ${e.toString()}'),
+              content: Text(
+                AppLocalizations.of(context)!.signupFailed(e.toString()),
+              ),
 
               backgroundColor: const Color(AppConstants.errorColor),
               behavior: SnackBarBehavior.floating,
@@ -148,167 +151,200 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
 
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                // Header
-                const Icon(
-                  Icons.eco,
-                  size: 60,
-                  color: Color(AppConstants.primaryColor),
-                ),
-                const SizedBox(height: 16),
-                Text(
-                  'Rejoignez ${AppConstants.appName}',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Créez votre compte pour commencer votre parcours écologique',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.grey[600]),
-                ),
-                const SizedBox(height: 32),
-
-                // Form Card
-                Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        // Username field
-                        CustomTextField(
-                          label: 'Nom d\'utilisateur',
-                          hintText: 'Choisissez un nom d\'utilisateur',
-                          prefixIcon: Icons.person_outline,
-                          controller: _usernameController,
-                          focusNode: _usernameFocus,
-                          validator: _validateUsername,
-                          textCapitalization: TextCapitalization.none,
-                          onChanged: (value) {
-                            // Remove validation error on type
-                            if (authState.error != null) {
-                              ref.read(authProvider.notifier).state = authState
-                                  .copyWith(error: null);
-                            }
-                          },
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Email field
-                        CustomTextField(
-                          label: 'Adresse email',
-                          hintText: 'votre@email.com',
-                          prefixIcon: Icons.email_outlined,
-                          controller: _emailController,
-                          focusNode: _emailFocus,
-                          validator: _validateEmail,
-                          keyboardType: TextInputType.emailAddress,
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Age field
-                        CustomTextField(
-                          label: 'Âge',
-                          hintText: 'Votre âge',
-                          prefixIcon: Icons.cake_outlined,
-                          controller: _ageController,
-                          focusNode: _ageFocus,
-                          validator: _validateAge,
-                          keyboardType: TextInputType.number,
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                            LengthLimitingTextInputFormatter(3),
-                          ],
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Password field
-                        CustomTextField(
-                          label: 'Mot de passe',
-                          hintText: 'Minimum 6 caractères',
-                          prefixIcon: Icons.lock_outline,
-                          controller: _passwordController,
-                          focusNode: _passwordFocus,
-                          validator: _validatePassword,
-                          obscureText: true,
-                        ),
-                        const SizedBox(height: 20),
-
-                        // Confirm Password field
-                        CustomTextField(
-                          label: 'Confirmer le mot de passe',
-                          hintText: 'Répétez votre mot de passe',
-                          prefixIcon: Icons.lock_outline,
-                          controller: _confirmPasswordController,
-                          focusNode: _confirmPasswordFocus,
-                          validator: _validateConfirmPassword,
-                          obscureText: true,
-                        ),
-                        const SizedBox(height: 32),
-
-                        // Signup button
-                        CustomButton(
-                          text: 'Créer mon compte',
-                          onPressed: _signup,
-                          isLoading: authState.isLoading,
-                          icon: Icons.person_add,
-                        ),
-                        const SizedBox(height: 16),
-
-                        // Login link
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Déjà un compte ? ',
-                              style: TextStyle(color: Colors.grey[600]),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.of(
-                                  context,
-                                ).pushReplacementNamed('/login');
-                              },
-                              child: const Text(
-                                'Se connecter',
-                                style: TextStyle(
-                                  color: Color(AppConstants.primaryColor),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+      body: Center(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(60),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF2E7D32), Color(0xFF388E3C), Color(0xFF43A047)],
+              stops: [0.0, 0.5, 1.0],
+            ),
+          ),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  // Header
+                  ClipOval(
+                    child: Image.asset(
+                      "assets/images/logo.png",
+                      width: 100,
+                      height: 100,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 16),
+                  Text(
+                    '${AppLocalizations.of(context)!.join} ${AppConstants.appName}',
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    AppLocalizations.of(context)!.createAccountSubtitle,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 16, color: Colors.white),
+                  ),
+                  const SizedBox(height: 12),
 
-                const SizedBox(height: 24),
+                  // Form Card
+                  Card(
+                    color: Colors.white,
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Text(
+                            AppLocalizations.of(context)!.signupTitle,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
 
-                // Terms text
-                Text(
-                  'En créant un compte, vous acceptez nos conditions d\'utilisation et notre politique de confidentialité.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
+                          // Username field
+                          CustomTextField(
+                            label: AppLocalizations.of(context)!.username,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.enterUsername,
+                            prefixIcon: Icons.person_outline,
+                            controller: _usernameController,
+                            focusNode: _usernameFocus,
+                            validator: _validateUsername,
+                            textCapitalization: TextCapitalization.none,
+                            onChanged: (value) {
+                              // Remove validation error on type
+                              if (authState.error != null) {
+                                ref.read(authProvider.notifier).state =
+                                    authState.copyWith(error: null);
+                              }
+                            },
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Email field
+                          CustomTextField(
+                            label: AppLocalizations.of(context)!.email,
+                            hintText: AppLocalizations.of(context)!.enterEmail,
+                            prefixIcon: Icons.email_outlined,
+                            controller: _emailController,
+                            focusNode: _emailFocus,
+                            validator: _validateEmail,
+                            keyboardType: TextInputType.emailAddress,
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Age field
+                          CustomTextField(
+                            label: AppLocalizations.of(context)!.age,
+                            hintText: AppLocalizations.of(context)!.yourAge,
+                            prefixIcon: Icons.cake_outlined,
+                            controller: _ageController,
+                            focusNode: _ageFocus,
+                            validator: _validateAge,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly,
+                              LengthLimitingTextInputFormatter(3),
+                            ],
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Password field
+                          CustomTextField(
+                            label: AppLocalizations.of(context)!.password,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.minimum6Characters,
+                            prefixIcon: Icons.lock_outline,
+                            controller: _passwordController,
+                            focusNode: _passwordFocus,
+                            validator: _validatePassword,
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 10),
+
+                          // Confirm Password field
+                          CustomTextField(
+                            label: AppLocalizations.of(
+                              context,
+                            )!.confirmPassword,
+                            hintText: AppLocalizations.of(
+                              context,
+                            )!.repeatPassword,
+                            prefixIcon: Icons.lock_outline,
+                            controller: _confirmPasswordController,
+                            focusNode: _confirmPasswordFocus,
+                            validator: _validateConfirmPassword,
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 32),
+
+                          // Signup button
+                          CustomButton(
+                            text: AppLocalizations.of(context)!.createMyAccount,
+                            onPressed: _signup,
+                            isLoading: authState.isLoading,
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Login link
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                AppLocalizations.of(
+                                  context,
+                                )!.alreadyHaveAccount,
+                                style: TextStyle(color: Colors.grey[700]),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(
+                                    context,
+                                  ).pushReplacementNamed('/login');
+                                },
+                                child: Text(
+                                  "  ${AppLocalizations.of(context)!.login}",
+                                  style: TextStyle(
+                                    color: Color(AppConstants.primaryColor),
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+
+                  // Terms text
+                  Text(
+                    AppLocalizations.of(context)!.termsConditionsPrivacy,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 12, color: Colors.white),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

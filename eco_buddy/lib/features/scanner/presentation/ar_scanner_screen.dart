@@ -18,7 +18,7 @@ class ARScannerScreen extends ConsumerStatefulWidget {
   ConsumerState<ARScannerScreen> createState() => _ARScannerScreenState();
 }
 
-class _ARScannerScreenState extends ConsumerState<ARScannerScreen> 
+class _ARScannerScreenState extends ConsumerState<ARScannerScreen>
     with TickerProviderStateMixin {
   CameraController? _cameraController;
   List<CameraDescription> _cameras = [];
@@ -38,7 +38,10 @@ class _ARScannerScreenState extends ConsumerState<ARScannerScreen>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
-    _animation = Tween<double>(begin: 0.0, end: 1.0).animate(_animationController);
+    _animation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(_animationController);
     _initializeApp();
   }
 
@@ -46,12 +49,14 @@ class _ARScannerScreenState extends ConsumerState<ARScannerScreen>
   Future<void> _initializeApp() async {
     // 1. Vérifier et demander les permissions
     final hasPermission = await PermissionService.requestCameraPermission();
-    
+
     if (!hasPermission) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: const Text('Permission caméra requise pour utiliser le scanner AR'),
+            content: const Text(
+              'Permission caméra requise pour utiliser le scanner AR',
+            ),
             backgroundColor: Colors.red,
             action: SnackBarAction(
               label: 'Paramètres',
@@ -64,10 +69,7 @@ class _ARScannerScreenState extends ConsumerState<ARScannerScreen>
     }
 
     // 2. Initialiser la caméra et ML Kit
-    await Future.wait([
-      _initializeCamera(),
-      _initializeImageLabeler(),
-    ]);
+    await Future.wait([_initializeCamera(), _initializeImageLabeler()]);
   }
 
   Future<void> _initializeCamera() async {
@@ -260,6 +262,7 @@ class _ARScannerScreenState extends ConsumerState<ARScannerScreen>
     return Scaffold(
       backgroundColor: Colors.black,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Scanner AR', style: TextStyle(color: Colors.white)),
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -603,7 +606,7 @@ class ScanOverlayPainter extends CustomPainter {
   final double animationValue;
 
   ScanOverlayPainter({
-    required this.detectedLabels, 
+    required this.detectedLabels,
     required this.isDetecting,
     this.animationValue = 0.0,
   });
@@ -646,11 +649,7 @@ class ScanOverlayPainter extends CustomPainter {
       final left = centerX - scanSize / 2;
       final right = centerX + scanSize / 2;
       final scanY = top + (animationValue * scanSize);
-      canvas.drawLine(
-        Offset(left, scanY),
-        Offset(right, scanY),
-        scanLinePaint,
-      );
+      canvas.drawLine(Offset(left, scanY), Offset(right, scanY), scanLinePaint);
     }
 
     // Indicateurs visuels pour objets détectés
@@ -665,9 +664,15 @@ class ScanOverlayPainter extends CustomPainter {
         final angle = (i * 2 * 3.14159) / 3;
         final targetX = centerX + (scanSize / 3) * 0.8 * cos(angle);
         final targetY = centerY + (scanSize / 3) * 0.8 * sin(angle);
-        
+
         canvas.drawCircle(Offset(targetX, targetY), 8, targetPaint);
-        canvas.drawCircle(Offset(targetX, targetY), 4, Paint()..color = Colors.green.withOpacity(0.6)..style = PaintingStyle.fill);
+        canvas.drawCircle(
+          Offset(targetX, targetY),
+          4,
+          Paint()
+            ..color = Colors.green.withOpacity(0.6)
+            ..style = PaintingStyle.fill,
+        );
       }
     }
 

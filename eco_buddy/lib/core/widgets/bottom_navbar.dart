@@ -1,3 +1,5 @@
+import 'package:eco_buddy/l10n/app_localizations.dart';
+import 'package:eco_buddy/l10n/app_localizations_en.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 
@@ -33,31 +35,31 @@ class BottomNavBar extends StatelessWidget {
               _buildNavItem(
                 icon: Icons.home_outlined,
                 activeIcon: Icons.home,
-                label: 'Accueil',
+                label: AppLocalizations.of(context)!.home,
                 index: 0,
               ),
               _buildNavItem(
                 icon: Icons.auto_stories_outlined,
                 activeIcon: Icons.auto_stories,
-                label: 'Histoires',
+                label: AppLocalizations.of(context)!.stories,
                 index: 1,
               ),
               _buildNavItem(
                 icon: Icons.emoji_events_outlined,
                 activeIcon: Icons.emoji_events,
-                label: 'Défis',
+                label: AppLocalizations.of(context)!.challenges,
                 index: 2,
               ),
               _buildNavItem(
                 icon: Icons.camera_alt_outlined,
                 activeIcon: Icons.camera_alt,
-                label: 'Scanner',
+                label: AppLocalizations.of(context)!.arScanner,
                 index: 3,
               ),
               _buildNavItem(
                 icon: Icons.leaderboard_outlined,
                 activeIcon: Icons.leaderboard,
-                label: 'Classement',
+                label: AppLocalizations.of(context)!.leaderboard,
                 index: 4,
               ),
             ],

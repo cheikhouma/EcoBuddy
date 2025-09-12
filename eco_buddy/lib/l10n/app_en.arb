@@ -1,0 +1,1870 @@
+{
+  "@@locale": "en",
+  
+  "appName": "EcoBuddy",
+  "@appName": {
+    "description": "The application name"
+  },
+
+  "ecologicalAssistant": "🌱 Your intelligent ecological assistant",
+  "@ecologicalAssistant": {
+    "description": "App tagline"
+  },
+
+  "loadingText": "Loading...",
+  "@loadingText": {
+    "description": "Loading text"
+  },
+
+  "home":"Home",
+  "scanner": "Scanner",
+  "errorLoading": "Loading error",
+  "@errorLoading": {
+    "description": "Generic loading error"
+  },
+
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+
+  "close": "Close",
+  "@close": {
+    "description": "Close button text"
+  },
+
+  "continue_": "Continue",
+  "@continue_": {
+    "description": "Continue button text"
+  },
+
+  "or": "or",
+  "@or": {
+    "description": "Or separator"
+  },
+
+  "points": "points",
+  "@points": {
+    "description": "Points label"
+  },
+
+  "pts": "pts",
+  "@pts": {
+    "description": "Points abbreviation"
+  },
+
+  "level": "Level",
+  "@level": {
+    "description": "Level label"
+  },
+
+  "usernameRequired": "Username required",
+  "@usernameRequired": {
+    "description": "Username validation error"
+  },
+
+  "passwordRequired": "Password required",
+  "@passwordRequired": {
+    "description": "Password validation error"
+  },
+
+  "loginFailed": "Login failed: {error}",
+  "@loginFailed": {
+    "description": "Login failure message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "welcomeBack": "Welcome back!",
+  "@welcomeBack": {
+    "description": "Welcome back message on login screen"
+  },
+
+  "connectToContinue": "Log in to continue your ecological journey",
+  "@connectToContinue": {
+    "description": "Login screen subtitle"
+  },
+
+  "loginTitle": "Login",
+  "@loginTitle": {
+    "description": "Login screen title"
+  },
+
+  "username": "Username",
+  "@username": {
+    "description": "Username label"
+  },
+
+  "enterUsername": "Enter your username",
+  "@enterUsername": {
+    "description": "Username field hint"
+  },
+
+  "password": "Password",
+  "@password": {
+    "description": "Password label"
+  },
+
+  "enterPassword": "Enter your password",
+  "@enterPassword": {
+    "description": "Password field hint"
+  },
+
+  "login": "Log in",
+  "@login": {
+    "description": "Login button text"
+  },
+
+  "newToApp": "New to {appName}?",
+  "@newToApp": {
+    "description": "New user message",
+    "placeholders": {
+      "appName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "createAccount": "Create account",
+  "@createAccount": {
+    "description": "Create account link text"
+  },
+
+  "signupFailed": "Registration failed: {error}",
+  "@signupFailed": {
+    "description": "Signup failure message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "createAccountSubtitle": "Create your account to start your ecological journey",
+  "@createAccountSubtitle": {
+    "description": "Signup screen subtitle"
+  },
+
+  "email": "Email",
+  "@email": {
+    "description": "Email label"
+  },
+
+  "enterEmail": "Enter your email",
+  "@enterEmail": {
+    "description": "Email field hint"
+  },
+
+  "age": "Age",
+  "@age": {
+    "description": "Age label"
+  },
+
+  "yourAge": "Your age",
+  "@yourAge": {
+    "description": "Age field hint"
+  },
+
+  "minimum6Characters": "Minimum 6 characters",
+  "@minimum6Characters": {
+    "description": "Password requirement"
+  },
+
+  "confirmPassword": "Confirm password",
+  "@confirmPassword": {
+    "description": "Confirm password label"
+  },
+
+  "repeatPassword": "Repeat your password",
+  "@repeatPassword": {
+    "description": "Confirm password hint"
+  },
+
+  "createMyAccount": "Create my account",
+  "@createMyAccount": {
+    "description": "Signup button text"
+  },
+
+  "signupTitle":"Sign Up",
+  "@signupTitle": {},
+
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Login link text"
+  },
+
+  "termsConditionsPrivacy": "By creating an account, you accept our terms of use and privacy policy.",
+  "@termsConditionsPrivacy": {
+    "description": "Terms and conditions text"
+  },
+
+  "usernameMinLength": "Username must contain at least 3 characters",
+  "@usernameMinLength": {
+    "description": "Username validation error"
+  },
+
+  "usernameMaxLength": "Username cannot exceed 50 characters",
+  "@usernameMaxLength": {
+    "description": "Username validation error"
+  },
+
+  "emailMaxLength": "Email cannot exceed 100 characters",
+  "@emailMaxLength": {
+    "description": "Email validation error"
+  },
+
+  "passwordMinLength": "Password must contain at least 6 characters",
+  "@passwordMinLength": {
+    "description": "Password validation error"
+  },
+
+  "passwordMaxLength": "Password cannot exceed 128 characters",
+  "@passwordMaxLength": {
+    "description": "Password validation error"
+  },
+
+  "weakPassword": "Password too weak. Use uppercase, lowercase, numbers or special characters",
+  "@weakPassword": {
+    "description": "Weak password validation error"
+  },
+
+  "ageRequired": "Age required",
+  "@ageRequired": {
+    "description": "Age validation error"
+  },
+
+  "invalidAge": "Age must be a valid number",
+  "@invalidAge": {
+    "description": "Age validation error"
+  },
+
+  "minimumAge": "You must be at least 13 years old to create an account",
+  "@minimumAge": {
+    "description": "Minimum age validation error"
+  },
+
+  "invalidAgeRange": "Invalid age",
+  "@invalidAgeRange": {
+    "description": "Age range validation error"
+  },
+
+  "dashboard": "Dashboard",
+  "@dashboard": {
+    "description": "Dashboard screen title"
+  },
+
+  "user": "User",
+  "@user": {
+    "description": "User label"
+  },
+
+  "quickActions": "Quick actions",
+  "@quickActions": {
+    "description": "Quick actions section title"
+  },
+
+  "continueEcologicalJourney": "Continue your ecological journey!",
+  "@continueEcologicalJourney": {
+    "description": "Dashboard encouragement message"
+  },
+
+  "totalPoints": "Total points",
+  "@totalPoints": {
+    "description": "Total points label"
+  },
+
+  "challengesCompleted": "Challenges completed",
+  "@challengesCompleted": {
+    "description": "Challenges completed label"
+  },
+
+  "arScanner": "AR Scanner",
+  "@arScanner": {
+    "description": "AR Scanner feature name"
+  },
+
+  "discoverObjectImpact": "Discover your objects' impact",
+  "@discoverObjectImpact": {
+    "description": "AR Scanner description"
+  },
+
+  "newStory": "New story",
+  "@newStory": {
+    "description": "New story feature name"
+  },
+
+  "liveEcologicalAdventure": "Live an ecological adventure",
+  "@liveEcologicalAdventure": {
+    "description": "Story feature description"
+  },
+
+  "dailyChallenges": "Daily challenges",
+  "@dailyChallenges": {
+    "description": "Daily challenges feature name"
+  },
+
+  "takeOnNewChallenges": "Take on new challenges",
+  "@takeOnNewChallenges": {
+    "description": "Challenges description"
+  },
+
+  "leaderboard": "Leaderboard",
+  "@leaderboard": {
+    "description": "Leaderboard feature name"
+  },
+
+  "seeYourPosition": "See your position",
+  "@seeYourPosition": {
+    "description": "Leaderboard description"
+  },
+
+  "recentActivity": "Recent activity",
+  "@recentActivity": {
+    "description": "Recent activity section title"
+  },
+
+  "plasticBottleScan": "Plastic bottle scan",
+  "@plasticBottleScan": {
+    "description": "Activity example"
+  },
+
+  "hoursAgo": "{hours} hours ago",
+  "@hoursAgo": {
+    "description": "Time ago format",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+
+  "plusPoints": "+{points} points",
+  "@plusPoints": {
+    "description": "Points earned format",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "challengeRecyclingCompleted": "\"Recycling\" challenge completed",
+  "@challengeRecyclingCompleted": {
+    "description": "Challenge completion example"
+  },
+
+  "daysAgo": "{days} day ago",
+  "@daysAgo": {
+    "description": "Days ago format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "storyMagicalForestCompleted": "Story \"The Magical Forest\" completed",
+  "@storyMagicalForestCompleted": {
+    "description": "Story completion example"
+  },
+
+  "progress": "Progress",
+  "@progress": {
+    "description": "Progress label"
+  },
+
+  "ecoCitizenLevel": "Eco-Citizen Level",
+  "@ecoCitizenLevel": {
+    "description": "User level label"
+  },
+
+  "monthlyGoal": "Monthly goal",
+  "@monthlyGoal": {
+    "description": "Monthly goal label"
+  },
+
+  "challengesGoal": "{current}/{total} challenges",
+  "@challengesGoal": {
+    "description": "Challenge progress format",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+
+  "goodMorning": "Good morning",
+  "@goodMorning": {
+    "description": "Morning greeting"
+  },
+
+  "goodAfternoon": "Good afternoon",
+  "@goodAfternoon": {
+    "description": "Afternoon greeting"
+  },
+
+  "goodEvening": "Good evening",
+  "@goodEvening": {
+    "description": "Evening greeting"
+  },
+
+  "seeAll": "See all",
+  "@seeAll": {
+    "description": "See all button text"
+  },
+
+  "noLeaderboardData": "No leaderboard data",
+  "@noLeaderboardData": {
+    "description": "Empty leaderboard message"
+  },
+
+  "completeChallengesForRanking": "Complete challenges to appear in the leaderboard!",
+  "@completeChallengesForRanking": {
+    "description": "Empty leaderboard instruction"
+  },
+
+  "andOthers": "and {count} others...",
+  "@andOthers": {
+    "description": "Additional users count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "userPoints": "{points} pts",
+  "@userPoints": {
+    "description": "User points format",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "userChallenges": "{count} challenges",
+  "@userChallenges": {
+    "description": "User challenges count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+
+  "loadingLeaderboard": "Loading leaderboard...",
+  "@loadingLeaderboard": {
+    "description": "Loading leaderboard message"
+  },
+
+  "completeProfile": "Complete your profile",
+  "@completeProfile": {
+    "description": "Complete profile action"
+  },
+
+  "addLocationForChallenges": "Add your location to discover challenges near you!",
+  "@addLocationForChallenges": {
+    "description": "Location completion message"
+  },
+
+  "later": "Later",
+  "@later": {
+    "description": "Later button text"
+  },
+
+  "complete": "Complete",
+  "@complete": {
+    "description": "Complete button text"
+  },
+
+  "refresh": "Refresh",
+  "@refresh": {
+    "description": "Refresh button text"
+  },
+
+  "filter": "Filter",
+  "@filter": {
+    "description": "Filter button text"
+  },
+
+  "fullLeaderboard": "Full leaderboard",
+  "@fullLeaderboard": {
+    "description": "Full leaderboard section title"
+  },
+
+  "yourCurrentPosition": "Your current position",
+  "@yourCurrentPosition": {
+    "description": "User position description"
+  },
+
+  "notRanked": "Not ranked",
+  "@notRanked": {
+    "description": "Not ranked status"
+  },
+
+  "week": "Week",
+  "@week": {
+    "description": "Week period"
+  },
+
+  "month": "Month",
+  "@month": {
+    "description": "Month period"
+  },
+
+  "year": "Year",
+  "@year": {
+    "description": "Year period"
+  },
+
+  "filterLeaderboard": "Filter leaderboard",
+  "@filterLeaderboard": {
+    "description": "Filter dialog title"
+  },
+
+  "friendsOnly": "Friends only",
+  "@friendsOnly": {
+    "description": "Friends filter option"
+  },
+
+  "localRegion": "Local region",
+  "@localRegion": {
+    "description": "Region filter option"
+  },
+
+  "apply": "Apply",
+  "@apply": {
+    "description": "Apply button text"
+  },
+
+  "ecologicalPoints": "{points} ecological points",
+  "@ecologicalPoints": {
+    "description": "Ecological points format",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "challenges": "Challenges",
+  "@challenges": {
+    "description": "Challenges label"
+  },
+
+  "scans": "Scans",
+  "@scans": {
+    "description": "Scans label"
+  },
+
+  "stories": "Stories",
+  "@stories": {
+    "description": "Stories label"
+  },
+
+  "badgesEarned": "Badges earned",
+  "@badgesEarned": {
+    "description": "Badges section title"
+  },
+
+  "noBadgesYet": "No badges yet",
+  "@noBadgesYet": {
+    "description": "Empty badges message"
+  },
+
+  "ecologicalChallenges": "Ecological Challenges",
+  "@ecologicalChallenges": {
+    "description": "Challenges screen title"
+  },
+
+  "activeChallenges": "Active challenges",
+  "@activeChallenges": {
+    "description": "Active challenges section"
+  },
+
+  "activeChallengesCount": "Active challenges",
+  "@activeChallengesCount": {
+    "description": "Active challenges stat"
+  },
+
+  "successfulChallenges": "Successful challenges",
+  "@successfulChallenges": {
+    "description": "Successful challenges stat"
+  },
+
+  "completedChallenges": "Completed challenges",
+  "@completedChallenges": {
+    "description": "Completed challenges section"
+  },
+
+  "noActiveChallenges": "No active challenges",
+  "@noActiveChallenges": {
+    "description": "Empty active challenges title"
+  },
+
+  "allChallengesCompleted": "All your challenges are completed!",
+  "@allChallengesCompleted": {
+    "description": "Empty active challenges message"
+  },
+
+  "noCompletedChallenges": "No completed challenges",
+  "@noCompletedChallenges": {
+    "description": "Empty completed challenges title"
+  },
+
+  "startYourFirstChallenges": "Start your first challenges!",
+  "@startYourFirstChallenges": {
+    "description": "Empty completed challenges subtitle"
+  },
+
+  "loadingError": "Loading error",
+  "@loadingError": {
+    "description": "Generic loading error message"
+  },
+
+  "startFirstChallenges": "Start your first challenges!",
+  "@startFirstChallenges": {
+    "description": "Empty completed challenges message"
+  },
+
+  "challengesLeaderboard": "Challenges leaderboard",
+  "@challengesLeaderboard": {
+    "description": "Challenges leaderboard section"
+  },
+
+  "topChallengesThisWeek": "Top challenges this week",
+  "@topChallengesThisWeek": {
+    "description": "Weekly challenges leaderboard"
+  },
+
+  "challengeCompleted": "Challenge completed!",
+  "@challengeCompleted": {
+    "description": "Challenge completion title"
+  },
+
+  "congratulationsChallenge": "Congratulations! You have completed this ecological challenge.",
+  "@congratulationsChallenge": {
+    "description": "Challenge completion message"
+  },
+ 
+  "pointsEarneds": "points earned!",
+  "@pointsEarneds": {},
+
+  "goodChoice":"Good choice",
+  "@goodChoice": {},
+
+  "viewResults":"Regarder les resultats",
+  "@viewResults": {},
+
+  "continueStory":"Continue story",
+  "@continueStory": {},
+
+  "storyCompleted":"Story completed",
+  "@storyCompleted": {},
+
+  "pointsEarned": "+{points} points earned!",
+  "@pointsEarned": {
+    "description": "Points earned message",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "totalPoints_": "Total: {points} points",
+  "@totalPoints_": {
+    "description": "Total points message",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "timeRemaining": "Time remaining",
+  "@timeRemaining": {
+    "description": "Time remaining label"
+  },
+
+  "expired": "Expired",
+  "@expired": {
+    "description": "Expired status"
+  },
+
+  "daysRemaining": "{days}d remaining",
+  "@daysRemaining": {
+    "description": "Days remaining format",
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
+
+  "hoursRemaining": "{hours}h remaining",
+  "@hoursRemaining": {
+    "description": "Hours remaining format",
+    "placeholders": {
+      "hours": {
+        "type": "int"
+      }
+    }
+  },
+
+  "minutesRemaining": "{minutes}min remaining",
+  "@minutesRemaining": {
+    "description": "Minutes remaining format",
+    "placeholders": {
+      "minutes": {
+        "type": "int"
+      }
+    }
+  },
+
+
+  "creatingUniqueEcoAdventure": "Creating a unique ecological adventure for you",
+  "@creatingUniqueEcoAdventure": {
+    "description": "Subtitle while generating story"
+  },
+
+  "whatDoYouWantToDo": "What do you want to do?",
+  "@whatDoYouWantToDo": {
+    "description": "Choices section title"
+  },
+
+  "welcomeToInteractiveStories": "Welcome to interactive stories!",
+  "@welcomeToInteractiveStories": {
+    "description": "Welcome title"
+  },
+
+
+  "startNewStory": "Start new story",
+  "@startNewStory": {
+    "description": "Start new story button"
+  },
+
+  "storyProgress": "Story progress",
+  "@storyProgress": {
+    "description": "Story progress indicator title"
+  },
+
+  "chapter": "Chapter {number}",
+  "@chapter": {
+    "description": "Chapter number format",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+
+  "congratulations": "Congratulations!",
+  "@congratulations": {
+    "description": "Congratulations title"
+  },
+
+  "storyCompletedSuccessfully": "Story completed successfully",
+  "@storyCompletedSuccessfully": {
+    "description": "Story completion message"
+  },
+
+  "ecologicalPointsEarned": "{points} ecological points earned!",
+  "@ecologicalPointsEarned": {
+    "description": "Points earned message",
+    "placeholders": {
+      "points": {
+        "type": "int"
+      }
+    }
+  },
+
+  "mainMenu": "Main menu",
+  "@mainMenu": {
+    "description": "Main menu button text"
+  },
+
+  "oopsAnErrorOccurred": "Oops! An error occurred",
+  "@oopsAnErrorOccurred": {
+    "description": "Error message title"
+  },
+
+  "smartARScanner": "Smart AR\nScanner",
+  "@smartARScanner": {
+    "description": "Onboarding page 1 title"
+  },
+
+  "discoverEcologicalImpact": "Instantly discover the ecological impact of any object thanks to artificial intelligence!",
+  "@discoverEcologicalImpact": {
+    "description": "Onboarding page 1 description"
+  },
+
+  "multipleChoices": "Multiple choices",
+  "@multipleChoices": {
+    "description": "Feature tag for interactive stories"
+  },
+
+  "suspense": "Suspense",
+  "@suspense": {
+    "description": "Feature tag for stories"
+  },
+
+
+  "transformYourDaily": "Transform your daily routine with fun ecological challenges and become an environmental hero!",
+  "@transformYourDaily": {
+    "description": "Onboarding page 3 description"
+  },
+
+
+
+  "ecoCitizensCommunity": "Eco-Citizens\nCommunity",
+  "@ecoCitizensCommunity": {
+    "description": "Onboarding page 4 title"
+  },
+
+  "join": "Join",
+  "@join": {},
+
+  "joinThousandsOfEcoWarriors": "Join thousands of eco-warriors and participate in the world's largest ecological movement!",
+  "@joinThousandsOfEcoWarriors": {
+    "description": "Onboarding page 4 description"
+  },
+
+  "ranking": "Ranking",
+  "@ranking": {
+    "description": "Feature tag for community"
+  },
+
+  "sharing": "Sharing",
+  "@sharing": {
+    "description": "Feature tag for community"
+  },
+
+  "impact": "Impact",
+  "@impact": {
+    "description": "Feature tag for community impact"
+  },
+
+
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button text"
+  },
+
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+
+  "scanObjectsDiscoverImpact": "Scan your objects and discover their environmental impact",
+  "@scanObjectsDiscoverImpact": {
+    "description": "AR Scanner feature description"
+  },
+
+  "takeChallengesEarnPoints": "Take on challenges and earn points",
+  "@takeChallengesEarnPoints": {
+    "description": "Ecological challenges feature description"
+  },
+
+  "description": "Description",
+  "@description": {
+    "description": "Description label"
+  },
+
+  "progression": "Progression",
+  "@progression": {
+    "description": "Progression label"
+  },
+
+  "percentCompleted": "{percent}% completed",
+  "@percentCompleted": {
+    "description": "Completion percentage",
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+
+  "markProgress": "Mark progress",
+  "@markProgress": {
+    "description": "Mark progress button"
+  },
+
+  "finish": "Finish",
+  "@finish": {
+    "description": "Finish button text"
+  },
+
+  "locked": "Locked",
+  "@locked": {
+    "description": "Locked status"
+  },
+
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+
+  "appSettings": "App settings",
+  "@appSettings": {
+    "description": "App settings section"
+  },
+
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications section"
+  },
+
+  "privacySecurity": "Privacy & Security",
+  "@privacySecurity": {
+    "description": "Privacy & Security section"
+  },
+
+  "aboutSupport": "About & Support",
+  "@aboutSupport": {
+    "description": "About & Support section"
+  },
+
+  "darkMode": "Dark mode",
+  "@darkMode": {
+    "description": "Dark mode setting"
+  },
+
+  "enableDarkTheme": "Enable dark theme",
+  "@enableDarkTheme": {
+    "description": "Dark mode description"
+  },
+
+  "language": "Language",
+  "@language": {
+    "description": "Language setting"
+  },
+
+  "french": "French",
+  "@french": {
+    "description": "French language"
+  },
+
+  "english": "English",
+  "@english": {
+    "description": "English language"
+  },
+
+  "vibrations": "Vibrations",
+  "@vibrations": {
+    "description": "Vibrations setting"
+  },
+
+  "hapticFeedback": "Haptic feedback",
+  "@hapticFeedback": {
+    "description": "Haptic feedback description"
+  },
+
+  "sounds": "Sounds",
+  "@sounds": {
+    "description": "Sounds setting"
+  },
+
+  "soundEffects": "Sound effects",
+  "@soundEffects": {
+    "description": "Sound effects description"
+  },
+
+  "pushNotifications": "Push notifications",
+  "@pushNotifications": {
+    "description": "Push notifications setting"
+  },
+
+  "receiveNotifications": "Receive notifications",
+  "@receiveNotifications": {
+    "description": "Push notifications description"
+  },
+
+  "dailyChallengesNotif": "Daily challenges",
+  "@dailyChallengesNotif": {
+    "description": "Daily challenges notifications"
+  },
+
+  "newChallengesReminder": "New challenges reminders",
+  "@newChallengesReminder": {
+    "description": "New challenges reminder description"
+  },
+
+  "leaderboardNotif": "Leaderboard",
+  "@leaderboardNotif": {
+    "description": "Leaderboard notifications"
+  },
+
+  "leaderboardNotifications": "Leaderboard notifications",
+  "@leaderboardNotifications": {
+    "description": "Leaderboard notifications description"
+  },
+
+  "activityReminders": "Activity reminders",
+  "@activityReminders": {
+    "description": "Activity reminders setting"
+  },
+
+  "whenStopBeingActive": "When to stop being active",
+  "@whenStopBeingActive": {
+    "description": "Activity reminders description"
+  },
+
+  "location": "Location",
+  "@location": {
+    "description": "Location setting"
+  },
+
+  "shareLocation": "Share your location",
+  "@shareLocation": {
+    "description": "Location sharing description"
+  },
+
+  "usageData": "Usage data",
+  "@usageData": {
+    "description": "Usage data setting"
+  },
+
+  "shareAnonymousData": "Share anonymous data",
+  "@shareAnonymousData": {
+    "description": "Usage data description"
+  },
+
+  "security": "Security",
+  "@security": {
+    "description": "Security setting"
+  },
+
+  "authenticationSecurity": "Authentication and security",
+  "@authenticationSecurity": {
+    "description": "Security description"
+  },
+
+  "deleteMyAccount": "Delete my account",
+  "@deleteMyAccount": {
+    "description": "Delete account setting"
+  },
+
+  "deletePermanently": "Delete permanently",
+  "@deletePermanently": {
+    "description": "Delete account description"
+  },
+
+  "helpFAQ": "Help & FAQ",
+  "@helpFAQ": {
+    "description": "Help & FAQ setting"
+  },
+
+  "frequentQuestions": "Frequently asked questions",
+  "@frequentQuestions": {
+    "description": "FAQ description"
+  },
+
+  "contactUs": "Contact us",
+  "@contactUs": {
+    "description": "Contact setting"
+  },
+
+  "technicalSupport": "Technical support",
+  "@technicalSupport": {
+    "description": "Technical support description"
+  },
+
+  "rateApp": "Rate the app",
+  "@rateApp": {
+    "description": "Rate app setting"
+  },
+
+  "giveYourFeedback": "Give your feedback",
+  "@giveYourFeedback": {
+    "description": "Rate app description"
+  },
+
+  "about": "About",
+  "@about": {
+    "description": "About setting"
+  },
+
+  "version": "Version 1.0.0",
+  "@version": {
+    "description": "App version"
+  },
+
+  "logout": "Log out",
+  "@logout": {
+    "description": "Logout setting"
+  },
+
+  "logoutFromAccount": "Logout from your account",
+  "@logoutFromAccount": {
+    "description": "Logout description"
+  },
+
+  "editProfile": "Edit profile",
+  "@editProfile": {
+    "description": "Edit profile dialog title"
+  },
+
+  "fillAllFields": "Please fill all fields",
+  "@fillAllFields": {
+    "description": "Form validation error"
+  },
+
+  "invalidEmailFormat": "Invalid email format",
+  "@invalidEmailFormat": {
+    "description": "Email validation error"
+  },
+
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "@profileUpdatedSuccessfully": {
+    "description": "Profile update success message"
+  },
+
+  "errorMessage": "Error: {error}",
+  "@errorMessage": {
+    "description": "Generic error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "chooseLanguage": "Choose language",
+  "@chooseLanguage": {
+    "description": "Language selection dialog title"
+  },
+
+  "languageChangedTo": "Language changed to {language}",
+  "@languageChangedTo": {
+    "description": "Language change confirmation",
+    "placeholders": {
+      "language": {
+        "type": "String"
+      }
+    }
+  },
+
+  "activityRemindersDialog": "Activity reminders",
+  "@activityRemindersDialog": {
+    "description": "Activity reminders dialog title"
+  },
+
+  "everyHour": "Every hour",
+  "@everyHour": {
+    "description": "Reminder frequency option"
+  },
+
+  "everyday": "Every day",
+  "@everyday": {
+    "description": "Reminder frequency option"
+  },
+
+  "everyWeek": "Every week",
+  "@everyWeek": {
+    "description": "Reminder frequency option"
+  },
+
+  "remindersConfigured": "Reminders configured",
+  "@remindersConfigured": {
+    "description": "Reminders configuration success"
+  },
+
+  "locationSettings": "Location settings",
+  "@locationSettings": {
+    "description": "Location settings dialog title"
+  },
+
+  "findLocalChallenges": "• Find local challenges",
+  "@findLocalChallenges": {
+    "description": "Location benefit"
+  },
+
+  "locateRecyclingCenters": "• Locate recycling centers",
+  "@locateRecyclingCenters": {
+    "description": "Location benefit"
+  },
+
+  "seeRegionalImpact": "• See your region's environmental impact",
+  "@seeRegionalImpact": {
+    "description": "Location benefit"
+  },
+
+  "participateLocalRankings": "• Participate in local rankings",
+  "@participateLocalRankings": {
+    "description": "Location benefit"
+  },
+
+  "decline": "Decline",
+  "@decline": {
+    "description": "Decline button text"
+  },
+
+  "locationEnabled": "Location enabled",
+  "@locationEnabled": {
+    "description": "Location enabled confirmation"
+  },
+
+  "allow": "Allow",
+  "@allow": {
+    "description": "Allow button text"
+  },
+
+  "usageDataDialog": "Usage data",
+  "@usageDataDialog": {
+    "description": "Usage data dialog title"
+  },
+
+  "anonymousUsageStats": "• Anonymous usage statistics",
+  "@anonymousUsageStats": {
+    "description": "Usage data type"
+  },
+
+  "bugCrashReports": "• Bug and crash reports",
+  "@bugCrashReports": {
+    "description": "Usage data type"
+  },
+
+  "usagePreferences": "• Usage preferences",
+  "@usagePreferences": {
+    "description": "Usage data type"
+  },
+
+  "performanceData": "• Performance data",
+  "@performanceData": {
+    "description": "Usage data type"
+  },
+
+  "doNotShare": "Do not share",
+  "@doNotShare": {
+    "description": "Do not share button text"
+  },
+
+  "dataSharingEnabled": "Data sharing enabled",
+  "@dataSharingEnabled": {
+    "description": "Data sharing enabled confirmation"
+  },
+
+  "accept": "Accept",
+  "@accept": {
+    "description": "Accept button text"
+  },
+
+  "securityDialog": "Security",
+  "@securityDialog": {
+    "description": "Security dialog title"
+  },
+
+  "changePassword": "Change password",
+  "@changePassword": {
+    "description": "Change password setting"
+  },
+
+  "modifyYourPassword": "Modify your password",
+  "@modifyYourPassword": {
+    "description": "Change password description"
+  },
+
+  "biometricAuthentication": "Biometric authentication",
+  "@biometricAuthentication": {
+    "description": "Biometric authentication setting"
+  },
+
+  "fingerprintFaceId": "Fingerprint / Face ID",
+  "@fingerprintFaceId": {
+    "description": "Biometric authentication description"
+  },
+
+  "biometricAuthEnabled": "Biometric authentication enabled",
+  "@biometricAuthEnabled": {
+    "description": "Biometric auth enabled confirmation"
+  },
+
+  "activeSessions": "Active sessions",
+  "@activeSessions": {
+    "description": "Active sessions setting"
+  },
+
+  "manageConnectedSessions": "Manage your connected sessions",
+  "@manageConnectedSessions": {
+    "description": "Active sessions description"
+  },
+
+  "deleteAccountWarning": "Deleting your account will result in:",
+  "@deleteAccountWarning": {
+    "description": "Account deletion warning"
+  },
+
+  "lossAllPointsProgress": "• Loss of all your points and progress",
+  "@lossAllPointsProgress": {
+    "description": "Account deletion consequence"
+  },
+
+  "deletionHistory": "• Deletion of your history",
+  "@deletionHistory": {
+    "description": "Account deletion consequence"
+  },
+
+  "lossScanData": "• Loss of your scan data",
+  "@lossScanData": {
+    "description": "Account deletion consequence"
+  },
+
+  "deletionRanking": "• Deletion of your ranking",
+  "@deletionRanking": {
+    "description": "Account deletion consequence"
+  },
+
+  "helpFAQDialog": "Help & FAQ",
+  "@helpFAQDialog": {
+    "description": "Help & FAQ dialog title"
+  },
+
+  "howToScanObject": "• How to scan an object?",
+  "@howToScanObject": {
+    "description": "FAQ item"
+  },
+
+  "howToEarnPoints": "• How to earn points?",
+  "@howToEarnPoints": {
+    "description": "FAQ item"
+  },
+
+  "howToParticipateInChallenges": "• How to participate in challenges?",
+  "@howToParticipateInChallenges": {
+    "description": "FAQ item"
+  },
+
+  "howToSeeRanking": "• How to see my ranking?",
+  "@howToSeeRanking": {
+    "description": "FAQ item"
+  },
+
+  "forMoreHelpContact": "For more help, contact technical support.",
+  "@forMoreHelpContact": {
+    "description": "Additional help text"
+  },
+
+  "contactUsDialog": "Contact us",
+  "@contactUsDialog": {
+    "description": "Contact us dialog title"
+  },
+
+  "emailCopied": "Email copied to clipboard",
+  "@emailCopied": {
+    "description": "Email copied confirmation"
+  },
+
+  "phone": "Phone",
+  "@phone": {
+    "description": "Phone label"
+  },
+
+  "numberCopied": "Number copied to clipboard",
+  "@numberCopied": {
+    "description": "Phone copied confirmation"
+  },
+
+  "liveChat": "Live chat",
+  "@liveChat": {
+    "description": "Live chat option"
+  },
+
+  "available9to6": "Available 9am-6pm",
+  "@available9to6": {
+    "description": "Live chat availability"
+  },
+
+  "liveChatComingSoon": "Live chat coming soon",
+  "@liveChatComingSoon": {
+    "description": "Live chat not available message"
+  },
+
+  "rateEcoBuddy": "Rate EcoBuddy",
+  "@rateEcoBuddy": {
+    "description": "Rate app dialog title"
+  },
+
+  "thankYouRating": "Thank you for your {rating} star rating!",
+  "@thankYouRating": {
+    "description": "Rating thank you message",
+    "placeholders": {
+      "rating": {
+        "type": "int"
+      }
+    }
+  },
+
+  "send": "Send",
+  "@send": {
+    "description": "Send button text"
+  },
+
+  "logoutDialog": "Logout",
+  "@logoutDialog": {
+    "description": "Logout dialog title"
+  },
+
+  "confirmLogout": "Are you sure you want to log out?",
+  "@confirmLogout": {
+    "description": "Logout confirmation message"
+  },
+
+  "logoutError": "Logout error: {error}",
+  "@logoutError": {
+    "description": "Logout error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "changePasswordDialog": "Change password",
+  "@changePasswordDialog": {
+    "description": "Change password dialog title"
+  },
+
+  "passwordChangedSuccessfully": "Password changed successfully",
+  "@passwordChangedSuccessfully": {
+    "description": "Password change success message"
+  },
+
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Password mismatch error"
+  },
+
+  "modify": "Modify",
+  "@modify": {
+    "description": "Modify button text"
+  },
+
+  "activeSessionsDialog": "Active sessions",
+  "@activeSessionsDialog": {
+    "description": "Active sessions dialog title"
+  },
+
+  "androidCurrentDevice": "Android - Current device",
+  "@androidCurrentDevice": {
+    "description": "Current Android device session"
+  },
+
+  "lastActivityNow": "Last activity: now",
+  "@lastActivityNow": {
+    "description": "Current session last activity"
+  },
+
+  "chromeWindows": "Chrome - Windows",
+  "@chromeWindows": {
+    "description": "Chrome Windows session"
+  },
+
+  "lastActivity2Days": "Last activity: 2 days ago",
+  "@lastActivity2Days": {
+    "description": "Session last activity"
+  },
+
+  "sessionRevoked": "Session revoked",
+  "@sessionRevoked": {
+    "description": "Session revoked confirmation"
+  },
+
+  "revoke": "Revoke",
+  "@revoke": {
+    "description": "Revoke button text"
+  },
+
+  "allOtherSessionsRevoked": "All other sessions have been revoked",
+  "@allOtherSessionsRevoked": {
+    "description": "All sessions revoked confirmation"
+  },
+
+  "revokeAll": "Revoke all",
+  "@revokeAll": {
+    "description": "Revoke all button text"
+  },
+
+  "accountDeletedSuccessfully": "Account deleted successfully",
+  "@accountDeletedSuccessfully": {
+    "description": "Account deletion success message"
+  },
+
+  "typeDeleteToConfirm": "Please type \"DELETE\" to confirm",
+  "@typeDeleteToConfirm": {
+    "description": "Account deletion confirmation instruction"
+  },
+
+  "deletePermanentlyButton": "Delete permanently",
+  "@deletePermanentlyButton": {
+    "description": "Delete permanently button text"
+  },
+
+  "completeYourProfile": "Complete your profile",
+  "@completeYourProfile": {
+    "description": "Complete profile screen title"
+  },
+
+  "helloUser": "Hi {username}! 👋",
+  "@helloUser": {
+    "description": "Profile completion greeting",
+    "placeholders": {
+      "username": {
+        "type": "String"
+      }
+    }
+  },
+
+  "tellUsWhereYouAre": "Tell us where you are to discover challenges and recycling centers near you!",
+  "@tellUsWhereYouAre": {
+    "description": "Profile completion instruction"
+  },
+
+  "automaticLocation": "📍 Automatic location",
+  "@automaticLocation": {
+    "description": "Automatic location option"
+  },
+
+  "useGpsLocation": "Use your GPS position to automatically fill in your information.",
+  "@useGpsLocation": {
+    "description": "GPS location description"
+  },
+
+  "locating": "Locating...",
+  "@locating": {
+    "description": "GPS locating status"
+  },
+
+  "useMyPosition": "Use my position",
+  "@useMyPosition": {
+    "description": "Use GPS button text"
+  },
+
+  "orEnterManually": "✏️ Or enter manually",
+  "@orEnterManually": {
+    "description": "Manual entry option"
+  },
+
+  "city": "City *",
+  "@city": {
+    "description": "City field label"
+  },
+
+  "pleaseEnterCity": "Please enter your city",
+  "@pleaseEnterCity": {
+    "description": "City field validation"
+  },
+
+  "country": "Country *",
+  "@country": {
+    "description": "Country field label"
+  },
+
+  "pleaseEnterCountry": "Please enter your country",
+  "@pleaseEnterCountry": {
+    "description": "Country field validation"
+  },
+
+  "regionOptional": "Region (optional)",
+  "@regionOptional": {
+    "description": "Region field label"
+  },
+
+  "privacy": "Privacy",
+  "@privacy": {
+    "description": "Privacy section title"
+  },
+
+  "dataEncryptedSecure": "• Your data is encrypted and secure",
+  "@dataEncryptedSecure": {
+    "description": "Privacy point"
+  },
+
+  "neverSharedThirdParties": "• Never shared with third parties",
+  "@neverSharedThirdParties": {
+    "description": "Privacy point"
+  },
+
+  "canModifyAnytime": "• You can modify them at any time",
+  "@canModifyAnytime": {
+    "description": "Privacy point"
+  },
+
+  "usedOnlyImproveExperience": "• Used only to improve your experience",
+  "@usedOnlyImproveExperience": {
+    "description": "Privacy point"
+  },
+
+  "skipForNow": "Skip for now",
+  "@skipForNow": {
+    "description": "Skip profile completion button"
+  },
+
+  "completeMyProfile": "Complete my profile",
+  "@completeMyProfile": {
+    "description": "Complete profile button text"
+  },
+
+  "locationRetrievedSuccessfully": "📍 Location retrieved successfully",
+  "@locationRetrievedSuccessfully": {
+    "description": "Location success message"
+  },
+
+  "geolocationError": "❌ Geolocation error: {error}",
+  "@geolocationError": {
+    "description": "Geolocation error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "profileCompletedSuccessfully": "🎉 Profile completed successfully!",
+  "@profileCompletedSuccessfully": {
+    "description": "Profile completion success message"
+  },
+
+  "yourEcologicalAssistant": "Your intelligent ecological assistant",
+  "@yourEcologicalAssistant": {
+    "description": "App description on splash screen"
+  },
+
+  "scanYourObjects": "Scan your objects and discover their environmental impact",
+  "@scanYourObjects": {
+    "description": "AR Scanner description on splash"
+  },
+
+  "interactiveStories": "Interactive stories",
+  "@interactiveStories": {
+    "description": "Stories feature name on splash"
+  },
+
+  "learnEcologyThroughAdventures": "Learn ecology through captivating adventures",
+  "@learnEcologyThroughAdventures": {
+    "description": "Stories description on splash"
+  },
+
+  "earnPointsAndChallenges": "Take on challenges and earn points",
+  "@earnPointsAndChallenges": {
+    "description": "Challenges description on splash"
+  },
+
+  "discoverInstantlyEcologicalImpact": "Instantly discover the ecological impact of any object using artificial intelligence!",
+  "@discoverInstantlyEcologicalImpact": {
+    "description": "Onboarding first page description"
+  },
+
+  "geminiAI": "Gemini AI",
+  "@geminiAI": {
+    "description": "AI feature tag"
+  },
+
+  "realTime": "Real time",
+  "@realTime": {
+    "description": "Real time feature tag"
+  },
+
+  "alternatives": "Alternatives",
+  "@alternatives": {
+    "description": "Alternatives feature tag"
+  },
+
+  "liveEcologicalAdventures": "Live captivating ecological adventures where every choice matters to save the planet!",
+  "@liveEcologicalAdventures": {
+    "description": "Onboarding second page description"
+  },
+
+  "dailyGreenChallenges": "Daily Green\nChallenges",
+  "@dailyGreenChallenges": {
+    "description": "Onboarding third page title"
+  },
+
+  "transformDailyLife": "Transform your daily life with fun ecological challenges and become an environmental hero!",
+  "@transformDailyLife": {
+    "description": "Onboarding third page description"
+  },
+
+  "gamification": "Gamification",
+  "@gamification": {
+    "description": "Gamification feature tag"
+  },
+
+  "rewards": "Rewards",
+  "@rewards": {
+    "description": "Rewards feature tag"
+  },
+
+  "ecoWarriorsCommuntiy": "Eco-Warriors\nCommunity",
+  "@ecoWarriorsCommuntiy": {
+    "description": "Onboarding fourth page title"
+  },
+
+  "joinThousandsEcoWarriors": "Join thousands of eco-warriors and participate in the largest global ecological movement!",
+  "@joinThousandsEcoWarriors": {
+    "description": "Onboarding fourth page description"
+  },
+
+  "previous": "Previous",
+  "@previous": {
+    "description": "Previous button text"
+  },
+
+  "cameraPermissionRequired": "Camera permission required to use AR scanner",
+  "@cameraPermissionRequired": {
+    "description": "Camera permission message"
+  },
+
+  "cameraError": "Camera error: {error}",
+  "@cameraError": {
+    "description": "Camera error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "scannerError": "Error: {error}",
+  "@scannerError": {
+    "description": "Scanner error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+
+  "scanWithCamera": "Scan with camera",
+  "@scanWithCamera": {
+    "description": "Scan with camera button text"
+  },
+
+  "scanOther": "Scan other",
+  "@scanOther": {
+    "description": "Scan other button text"
+  },
+
+  "generatingStory": "Generating story...",
+  "@generatingStory": {
+    "description": "Story generation status"
+  },
+
+  "creatingUniqueEcologicalAdventure": "Creating a unique ecological adventure for you",
+  "@creatingUniqueEcologicalAdventure": {
+    "description": "Story generation description"
+  },
+
+  "checkingPermissions": "Checking permissions...",
+  "@checkingPermissions": {
+    "description": "Permission checking status"
+  },
+
+  "thisFeatureRequires": "This feature requires access to your {permissionName}.",
+  "@thisFeatureRequires": {
+    "description": "Permission requirement message",
+    "placeholders": {
+      "permissionName": {
+        "type": "String"
+      }
+    }
+  },
+
+  "openSettings": "Open settings",
+  "@openSettings": {
+    "description": "Open settings button text"
+  },
+
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera permission name"
+  },
+
+  "arScannerRequiresCamera": "AR scanner requires camera access to detect objects in real time.",
+  "@arScannerRequiresCamera": {
+    "description": "AR scanner camera permission explanation"
+  },
+
+  "veryWeak": "Very weak",
+  "@veryWeak": {
+    "description": "Password strength: very weak"
+  },
+
+  "veryStrong": "Very strong",
+  "@veryStrong": {
+    "description": "Password strength: very strong"
+  },
+
+  "useReusableBottle": "Use a reusable bottle",
+  "@useReusableBottle": {
+    "description": "Environmental recommendation"
+  },
+
+  "preferGlassPackaging": "Prefer glass packaging",
+  "@preferGlassPackaging": {
+    "description": "Environmental recommendation"
+  },
+
+  "chooseBiodegradableAlternatives": "Choose biodegradable alternatives",
+  "@chooseBiodegradableAlternatives": {
+    "description": "Environmental recommendation"
+  },
+
+  "recycleInRightStream": "Recycle in the right stream",
+  "@recycleInRightStream": {
+    "description": "Environmental recommendation"
+  },
+
+  "reuseAsContainer": "Reuse as container",
+  "@reuseAsContainer": {
+    "description": "Environmental recommendation"
+  },
+
+  "useReusableBag": "Use a reusable bag",
+  "@useReusableBag": {
+    "description": "Environmental recommendation"
+  },
+
+  "avoidPlasticBags": "Avoid plastic bags",
+  "@avoidPlasticBags": {
+    "description": "Environmental recommendation"
+  },
+
+  "reuseIfPossible": "Reuse if possible",
+  "@reuseIfPossible": {
+    "description": "Environmental recommendation"
+  },
+
+  "onlyLettersNumbersUnderscore": "Only letters, numbers and _ are allowed",
+  "@onlyLettersNumbersUnderscore": {
+    "description": "Username validation error"
+  },
+
+  "emailRequired": "Email required",
+  "@emailRequired": {
+    "description": "Email validation error"
+  },
+
+  "confirmationRequired": "Confirmation required",
+  "@confirmationRequired": {
+    "description": "Password confirmation validation error"
+  }
+}

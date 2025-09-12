@@ -1,0 +1,706 @@
+{
+  "@@locale": "fr",
+  
+  "appName": "EcoBuddy",
+  
+  "ecologicalAssistant": "🌱 Votre assistant écologique intelligent",
+  
+  "loadingText": "Chargement...",
+  
+  "errorLoading": "Erreur de chargement",
+  "home":"Accueil",
+  "scanner": "Scanner",
+  
+  "retry": "Réessayer",
+  
+  "cancel": "Annuler",
+  
+  "save": "Sauvegarder",
+  
+  "close": "Fermer",
+  
+  "continue_": "Continuer",
+  
+  "or": "ou",
+  
+  "points": "points",
+  
+  "pts": "pts",
+  
+  "level": "Niveau",
+  
+  "usernameRequired": "Nom d'utilisateur requis",
+  
+  "passwordRequired": "Mot de passe requis",
+  
+  "loginFailed": "Connexion échouée: {error}",
+  
+  "welcomeBack": "Bon retour !",
+  
+  "connectToContinue": "Connectez-vous pour continuer votre parcours écologique",
+  
+  "signupTitle":"Inscription",
+  "loginTitle": "Connexion",
+  
+  "username": "Nom d'utilisateur",
+  
+  "enterUsername": "Entrez votre nom d'utilisateur",
+  
+  "password": "Mot de passe",
+  
+  "enterPassword": "Entrez votre mot de passe",
+  
+  "login": "Se connecter",
+  
+  "newToApp": "Nouveau sur {appName} ?",
+  
+  "createAccount": "Créer un compte",
+  
+  "signupFailed": "Inscription échouée: {error}",
+  
+  "createAccountSubtitle": "Créez votre compte pour commencer votre parcours écologique",
+  
+  "email": "Email",
+  
+  "enterEmail": "Entrez votre email",
+  
+  "age": "Âge",
+  
+  "yourAge": "Votre âge",
+  
+  "minimum6Characters": "Minimum 6 caractères",
+  
+  "confirmPassword": "Confirmer le mot de passe",
+  
+  "repeatPassword": "Répétez votre mot de passe",
+  
+  "createMyAccount": "Créer mon compte",
+  
+  "alreadyHaveAccount": "Déjà un compte ?",
+  
+  "termsConditionsPrivacy": "En créant un compte, vous acceptez nos conditions d'utilisation et notre politique de confidentialité.",
+  
+  "usernameMinLength": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+  
+  "usernameMaxLength": "Le nom d'utilisateur ne peut pas dépasser 50 caractères",
+  
+  "emailMaxLength": "L'email ne peut pas dépasser 100 caractères",
+  
+  "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+  
+  "passwordMaxLength": "Le mot de passe ne peut pas dépasser 128 caractères",
+  
+  "weakPassword": "Mot de passe trop faible. Utilisez majuscules, minuscules, chiffres ou caractères spéciaux",
+  
+  "ageRequired": "Âge requis",
+  
+  "invalidAge": "L'âge doit être un nombre valide",
+  
+  "minimumAge": "Vous devez avoir au moins 13 ans pour créer un compte",
+  
+  "invalidAgeRange": "Âge invalide",
+  
+  "dashboard": "Tableau de bord",
+  
+  "user": "Utilisateur",
+  
+  "quickActions": "Actions rapides",
+  
+  "continueEcologicalJourney": "Continuez votre parcours écologique !",
+  
+  "totalPoints": "Points totaux",
+  
+  "challengesCompleted": "Défis réalisés",
+  
+  "arScanner": "Scanner AR",
+  
+  "discoverObjectImpact": "Découvrez l'impact de vos objets",
+  
+  "newStory": "Nouvelle histoire",
+  
+  "liveEcologicalAdventure": "Vivez une aventure écologique",
+  
+  "dailyChallenges": "Défis du jour",
+  
+  "takeOnNewChallenges": "Relevez de nouveaux défis",
+  
+  "leaderboard": "Classement",
+  
+  "seeYourPosition": "Voir votre position",
+  
+  "recentActivity": "Activité récente",
+  
+  "plasticBottleScan": "Scan d'une bouteille plastique",
+  
+  "hoursAgo": "Il y a {hours} heures",
+  
+  "plusPoints": "+{points} points",
+  
+  "challengeRecyclingCompleted": "Défi \"Recyclage\" terminé",
+  
+  "daysAgo": "Il y a {days} jour",
+  
+  "storyMagicalForestCompleted": "Histoire \"La Forêt Magique\" complétée",
+  
+  "progress": "Progression",
+  
+  "ecoCitizenLevel": "Niveau Éco-Citoyen",
+  
+  "monthlyGoal": "Objectif mensuel",
+  
+  "challengesGoal": "{current}/{total} défis",
+  
+  "goodMorning": "Bonjour",
+  
+  "goodAfternoon": "Bon après-midi",
+  
+  "goodEvening": "Bonsoir",
+  
+  "seeAll": "Voir tout",
+  
+  "noLeaderboardData": "Aucune donnée de classement",
+  
+  "completeChallengesForRanking": "Complétez des défis pour apparaître dans le classement !",
+  
+  "andOthers": "et {count} autres...",
+  
+  "userPoints": "{points} pts",
+  
+  "userChallenges": "{count} défis",
+  
+  "loadingLeaderboard": "Chargement du classement...",
+  
+  "completeProfile": "Complétez votre profil",
+  
+  "addLocationForChallenges": "Ajoutez votre localisation pour découvrir des défis près de chez vous !",
+  
+  "later": "Plus tard",
+  
+  "complete": "Compléter",
+  
+  "refresh": "Actualiser",
+  
+  "filter": "Filtrer",
+  
+  "fullLeaderboard": "Classement complet",
+  
+  "yourCurrentPosition": "Votre position actuelle",
+  
+  "notRanked": "Non classé",
+  
+  "week": "Semaine",
+  
+  "month": "Mois",
+  
+  "year": "Année",
+  
+  "filterLeaderboard": "Filtrer le classement",
+  
+  "friendsOnly": "Amis uniquement",
+  
+  "localRegion": "Région locale",
+  
+  "apply": "Appliquer",
+  
+  "ecologicalPoints": "{points} points écologiques",
+  
+  "challenges": "Défis",
+  
+  "scans": "Scans",
+  
+  "stories": "Histoires",
+  
+  "badgesEarned": "Badges obtenus",
+  
+  "noBadgesYet": "Aucun badge pour le moment",
+  
+  "ecologicalChallenges": "Défis Écologiques",
+  
+  "activeChallenges": "Défis actifs",
+  
+  "activeChallengesCount": "Défis actifs",
+  
+  "successfulChallenges": "Défis réussis",
+  
+  "completedChallenges": "Défis terminés",
+  
+  "noActiveChallenges": "Aucun défi actif",
+  
+  "allChallengesCompleted": "Tous vos défis sont terminés !",
+  
+  "noCompletedChallenges": "Aucun défi terminé",
+  
+  "startYourFirstChallenges": "Commencez vos premiers défis !",
+  
+  "loadingError": "Erreur de chargement",
+  
+  "startFirstChallenges": "Commencez vos premiers défis !",
+  
+  "challengesLeaderboard": "Classement des défis",
+  
+  "topChallengesThisWeek": "Top défis cette semaine",
+  
+  "challengeCompleted": "Défi terminé !",
+  
+  "congratulationsChallenge": "Félicitations ! Vous avez terminé ce défi écologique.",
+  
+  "pointsEarned": "+{points} points gagnés !",
+
+  "storyCompleted":"Histoire complète",
+
+  "goodChoice":"Bon choix",
+
+  "viewResults":"View results",
+
+  "continueStory":"Continue story",
+
+  "pointsEarneds": "points gagnés !",
+  
+  "totalPoints_": "Total : {points} points",
+  
+  "timeRemaining": "Temps restant",
+  
+  "expired": "Expiré",
+  
+  "daysRemaining": "{days}j restants",
+  
+  "hoursRemaining": "{hours}h restantes",
+  
+  "minutesRemaining": "{minutes}min restantes",
+  
+  "description": "Description",
+  
+  "progression": "Progression",
+  
+  "percentCompleted": "{percent}% complété",
+  
+  "markProgress": "Progression",
+  
+  "finish": "Terminer",
+  
+  "locked": "Verrouillé",
+  
+  "settings": "Paramètres",
+  
+  "appSettings": "Paramètres de l'application",
+  
+  "notifications": "Notifications",
+  
+  "privacySecurity": "Confidentialité & Sécurité",
+  
+  "aboutSupport": "À propos & Support",
+  
+  "darkMode": "Mode sombre",
+  
+  "enableDarkTheme": "Activer le thème sombre",
+  
+  "language": "Langue",
+  
+  "french": "Français",
+  
+  "english": "Anglais",
+  
+  "vibrations": "Vibrations",
+  
+  "hapticFeedback": "Retour haptique",
+  
+  "sounds": "Sons",
+  
+  "soundEffects": "Effets sonores",
+  
+  "pushNotifications": "Notifications push",
+  
+  "receiveNotifications": "Recevoir les notifications",
+  
+  "dailyChallengesNotif": "Défis quotidiens",
+  
+  "newChallengesReminder": "Rappels des nouveaux défis",
+  
+  "leaderboardNotif": "Classement",
+  
+  "leaderboardNotifications": "Notifications de classement",
+  
+  "activityReminders": "Rappels d'activité",
+  
+  "whenStopBeingActive": "Quand arrêter d'être actif",
+  
+  "location": "Localisation",
+  
+  "shareLocation": "Partager votre localisation",
+  
+  "usageData": "Données d'usage",
+  
+  "shareAnonymousData": "Partager les données anonymes",
+  
+  "security": "Sécurité",
+  
+  "authenticationSecurity": "Authentification et sécurité",
+  
+  "deleteMyAccount": "Supprimer mon compte",
+  
+  "deletePermanently": "Supprimer définitivement",
+  
+  "helpFAQ": "Aide & FAQ",
+  
+  "frequentQuestions": "Questions fréquentes",
+  
+  "contactUs": "Nous contacter",
+  
+  "technicalSupport": "Support technique",
+  
+  "rateApp": "Évaluer l'app",
+  
+  "giveYourFeedback": "Donner votre avis",
+  
+  "about": "À propos",
+  
+  "version": "Version 1.0.0",
+  
+  "logout": "Se déconnecter",
+  
+  "logoutFromAccount": "Déconnexion de votre compte",
+  
+  "editProfile": "Modifier le profil",
+  
+  "fillAllFields": "Veuillez remplir tous les champs",
+  
+  "invalidEmailFormat": "Format d'email invalide",
+  
+  "profileUpdatedSuccessfully": "Profil mis à jour avec succès",
+  
+  "errorMessage": "Erreur: {error}",
+  
+  "chooseLanguage": "Choisir la langue",
+  
+  "languageChangedTo": "Langue changée en {language}",
+  
+  "activityRemindersDialog": "Rappels d'activité",
+  
+  "everyHour": "Toutes les heures",
+  
+  "everyday": "Tous les jours",
+  
+  "everyWeek": "Toutes les semaines",
+  
+  "remindersConfigured": "Rappels configurés",
+  
+  "locationSettings": "Paramètres de localisation",
+  
+  "findLocalChallenges": "• Trouver des défis locaux",
+  
+  "locateRecyclingCenters": "• Localiser les centres de recyclage",
+  
+  "seeRegionalImpact": "• Voir l'impact environnemental de votre région",
+  
+  "participateLocalRankings": "• Participer aux classements locaux",
+  
+  "decline": "Refuser",
+  
+  "locationEnabled": "Localisation activée",
+  
+  "allow": "Autoriser",
+  
+  "usageDataDialog": "Données d'usage",
+  
+  "anonymousUsageStats": "• Statistiques d'utilisation anonymes",
+  
+  "bugCrashReports": "• Rapport de bugs et plantages",
+  
+  "usagePreferences": "• Préférences d'utilisation",
+  
+  "performanceData": "• Données de performance",
+  
+  "doNotShare": "Ne pas partager",
+  
+  "dataSharingEnabled": "Partage de données activé",
+  
+  "accept": "Accepter",
+  
+  "securityDialog": "Sécurité",
+  
+  "changePassword": "Changer le mot de passe",
+  
+  "modifyYourPassword": "Modifier votre mot de passe",
+  
+  "biometricAuthentication": "Authentification biométrique",
+  
+  "fingerprintFaceId": "Empreinte digitale / Face ID",
+  
+  "biometricAuthEnabled": "Authentification biométrique activée",
+  
+  "activeSessions": "Sessions actives",
+  
+  "manageConnectedSessions": "Gérer vos sessions connectées",
+  
+  "deleteAccountWarning": "La suppression de votre compte entraînera:",
+  
+  "lossAllPointsProgress": "• Perte de tous vos points et progrès",
+  
+  "deletionHistory": "• Suppression de votre historique",
+  
+  "lossScanData": "• Perte de vos données de scan",
+  
+  "deletionRanking": "• Suppression de votre classement",
+  
+  "helpFAQDialog": "Aide & FAQ",
+  
+  "howToScanObject": "• Comment scanner un objet ?",
+  
+  "howToEarnPoints": "• Comment gagner des points ?",
+  
+  "howToParticipateInChallenges": "• Comment participer aux défis ?",
+  
+  "howToSeeRanking": "• Comment voir mon classement ?",
+  
+  "forMoreHelpContact": "Pour plus d'aide, contactez le support technique.",
+  
+  "contactUsDialog": "Nous contacter",
+  
+  "emailCopied": "Email copié dans le presse-papiers",
+  
+  "phone": "Téléphone",
+  
+  "numberCopied": "Numéro copié dans le presse-papiers",
+  
+  "liveChat": "Chat en direct",
+  
+  "available9to6": "Disponible 9h-18h",
+  
+  "liveChatComingSoon": "Chat en direct bientôt disponible",
+  
+  "rateEcoBuddy": "Évaluer EcoBuddy",
+  
+  "thankYouRating": "Merci pour votre note de {rating} étoile !",
+  
+  "send": "Envoyer",
+  
+  "logoutDialog": "Déconnexion",
+  
+  "confirmLogout": "Êtes-vous sûr de vouloir vous déconnecter ?",
+  
+  "logoutError": "Erreur lors de la déconnexion: {error}",
+  
+  "changePasswordDialog": "Changer le mot de passe",
+  
+  "passwordChangedSuccessfully": "Mot de passe modifié avec succès",
+  
+  "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
+  
+  "modify": "Modifier",
+  
+  "activeSessionsDialog": "Sessions actives",
+  
+  "androidCurrentDevice": "Android - Appareil actuel",
+  
+  "lastActivityNow": "Dernière activité: maintenant",
+  
+  "chromeWindows": "Chrome - Windows",
+  
+  "lastActivity2Days": "Dernière activité: il y a 2 jours",
+  
+  "sessionRevoked": "Session révoquée",
+  
+  "revoke": "Révoquer",
+  
+  "allOtherSessionsRevoked": "Toutes les autres sessions ont été révoquées",
+  
+  "revokeAll": "Révoquer toutes",
+  
+  "accountDeletedSuccessfully": "Compte supprimé avec succès",
+  
+  "typeDeleteToConfirm": "Veuillez taper \"SUPPRIMER\" pour confirmer",
+  
+  "deletePermanentlyButton": "Supprimer définitivement",
+  
+  "completeYourProfile": "Compléter votre profil",
+  
+  "helloUser": "Salut {username} ! 👋",
+  
+  "tellUsWhereYouAre": "Dites-nous où vous êtes pour découvrir des défis et centres de recyclage près de chez vous !",
+  
+  "automaticLocation": "📍 Localisation automatique",
+  
+  "useGpsLocation": "Utilisez votre position GPS pour remplir automatiquement vos informations.",
+  
+  "locating": "Localisation...",
+  
+  "useMyPosition": "Utiliser ma position",
+  
+  "orEnterManually": "✏️ Ou saisissez manuellement",
+  
+  "city": "Ville *",
+  
+  "pleaseEnterCity": "Veuillez saisir votre ville",
+  
+  "country": "Pays *",
+  
+  "pleaseEnterCountry": "Veuillez saisir votre pays",
+  
+  "regionOptional": "Région (optionnel)",
+  
+  "privacy": "Confidentialité",
+  
+  "dataEncryptedSecure": "• Vos données sont chiffrées et sécurisées",
+  
+  "neverSharedThirdParties": "• Elles ne sont jamais partagées avec des tiers",
+  
+  "canModifyAnytime": "• Vous pouvez les modifier à tout moment",
+  
+  "usedOnlyImproveExperience": "• Utilisées uniquement pour améliorer votre expérience",
+  
+  "skipForNow": "Ignorer pour l'instant",
+  
+  "completeMyProfile": "Compléter mon profil",
+  
+  "locationRetrievedSuccessfully": "📍 Localisation récupérée avec succès",
+  
+  "geolocationError": "❌ Erreur de géolocalisation: {error}",
+  
+  "profileCompletedSuccessfully": "🎉 Profil complété avec succès !",
+  
+  "yourEcologicalAssistant": "Votre assistant écologique intelligent",
+  
+  "scanYourObjects": "Scannez vos objets et découvrez leur impact environnemental",
+  
+  
+  "learnEcologyThroughAdventures": "Apprenez l'écologie à travers des aventures captivantes",
+  
+  "earnPointsAndChallenges": "Relevez des défis et gagnez des points",
+  
+  "discoverInstantlyEcologicalImpact": "Découvrez instantanément l'impact écologique de n'importe quel objet grâce à l'intelligence artificielle !",
+  
+
+  
+  "alternatives": "Alternatives",
+  
+
+  
+  "transformDailyLife": "Transformez votre quotidien avec des défis écologiques amusants et devenez un héros de l'environnement !",
+  
+  
+  "rewards": "Récompenses",
+  
+  "ecoWarriorsCommuntiy": "Communauté\nÉco-citoyens",
+
+  "join":"Rejoignez",
+  
+  
+  "joinThousandsEcoWarriors": "Rejoignez des milliers d'éco-warriors et participez au plus grand mouvement écologique mondial !",
+  
+  
+  "cameraPermissionRequired": "Permission caméra requise pour utiliser le scanner AR",
+  
+  "cameraError": "Erreur caméra: {error}",
+  
+  "scannerError": "Erreur: {error}",
+  
+  "scanWithCamera": "Scanner avec caméra",
+  
+  "scanOther": "Scanner autre",
+    
+  "creatingUniqueEcologicalAdventure": "Création d'une aventure écologique unique pour vous",
+  
+  "checkingPermissions": "Vérification des permissions...",
+  
+  "thisFeatureRequires": "Cette fonctionnalité nécessite l'accès à votre {permissionName}.",
+  
+  "openSettings": "Ouvrir paramètres",
+  
+  "camera": "Caméra",
+  
+  "arScannerRequiresCamera": "Le scanner AR nécessite l'accès à la caméra pour détecter les objets en temps réel.",
+  
+  "veryWeak": "Très faible",
+  
+  "veryStrong": "Très fort",
+  
+  "useReusableBottle": "Utiliser une gourde réutilisable",
+  
+  "preferGlassPackaging": "Privilégier les emballages en verre",
+  
+  "chooseBiodegradableAlternatives": "Choisir des alternatives biodégradables",
+  
+  "recycleInRightStream": "Recycler dans la bonne filière",
+  
+  "reuseAsContainer": "Réutiliser comme contenant",
+  
+  "useReusableBag": "Utiliser un sac réutilisable",
+  
+  "avoidPlasticBags": "Éviter les sacs plastique",
+  
+  "reuseIfPossible": "Réutiliser si possible",
+
+  "onlyLettersNumbersUnderscore": "Seuls les lettres, chiffres et _ sont autorisés",
+
+  "emailRequired": "Email requis",
+
+  "confirmationRequired": "Confirmation requise",
+
+  "interactiveStories": "Histoires interactives",
+
+  "generatingStory": "Génération de l'histoire...",
+
+  "creatingUniqueEcoAdventure": "Création d'une aventure écologique unique pour vous",
+
+  "whatDoYouWantToDo": "Que voulez-vous faire ?",
+
+  "welcomeToInteractiveStories": "Bienvenue dans les histoires interactives !",
+
+  "liveEcologicalAdventures": "Vivez des aventures écologiques captivantes où vos choix façonnent l'histoire et impactent l'environnement.",
+
+  "startNewStory": "Commencer une nouvelle histoire",
+
+  "storyProgress": "Progression de l'histoire",
+
+  "chapter": "Chapitre {number}",
+
+  "congratulations": "Félicitations !",
+
+  "storyCompletedSuccessfully": "Histoire terminée avec succès",
+
+  "ecologicalPointsEarned": "{points} points écologiques gagnés !",
+
+  "newStory": "Nouvelle histoire",
+
+  "mainMenu": "Menu principal",
+
+  "oopsAnErrorOccurred": "Oops ! Une erreur s'est produite",
+
+  "smartARScanner": "Scanner AR\nIntelligent",
+
+  "discoverEcologicalImpact": "Découvrez instantanément l'impact écologique de n'importe quel objet grâce à l'intelligence artificielle !",
+
+  "geminiAI": "IA Gemini",
+
+  "realTime": "Temps réel",
+
+  "multipleChoices": "Choix multiples",
+
+  "suspense": "Suspense",
+
+  "dailyGreenChallenges": "Défis Verts\nQuotidiens",
+
+  "transformYourDaily": "Transformez votre quotidien avec des défis écologiques amusants et devenez un héros de l'environnement !",
+
+  "gamification": "Gamification",
+
+  "ecoCitizensCommunity": "Communauté\nÉco-citoyens",
+
+  "joinThousandsOfEcoWarriors": "Rejoignez des milliers d'éco-warriors et participez au plus grand mouvement écologique mondial !",
+
+  "ranking": "Classement",
+
+  "sharing": "Partage",
+
+  "impact": "Impact",
+
+  "previous": "Précédent",
+
+  "getStarted": "Commencer",
+
+  "next": "Suivant",
+
+  "scanObjectsDiscoverImpact": "Scannez vos objets et découvrez leur impact environnemental",
+
+  "takeChallengesEarnPoints": "Relevez des défis et gagnez des points"
+}

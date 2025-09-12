@@ -1,11 +1,11 @@
+import 'package:eco_buddy/core/widgets/bottom_navbar.dart';
+import 'package:eco_buddy/features/challenges/presentation/challenges_screen.dart';
+import 'package:eco_buddy/features/dashboard/presentation/dashboard_screen.dart';
+import 'package:eco_buddy/features/leaderboard/presentation/leaderboard_screen.dart';
+import 'package:eco_buddy/features/narration/presentation/narration_screen.dart';
+import 'package:eco_buddy/features/scanner/presentation/scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/widgets/bottom_navbar.dart';
-import '../../dashboard/presentation/dashboard_screen.dart';
-import '../../narration/presentation/narration_screen.dart';
-import '../../challenges/presentation/challenges_screen.dart';
-import '../../scanner/presentation/scanner_screen.dart';
-import '../../leaderboard/presentation/leaderboard_screen.dart';
 
 class MainScreen extends ConsumerStatefulWidget {
   const MainScreen({super.key});

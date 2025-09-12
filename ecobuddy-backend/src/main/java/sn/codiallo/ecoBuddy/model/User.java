@@ -60,10 +60,10 @@ public class User implements UserDetails {
     @Column(length = 100)
     private String region;
     
-    @Column(precision = 10, scale = 7)
+    @Column(precision = 10)
     private Double latitude;
     
-    @Column(precision = 10, scale = 7)
+    @Column(precision = 10)
     private Double longitude;
     
     @Column(nullable = false)

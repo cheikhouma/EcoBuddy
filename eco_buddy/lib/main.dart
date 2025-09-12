@@ -1,5 +1,7 @@
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'shared/services/tflite_service.dart';
@@ -32,6 +34,13 @@ class EcoBuddyApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: ThemeMode.light,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [Locale('en'), Locale('fr')],
       home: const SplashScreen(),
       routes: {
         '/splash': (context) => const SplashScreen(),
@@ -45,7 +54,8 @@ class EcoBuddyApp extends ConsumerWidget {
         '/complete-profile': (context) => const CompleteProfileScreen(),
         '/ar_scanner': (context) => const PermissionWrapper(
           permissionName: 'Caméra',
-          errorMessage: 'Le scanner AR nécessite l\'accès à la caméra pour détecter les objets en temps réel.',
+          errorMessage:
+              'Le scanner AR nécessite l\'accès à la caméra pour détecter les objets en temps réel.',
           child: ARScannerScreen(),
         ),
       },

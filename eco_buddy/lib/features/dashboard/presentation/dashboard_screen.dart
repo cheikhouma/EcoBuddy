@@ -2,6 +2,7 @@ import 'package:eco_buddy/features/leaderboard/domain/models/leaderboard_user_mo
 import 'package:eco_buddy/features/main/presentation/main_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../l10n/app_localizations.dart';
 import '../../../shared/providers/auth_provider.dart';
 import '../../../shared/providers/leaderboard_provider.dart';
 import '../../../shared/services/api_service.dart';
@@ -25,7 +26,10 @@ class DashboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with greeting and profile
-              _buildHeader(context, user?.username ?? 'Utilisateur'),
+              _buildHeader(
+                context,
+                user?.username ?? AppLocalizations.of(context)!.user,
+              ),
               const SizedBox(height: 24),
 
               // Location completion prompt
@@ -45,12 +49,12 @@ class DashboardScreen extends ConsumerWidget {
               ),
 
               // Stats Cards Row
-              _buildStatsRow(user?.points ?? 0),
+              _buildStatsRow(context, user?.points ?? 0),
               const SizedBox(height: 24),
 
               // Quick Actions Grid
-              const Text(
-                'Actions rapides',
+              Text(
+                AppLocalizations.of(context)!.quickActions,
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
@@ -66,11 +70,11 @@ class DashboardScreen extends ConsumerWidget {
               const SizedBox(height: 24),
 
               // Recent Activity
-              _buildRecentActivity(),
+              _buildRecentActivity(context),
               const SizedBox(height: 24),
 
               // Progress Section
-              _buildProgressSection(),
+              _buildProgressSection(context),
             ],
           ),
         ),
@@ -97,7 +101,7 @@ class DashboardScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  _getGreeting(),
+                  _getGreeting(context),
                   style: TextStyle(
                     fontSize: 16,
                     color: Colors.white.withValues(alpha: 0.9),
@@ -115,7 +119,7 @@ class DashboardScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Continuez votre parcours écologique !',
+                  AppLocalizations.of(context)!.continueEcologicalJourney,
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.white.withValues(alpha: 0.8),
@@ -141,12 +145,12 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatsRow(int points) {
+  Widget _buildStatsRow(BuildContext context, int points) {
     return Row(
       children: [
         Expanded(
           child: StatCard(
-            title: 'Points totaux',
+            title: AppLocalizations.of(context)!.totalPoints,
             value: points.toString(),
             icon: Icons.stars,
             color: const Color(AppConstants.accentColor),
@@ -155,7 +159,7 @@ class DashboardScreen extends ConsumerWidget {
         const SizedBox(width: 16),
         Expanded(
           child: StatCard(
-            title: 'Défis réalisés',
+            title: AppLocalizations.of(context)!.challengesCompleted,
             value: '12',
             icon: Icons.emoji_events,
             color: const Color(AppConstants.warningColor),
@@ -175,29 +179,29 @@ class DashboardScreen extends ConsumerWidget {
       childAspectRatio: 1.2,
       children: [
         QuickActionCard(
-          title: 'Scanner AR',
-          subtitle: 'Découvrez l\'impact de vos objets',
+          title: AppLocalizations.of(context)!.arScanner,
+          subtitle: AppLocalizations.of(context)!.discoverObjectImpact,
           icon: Icons.camera_alt,
           color: const Color(AppConstants.primaryColor),
           onTap: () => _navigateToTab(context, 3),
         ),
         QuickActionCard(
-          title: 'Nouvelle histoire',
-          subtitle: 'Vivez une aventure écologique',
+          title: AppLocalizations.of(context)!.newStory,
+          subtitle: AppLocalizations.of(context)!.liveEcologicalAdventure,
           icon: Icons.auto_stories,
           color: const Color(AppConstants.secondaryColor),
           onTap: () => _navigateToTab(context, 1),
         ),
         QuickActionCard(
-          title: 'Défis du jour',
-          subtitle: 'Relevez de nouveaux défis',
+          title: AppLocalizations.of(context)!.dailyChallenges,
+          subtitle: AppLocalizations.of(context)!.takeOnNewChallenges,
           icon: Icons.emoji_events,
           color: const Color(AppConstants.warningColor),
           onTap: () => _navigateToTab(context, 2),
         ),
         QuickActionCard(
-          title: 'Classement',
-          subtitle: 'Voir votre position',
+          title: AppLocalizations.of(context)!.leaderboard,
+          subtitle: AppLocalizations.of(context)!.seeYourPosition,
           icon: Icons.leaderboard,
           color: const Color(AppConstants.accentColor),
           onTap: () => _navigateToTab(context, 4),
@@ -206,12 +210,12 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildRecentActivity() {
+  Widget _buildRecentActivity(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Activité récente',
+        Text(
+          AppLocalizations.of(context)!.recentActivity,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -224,23 +228,23 @@ class DashboardScreen extends ConsumerWidget {
             children: [
               _buildActivityItem(
                 Icons.camera_alt,
-                'Scan d\'une bouteille plastique',
-                'Il y a 2 heures',
-                '+5 points',
+                AppLocalizations.of(context)!.plasticBottleScan,
+                AppLocalizations.of(context)!.hoursAgo(2),
+                AppLocalizations.of(context)!.plusPoints(5),
               ),
               const Divider(),
               _buildActivityItem(
                 Icons.emoji_events,
-                'Défi "Recyclage" terminé',
-                'Il y a 1 jour',
-                '+20 points',
+                AppLocalizations.of(context)!.challengeRecyclingCompleted,
+                AppLocalizations.of(context)!.daysAgo(1),
+                AppLocalizations.of(context)!.plusPoints(20),
               ),
               const Divider(),
               _buildActivityItem(
                 Icons.auto_stories,
-                'Histoire "La Forêt Magique" complétée',
-                'Il y a 2 jours',
-                '+15 points',
+                AppLocalizations.of(context)!.storyMagicalForestCompleted,
+                AppLocalizations.of(context)!.daysAgo(2),
+                AppLocalizations.of(context)!.plusPoints(15),
               ),
             ],
           ),
@@ -307,12 +311,12 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildProgressSection() {
+  Widget _buildProgressSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Progression',
+        Text(
+          AppLocalizations.of(context)!.progress,
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
@@ -321,27 +325,27 @@ class DashboardScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
         ProgressCard(
-          title: 'Niveau Éco-Citoyen',
+          title: AppLocalizations.of(context)!.ecoCitizenLevel,
           progress: 0.6,
           progressText: '60%',
           color: const Color(AppConstants.primaryColor),
         ),
         const SizedBox(height: 16),
         ProgressCard(
-          title: 'Objectif mensuel',
+          title: AppLocalizations.of(context)!.monthlyGoal,
           progress: 0.4,
-          progressText: '8/20 défis',
+          progressText: AppLocalizations.of(context)!.challengesGoal(8, 20),
           color: const Color(AppConstants.warningColor),
         ),
       ],
     );
   }
 
-  String _getGreeting() {
+  String _getGreeting(BuildContext context) {
     final hour = DateTime.now().hour;
-    if (hour < 12) return 'Bonjour';
-    if (hour < 18) return 'Bon après-midi';
-    return 'Bonsoir';
+    if (hour < 12) return AppLocalizations.of(context)!.goodMorning;
+    if (hour < 18) return AppLocalizations.of(context)!.goodAfternoon;
+    return AppLocalizations.of(context)!.goodEvening;
   }
 
   Widget _buildLeaderboardSection(BuildContext context, WidgetRef ref) {
@@ -353,8 +357,8 @@ class DashboardScreen extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
-              'Classement',
+            Text(
+              AppLocalizations.of(context)!.leaderboard,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -363,8 +367,8 @@ class DashboardScreen extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () => _navigateToTab(context, 4),
-              child: const Text(
-                'Voir tout',
+              child: Text(
+                AppLocalizations.of(context)!.seeAll,
                 style: TextStyle(
                   color: Color(AppConstants.primaryColor),
                   fontWeight: FontWeight.w600,
@@ -375,15 +379,19 @@ class DashboardScreen extends ConsumerWidget {
         ),
         const SizedBox(height: 16),
         leaderboardState.when(
-          data: (state) => _buildLeaderboardContent(state),
-          loading: () => _buildLeaderboardLoading(),
-          error: (error, _) => _buildLeaderboardError(error.toString()),
+          data: (state) => _buildLeaderboardContent(context, state),
+          loading: () => _buildLeaderboardLoading(context),
+          error: (error, _) =>
+              _buildLeaderboardError(context, error.toString()),
         ),
       ],
     );
   }
 
-  Widget _buildLeaderboardContent(LeaderboardState state) {
+  Widget _buildLeaderboardContent(
+    BuildContext context,
+    LeaderboardState state,
+  ) {
     if (state.topUsers.isEmpty) {
       return CustomCard(
         child: Column(
@@ -391,7 +399,7 @@ class DashboardScreen extends ConsumerWidget {
             Icon(Icons.leaderboard_outlined, size: 48, color: Colors.grey[400]),
             const SizedBox(height: 12),
             Text(
-              'Aucune donnée de classement',
+              AppLocalizations.of(context)!.noLeaderboardData,
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.grey[600],
@@ -400,7 +408,7 @@ class DashboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 4),
             Text(
-              'Complétez des défis pour apparaître dans le classement !',
+              AppLocalizations.of(context)!.completeChallengesForRanking,
               style: TextStyle(fontSize: 14, color: Colors.grey[500]),
               textAlign: TextAlign.center,
             ),
@@ -417,9 +425,9 @@ class DashboardScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                _buildPodiumPosition(2, state.topUsers[1]),
-                _buildPodiumPosition(1, state.topUsers[0]),
-                _buildPodiumPosition(3, state.topUsers[2]),
+                _buildPodiumPosition(context, 2, state.topUsers[1]),
+                _buildPodiumPosition(context, 1, state.topUsers[0]),
+                _buildPodiumPosition(context, 3, state.topUsers[2]),
               ],
             ),
             const SizedBox(height: 24),
@@ -430,13 +438,14 @@ class DashboardScreen extends ConsumerWidget {
           // Rest of leaderboard
           ...state.topUsers
               .take(5)
-              .map((user) => _buildLeaderboardRow(user))
-              .toList(),
+              .map((user) => _buildLeaderboardRow(context, user)),
 
           if (state.topUsers.length > 5) ...[
             const SizedBox(height: 8),
             Text(
-              'et ${state.topUsers.length - 5} autres...',
+              AppLocalizations.of(
+                context,
+              )!.andOthers(state.topUsers.length - 5),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
@@ -449,7 +458,11 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPodiumPosition(int position, LeaderboardUser user) {
+  Widget _buildPodiumPosition(
+    BuildContext context,
+    int position,
+    LeaderboardUser user,
+  ) {
     Color positionColor;
     double size;
 
@@ -529,7 +542,7 @@ class DashboardScreen extends ConsumerWidget {
           overflow: TextOverflow.ellipsis,
         ),
         Text(
-          '${user.points} pts',
+          AppLocalizations.of(context)!.userPoints(user.points),
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],
@@ -540,7 +553,7 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLeaderboardRow(LeaderboardUser user) {
+  Widget _buildLeaderboardRow(BuildContext context, LeaderboardUser user) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -601,7 +614,7 @@ class DashboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${user.points} pts',
+                AppLocalizations.of(context)!.userPoints(user.points),
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -609,7 +622,9 @@ class DashboardScreen extends ConsumerWidget {
                 ),
               ),
               Text(
-                '${user.challengesCompleted ?? 0} défis',
+                AppLocalizations.of(
+                  context,
+                )!.userChallenges(user.challengesCompleted ?? 0),
                 style: TextStyle(fontSize: 12, color: Colors.grey[600]),
               ),
             ],
@@ -619,7 +634,7 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLeaderboardLoading() {
+  Widget _buildLeaderboardLoading(BuildContext context) {
     return CustomCard(
       child: Column(
         children: [
@@ -630,7 +645,7 @@ class DashboardScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Chargement du classement...',
+            AppLocalizations.of(context)!.loadingLeaderboard,
             style: TextStyle(fontSize: 14, color: Colors.grey[600]),
           ),
         ],
@@ -638,14 +653,14 @@ class DashboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildLeaderboardError(String error) {
+  Widget _buildLeaderboardError(BuildContext context, String error) {
     return CustomCard(
       child: Column(
         children: [
           Icon(Icons.error_outline, size: 48, color: Colors.grey[400]),
           const SizedBox(height: 12),
-          const Text(
-            'Erreur de chargement',
+          Text(
+            AppLocalizations.of(context)!.errorLoading,
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -684,7 +699,7 @@ class DashboardScreen extends ConsumerWidget {
 
   Widget _buildLocationPrompt(BuildContext context) {
     return CustomCard(
-      backgroundColor: const Color(AppConstants.secondaryColor).withValues(alpha: 0.1),
+      backgroundColor: Colors.grey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -693,34 +708,27 @@ class DashboardScreen extends ConsumerWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: const Color(AppConstants.secondaryColor),
+                  color: Colors.red,
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(
-                  Icons.location_on,
-                  color: Colors.white,
-                  size: 20,
-                ),
+                child: const Icon(Icons.info, color: Colors.white, size: 20),
               ),
               const SizedBox(width: 12),
-              const Expanded(
+              Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Complétez votre profil',
+                      AppLocalizations.of(context)!.completeProfile,
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
-                        color: Colors.black87,
+                        color: Colors.red,
                       ),
                     ),
                     Text(
-                      'Ajoutez votre localisation pour découvrir des défis près de chez vous !',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.black54,
-                      ),
+                      AppLocalizations.of(context)!.addLocationForChallenges,
+                      style: TextStyle(fontSize: 14, color: Colors.red),
                     ),
                   ],
                 ),
@@ -737,8 +745,9 @@ class DashboardScreen extends ConsumerWidget {
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.grey),
+                    backgroundColor: Colors.white,
                   ),
-                  child: const Text('Plus tard'),
+                  child: Text(AppLocalizations.of(context)!.later),
                 ),
               ),
               const SizedBox(width: 12),
@@ -748,11 +757,11 @@ class DashboardScreen extends ConsumerWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamed('/complete-profile');
                   },
-                  icon: const Icon(Icons.add_location),
-                  label: const Text('Compléter'),
+                  label: Text(AppLocalizations.of(context)!.complete),
+                  icon: const Icon(Icons.arrow_forward_ios_outlined),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(AppConstants.secondaryColor),
-                    foregroundColor: Colors.white,
+                    foregroundColor: Colors.black,
                   ),
                 ),
               ),
