@@ -9,16 +9,23 @@ import '../../../shared/services/api_service.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/card_widget.dart';
 
-class DashboardScreen extends ConsumerWidget {
+class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends ConsumerState<DashboardScreen> {
+  bool _showLocationPrompt = true;
+
+  @override
+  Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFFAFBFC),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -26,39 +33,103 @@ class DashboardScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with greeting and profile
-              _buildHeader(
-                context,
-                user?.username ?? AppLocalizations.of(context)!.user,
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 800),
+                tween: Tween(begin: 0.0, end: 1.0),
+                builder: (context, value, child) {
+                  return Transform.translate(
+                    offset: Offset(0, 30 * (1 - value)),
+                    child: Opacity(
+                      opacity: value,
+                      child: _buildHeader(
+                        context,
+                        user?.username ?? AppLocalizations.of(context)!.user,
+                      ),
+                    ),
+                  );
+                },
               ),
               const SizedBox(height: 24),
 
               // Location completion prompt
-              FutureBuilder<bool>(
-                future: _checkLocationStatus(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData && !snapshot.data!) {
-                    return Column(
-                      children: [
-                        _buildLocationPrompt(context),
-                        const SizedBox(height: 24),
-                      ],
-                    );
-                  }
-                  return const SizedBox.shrink();
-                },
-              ),
+              if (_showLocationPrompt)
+                FutureBuilder<bool>(
+                  future: _checkLocationStatus(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && !snapshot.data!) {
+                      return Column(
+                        children: [
+                          _buildLocationPrompt(context),
+                          const SizedBox(height: 24),
+                        ],
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
 
               // Stats Cards Row
-              _buildStatsRow(context, user?.points ?? 0),
+              TweenAnimationBuilder<double>(
+                duration: const Duration(milliseconds: 1000),
+                tween: Tween(begin: 0.0, end: 1.0),
+                builder: (context, value, child) {
+                  return Transform.translate(
+                    offset: Offset(0, 20 * (1 - value)),
+                    child: Opacity(
+                      opacity: value,
+                      child: _buildStatsRow(context, user?.points ?? 0),
+                    ),
+                  );
+                },
+              ),
               const SizedBox(height: 24),
 
               // Quick Actions Grid
-              Text(
-                AppLocalizations.of(context)!.quickActions,
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 24,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(AppConstants.primaryColor),
+                            Color(AppConstants.accentColor),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      AppLocalizations.of(context)!.quickActions,
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.black87,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(AppConstants.accentColor).withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '4',
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: const Color(AppConstants.accentColor),
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 16),
@@ -84,60 +155,147 @@ class DashboardScreen extends ConsumerWidget {
 
   Widget _buildHeader(BuildContext context, String username) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             Color(AppConstants.primaryColor),
             Color(AppConstants.secondaryColor),
+            Color(AppConstants.accentColor),
           ],
+          stops: [0.0, 0.7, 1.0],
         ),
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
-      child: Row(
+      child: Column(
         children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _getGreeting(context),
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white.withValues(alpha: 0.9),
-                    fontWeight: FontWeight.w400,
-                  ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _getGreeting(context),
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.white.withValues(alpha: 0.95),
+                        fontWeight: FontWeight.w500,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      username,
+                      style: const TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
+                        letterSpacing: 0.8,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(0, 2),
+                            blurRadius: 4,
+                            color: Colors.black26,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.3),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        AppLocalizations.of(context)!.continueEcologicalJourney,
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.white.withValues(alpha: 0.95),
+                          fontWeight: FontWeight.w500,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  username,
-                  style: const TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
+              ),
+              const SizedBox(width: 16),
+              GestureDetector(
+                onTap: () => Navigator.pushNamed(context, '/settings'),
+                child: Container(
+                  width: 64,
+                  height: 64,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Colors.white.withValues(alpha: 0.25),
+                        Colors.white.withValues(alpha: 0.15),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(32),
+                    border: Border.all(
+                      color: Colors.white.withValues(alpha: 0.3),
+                      width: 2,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.1),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: const Icon(
+                    Icons.person_rounded,
                     color: Colors.white,
+                    size: 32,
                   ),
                 ),
-                const SizedBox(height: 8),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          // Weather or time indicator
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(25),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  _getTimeIcon(),
+                  color: Colors.white.withValues(alpha: 0.9),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
                 Text(
-                  AppLocalizations.of(context)!.continueEcologicalJourney,
+                  _getTimeMessage(context),
                   style: TextStyle(
-                    fontSize: 14,
-                    color: Colors.white.withValues(alpha: 0.8),
+                    fontSize: 12,
+                    color: Colors.white.withValues(alpha: 0.9),
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.3,
                   ),
                 ),
               ],
-            ),
-          ),
-          GestureDetector(
-            onTap: () => Navigator.pushNamed(context, '/settings'),
-            child: Container(
-              width: 60,
-              height: 60,
-              decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(30),
-              ),
-              child: const Icon(Icons.person, color: Colors.white, size: 30),
             ),
           ),
         ],
@@ -214,12 +372,47 @@ class DashboardScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.recentActivity,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(AppConstants.secondaryColor),
+                      Color(AppConstants.accentColor),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                AppLocalizations.of(context)!.recentActivity,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black87,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(AppConstants.secondaryColor).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.history,
+                  size: 16,
+                  color: const Color(AppConstants.secondaryColor),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -315,12 +508,47 @@ class DashboardScreen extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          AppLocalizations.of(context)!.progress,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 24,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(AppConstants.warningColor),
+                      Color(AppConstants.accentColor),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Text(
+                AppLocalizations.of(context)!.progress,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.black87,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const Spacer(),
+              Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: const Color(AppConstants.warningColor).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(
+                  Icons.trending_up,
+                  size: 16,
+                  color: const Color(AppConstants.warningColor),
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 16),
@@ -346,6 +574,22 @@ class DashboardScreen extends ConsumerWidget {
     if (hour < 12) return AppLocalizations.of(context)!.goodMorning;
     if (hour < 18) return AppLocalizations.of(context)!.goodAfternoon;
     return AppLocalizations.of(context)!.goodEvening;
+  }
+
+  IconData _getTimeIcon() {
+    final hour = DateTime.now().hour;
+    if (hour < 6) return Icons.nights_stay;
+    if (hour < 12) return Icons.wb_sunny;
+    if (hour < 18) return Icons.wb_sunny_outlined;
+    return Icons.brightness_3;
+  }
+
+  String _getTimeMessage(BuildContext context) {
+    final hour = DateTime.now().hour;
+    if (hour < 6) return 'Nuit calme';
+    if (hour < 12) return 'Matinée productive';
+    if (hour < 18) return 'Après-midi active';
+    return 'Soirée détente';
   }
 
   Widget _buildLeaderboardSection(BuildContext context, WidgetRef ref) {
@@ -741,7 +985,9 @@ class DashboardScreen extends ConsumerWidget {
               Expanded(
                 child: OutlinedButton(
                   onPressed: () {
-                    // Ignorer pour l'instant - on peut sauvegarder cette préférence
+                    setState(() {
+                      _showLocationPrompt = false;
+                    });
                   },
                   style: OutlinedButton.styleFrom(
                     side: const BorderSide(color: Colors.grey),

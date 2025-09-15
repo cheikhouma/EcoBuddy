@@ -1,4 +1,5 @@
 import 'package:eco_buddy/features/leaderboard/domain/models/leaderboard_user_model.dart';
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:eco_buddy/shared/models/user.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,11 +17,11 @@ class LeaderboardScreen extends ConsumerWidget {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFFAFBFC),
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
-            expandedHeight: 200,
+            expandedHeight: 250,
             floating: false,
             pinned: true,
             backgroundColor: const Color(AppConstants.primaryColor),
@@ -28,24 +29,104 @@ class LeaderboardScreen extends ConsumerWidget {
               title: const Text(
                 'Classement',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                  fontWeight: FontWeight.w800,
                   color: Colors.white,
+                  fontSize: 24,
+                  letterSpacing: 0.8,
+                  shadows: [
+                    Shadow(
+                      offset: Offset(0, 1),
+                      blurRadius: 2,
+                      color: Colors.black26,
+                    ),
+                  ],
                 ),
               ),
-              background: Container(
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(AppConstants.primaryColor),
-                      Color(AppConstants.secondaryColor),
-                    ],
+              background: Stack(
+                fit: StackFit.expand,
+                children: [
+                  Container(
+                    decoration: const BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color(AppConstants.primaryColor),
+                          Color(AppConstants.secondaryColor),
+                          Color(AppConstants.accentColor),
+                        ],
+                        stops: [0.0, 0.7, 1.0],
+                      ),
+                    ),
                   ),
-                ),
-                child: const Center(
-                  child: Icon(Icons.leaderboard, size: 80, color: Colors.white),
-                ),
+                  // Decorative circles
+                  Positioned(
+                    top: -50,
+                    right: -50,
+                    child: Container(
+                      width: 150,
+                      height: 150,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.1),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: -30,
+                    left: -30,
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withValues(alpha: 0.05),
+                      ),
+                    ),
+                  ),
+                  // Main content
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 20),
+                        Container(
+                          padding: const EdgeInsets.all(20),
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withValues(alpha: 0.2),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 2,
+                            ),
+                          ),
+                          child: const Icon(
+                            Icons.emoji_events,
+                            size: 50,
+                            color: Colors.white,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          AppLocalizations.of(context)!.ecoChamp,
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.white.withValues(alpha: 0.95),
+                            fontWeight: FontWeight.w600,
+                            letterSpacing: 1.5,
+                            shadows: [
+                              Shadow(
+                                offset: const Offset(0, 1),
+                                blurRadius: 3,
+                                color: Colors.black.withValues(alpha: 0.2),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
             ),
             actions: [
@@ -55,28 +136,28 @@ class LeaderboardScreen extends ConsumerWidget {
                 onSelected: (value) =>
                     _handleMenuSelection(context, ref, value),
                 itemBuilder: (context) => [
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'refresh',
                     child: Row(
                       children: [
-                        Icon(Icons.refresh, color: Colors.black38),
+                        Icon(Icons.refresh, color: Colors.black),
                         SizedBox(width: 8),
                         Text(
-                          'Actualiser',
-                          style: TextStyle(color: Colors.black38),
+                          AppLocalizations.of(context)!.refresh,
+                          style: TextStyle(color: Colors.black),
                         ),
                       ],
                     ),
                   ),
-                  const PopupMenuItem(
+                  PopupMenuItem(
                     value: 'filter',
                     child: Row(
                       children: [
-                        Icon(Icons.filter_list, color: Colors.black38),
+                        Icon(Icons.filter_list, color: Colors.black),
                         SizedBox(width: 8),
                         Text(
-                          'Filtrer',
-                          style: TextStyle(color: Colors.black38),
+                          AppLocalizations.of(context)!.filter,
+                          style: TextStyle(color: Colors.black),
                         ),
                       ],
                     ),
@@ -91,28 +172,72 @@ class LeaderboardScreen extends ConsumerWidget {
               delegate: SliverChildListDelegate([
                 // User's rank card
                 if (authState.user != null)
-                  _buildUserRankCard(ref, authState.user!),
+                  _buildUserRankCard(context, ref, authState.user!),
                 const SizedBox(height: 20),
 
                 // Period selector
-                _buildPeriodSelector(ref),
+                _buildPeriodSelector(context, ref),
                 const SizedBox(height: 20),
 
                 // Top 3 podium
                 leaderboardState.when(
-                  data: (state) => _buildPodium(state.topUsers),
+                  data: (state) => _buildPodium(context, state.topUsers),
                   loading: () => _buildLoadingPodium(),
                   error: (error, _) => _buildErrorWidget(error.toString()),
                 ),
                 const SizedBox(height: 24),
 
                 // Full leaderboard
-                const Text(
-                  'Classement complet',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 4,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          gradient: const LinearGradient(
+                            colors: [
+                              Color(AppConstants.primaryColor),
+                              Color(AppConstants.accentColor),
+                            ],
+                          ),
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        AppLocalizations.of(context)!.fullLeaderboard,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.black87,
+                          letterSpacing: 0.3,
+                        ),
+                      ),
+                      const Spacer(),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 4,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(
+                            AppConstants.accentColor,
+                          ).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          'Live',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                            color: const Color(AppConstants.accentColor),
+                            letterSpacing: 0.5,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -151,7 +276,7 @@ class LeaderboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildUserRankCard(WidgetRef ref, User user) {
+  Widget _buildUserRankCard(BuildContext context, WidgetRef ref, User user) {
     // Obtenir le rang réel de l'utilisateur depuis l'API
     final leaderboardState = ref.watch(leaderboardProvider);
 
@@ -193,14 +318,20 @@ class LeaderboardScreen extends ConsumerWidget {
                   user.username,
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w700,
                     color: Colors.black87,
+                    letterSpacing: 0.3,
                   ),
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Votre position actuelle',
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                  AppLocalizations.of(context)!.pointsEarneds,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w500,
+                    letterSpacing: 0.2,
+                  ),
                 ),
               ],
             ),
@@ -275,175 +406,404 @@ class LeaderboardScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildPeriodSelector(WidgetRef ref) {
+  Widget _buildPeriodSelector(BuildContext context, WidgetRef ref) {
     return Row(
       children: [
-        Expanded(child: _buildPeriodButton('Semaine', true, ref)),
+        Expanded(
+          child: _buildPeriodButton(
+            AppLocalizations.of(context)!.week,
+            true,
+            ref,
+          ),
+        ),
         const SizedBox(width: 8),
-        Expanded(child: _buildPeriodButton('Mois', false, ref)),
+        Expanded(
+          child: _buildPeriodButton(
+            AppLocalizations.of(context)!.month,
+            false,
+            ref,
+          ),
+        ),
         const SizedBox(width: 8),
-        Expanded(child: _buildPeriodButton('Année', false, ref)),
+        Expanded(
+          child: _buildPeriodButton(
+            AppLocalizations.of(context)!.year,
+            false,
+            ref,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildPeriodButton(String text, bool isSelected, WidgetRef ref) {
-    return GestureDetector(
-      onTap: () =>
-          ref.read(leaderboardProvider.notifier).setPeriod(text.toLowerCase()),
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? const Color(AppConstants.primaryColor)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(
-            color: const Color(AppConstants.primaryColor),
-            width: 1,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      child: InkWell(
+        onTap: () => ref
+            .read(leaderboardProvider.notifier)
+            .setPeriod(text.toLowerCase()),
+        borderRadius: BorderRadius.circular(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 300),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          decoration: BoxDecoration(
+            gradient: isSelected
+                ? const LinearGradient(
+                    colors: [
+                      Color(AppConstants.primaryColor),
+                      Color(AppConstants.secondaryColor),
+                    ],
+                  )
+                : null,
+            color: isSelected ? null : Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected
+                  ? Colors.transparent
+                  : const Color(
+                      AppConstants.primaryColor,
+                    ).withValues(alpha: 0.3),
+              width: 1.5,
+            ),
+            boxShadow: isSelected
+                ? [
+                    BoxShadow(
+                      color: const Color(
+                        AppConstants.primaryColor,
+                      ).withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4),
+                    ),
+                  ]
+                : [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 2,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
           ),
-        ),
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: isSelected
-                ? Colors.white
-                : const Color(AppConstants.primaryColor),
+          child: AnimatedDefaultTextStyle(
+            duration: const Duration(milliseconds: 200),
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: isSelected
+                  ? Colors.white
+                  : const Color(AppConstants.primaryColor),
+              letterSpacing: 0.5,
+            ),
+            child: Text(text, textAlign: TextAlign.center),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildPodium(List<LeaderboardUser> topUsers) {
+  Widget _buildPodium(BuildContext context, List<LeaderboardUser> topUsers) {
     if (topUsers.length < 3) return Container();
 
-    return ConstrainedBox(
-      constraints: const BoxConstraints(
-        minHeight: 160,
-        maxHeight: 200,
-      ),
-      child: Container(
-        padding: const EdgeInsets.all(12),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 12),
+      child: Column(
+        children: [
+          // Section title with trophy
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Second place
-              _buildPodiumPosition(topUsers[1], 2, 40),
-              const SizedBox(width: 6),
-              // First place  
-              _buildPodiumPosition(topUsers[0], 1, 60),
-              const SizedBox(width: 6),
-              // Third place
-              if (topUsers.length > 2)
-                _buildPodiumPosition(topUsers[2], 3, 30),
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [Color(0xFFFFD700), Color(0xFFFFA000)],
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.amber.withValues(alpha: 0.3),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: const Icon(
+                  Icons.emoji_events,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                AppLocalizations.of(context)!.top3,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: 20),
+
+          // Podium
+          Container(
+            height: 250,
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // Second place
+                Expanded(child: _buildPodiumPosition(topUsers[1], 2, 70)),
+                const SizedBox(width: 8),
+                // First place
+                Expanded(child: _buildPodiumPosition(topUsers[0], 1, 100)),
+                const SizedBox(width: 8),
+                // Third place
+                if (topUsers.length > 2)
+                  Expanded(child: _buildPodiumPosition(topUsers[2], 3, 50)),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
 
   Widget _buildPodiumPosition(LeaderboardUser user, int rank, double height) {
-    Color rankColor;
-    IconData crownIcon;
+    Color primaryColor;
+    Color secondaryColor;
+    List<BoxShadow> shadows;
+    String rankText;
 
     switch (rank) {
       case 1:
-        rankColor = const Color(0xFFFFD700); // Gold
-        crownIcon = Icons.emoji_events;
+        primaryColor = const Color(0xFFFFD700);
+        secondaryColor = const Color(0xFFFFA000);
+        rankText = '🥇';
+        shadows = [
+          BoxShadow(
+            color: Colors.amber.withValues(alpha: 0.4),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ];
         break;
       case 2:
-        rankColor = const Color(0xFFC0C0C0); // Silver
-        crownIcon = Icons.emoji_events;
+        primaryColor = const Color(0xFFC0C0C0);
+        secondaryColor = const Color(0xFF9E9E9E);
+        rankText = '🥈';
+        shadows = [
+          BoxShadow(
+            color: Colors.grey.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 3),
+          ),
+        ];
         break;
       case 3:
-        rankColor = const Color(0xFFCD7F32); // Bronze
-        crownIcon = Icons.emoji_events;
+        primaryColor = const Color(0xFFCD7F32);
+        secondaryColor = const Color(0xFFA0522D);
+        rankText = '🥉';
+        shadows = [
+          BoxShadow(
+            color: Colors.brown.withValues(alpha: 0.3),
+            blurRadius: 6,
+            offset: const Offset(0, 2),
+          ),
+        ];
         break;
       default:
-        rankColor = Colors.grey;
-        crownIcon = Icons.emoji_events;
+        primaryColor = Colors.grey[400]!;
+        secondaryColor = Colors.grey[600]!;
+        rankText = rank.toString();
+        shadows = [];
     }
 
-    return Expanded(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 600),
+      curve: Curves.elasticOut,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // User avatar and crown
+          // Crown and avatar section
           Stack(
+            clipBehavior: Clip.none,
             alignment: Alignment.topCenter,
             children: [
+              // Glowing effect for winner
+              if (rank == 1)
+                Positioned(
+                  top: -5,
+                  child: Container(
+                    width: 70,
+                    height: 70,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: RadialGradient(
+                        colors: [
+                          primaryColor.withValues(alpha: 0.3),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+              // Avatar
               Container(
-                width: 50,
-                height: 50,
-                margin: const EdgeInsets.only(top: 12),
+                width: 60,
+                height: 60,
+                margin: const EdgeInsets.only(top: 15),
                 decoration: BoxDecoration(
-                  color: rankColor.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: rankColor, width: 2),
+                  gradient: LinearGradient(
+                    colors: [primaryColor, secondaryColor],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: shadows,
+                  border: Border.all(color: Colors.white, width: 3),
                 ),
                 child: Center(
                   child: Text(
                     user.username.substring(0, 1).toUpperCase(),
-                    style: TextStyle(
-                      fontSize: 18,
+                    style: const TextStyle(
+                      fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: rankColor,
+                      color: Colors.white,
                     ),
                   ),
                 ),
               ),
-              Icon(crownIcon, color: rankColor, size: 20),
+
+              // Crown/Medal
+              Positioned(
+                top: -5,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(rankText, style: const TextStyle(fontSize: 16)),
+                ),
+              ),
             ],
+          ),
+          const SizedBox(height: 12),
+
+          // Username
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: primaryColor.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              user.username,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: secondaryColor,
+              ),
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           const SizedBox(height: 6),
 
-          // Username
-          Text(
-            user.username,
-            style: const TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+          // Points with icon
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+            decoration: BoxDecoration(
+              color: const Color(
+                AppConstants.accentColor,
+              ).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
             ),
-            textAlign: TextAlign.center,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
-          const SizedBox(height: 2),
-
-          // Points
-          Text(
-            '${user.points} pts',
-            style: TextStyle(fontSize: 10, color: Colors.grey[600]),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  Icons.stars,
+                  size: 12,
+                  color: const Color(AppConstants.accentColor),
+                ),
+                const SizedBox(width: 2),
+                Text(
+                  '${user.points}',
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: Color(AppConstants.accentColor),
+                  ),
+                ),
+              ],
+            ),
           ),
           const Spacer(),
 
-          // Podium base
+          // Podium base with gradient
           Container(
-            height: height.clamp(30.0, 80.0),
+            height: height,
             width: double.infinity,
             decoration: BoxDecoration(
-              color: rankColor.withValues(alpha: 0.3),
-              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-              border: Border.all(
-                color: rankColor.withValues(alpha: 0.5),
-                width: 1,
+              gradient: LinearGradient(
+                colors: [
+                  primaryColor.withValues(alpha: 0.8),
+                  primaryColor.withValues(alpha: 0.4),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: primaryColor.withValues(alpha: 0.2),
+                  blurRadius: 4,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
             child: Center(
-              child: Text(
-                rank.toString(),
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: rankColor,
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    rank.toString(),
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: secondaryColor,
+                    ),
+                  ),
+                  Text(
+                    rank == 1
+                        ? 'Winner'
+                        : rank == 2
+                        ? 'Runner'
+                        : 'Third',
+                    style: TextStyle(
+                      fontSize: 8,
+                      fontWeight: FontWeight.w600,
+                      color: secondaryColor.withValues(alpha: 0.8),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -485,136 +845,353 @@ class LeaderboardScreen extends ConsumerWidget {
     required VoidCallback onTap,
   }) {
     Color rankColor = Colors.grey[600]!;
+    Widget rankWidget = Text(rank.toString());
+
     if (rank <= 3) {
       switch (rank) {
         case 1:
           rankColor = const Color(0xFFFFD700);
+          rankWidget = TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 800),
+            tween: Tween(begin: 0.0, end: 1.0),
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + (0.2 * value),
+                child: const Text('🥇', style: TextStyle(fontSize: 20)),
+              );
+            },
+          );
           break;
         case 2:
           rankColor = const Color(0xFFC0C0C0);
+          rankWidget = TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 600),
+            tween: Tween(begin: 0.0, end: 1.0),
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + (0.2 * value),
+                child: const Text('🥈', style: TextStyle(fontSize: 18)),
+              );
+            },
+          );
           break;
         case 3:
           rankColor = const Color(0xFFCD7F32);
+          rankWidget = TweenAnimationBuilder<double>(
+            duration: const Duration(milliseconds: 400),
+            tween: Tween(begin: 0.0, end: 1.0),
+            builder: (context, value, child) {
+              return Transform.scale(
+                scale: 0.8 + (0.2 * value),
+                child: const Text('🥉', style: TextStyle(fontSize: 16)),
+              );
+            },
+          );
           break;
       }
+    } else {
+      rankWidget = Text(
+        rank.toString(),
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: rankColor,
+        ),
+      );
     }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: CustomCard(
-        onTap: onTap,
-        backgroundColor: isCurrentUser
-            ? const Color(AppConstants.primaryColor).withValues(alpha: 0.1)
-            : null,
-        child: Row(
-          children: [
-            // Rank
-            Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                color: rankColor.withValues(alpha: 0.2),
+    return TweenAnimationBuilder<double>(
+      duration: Duration(milliseconds: 300 + (rank * 50)),
+      tween: Tween(begin: 0.0, end: 1.0),
+      builder: (context, value, child) {
+        return Transform.translate(
+          offset: Offset(0, 20 * (1 - value)),
+          child: Opacity(
+            opacity: value,
+            child: Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              child: Material(
                 borderRadius: BorderRadius.circular(16),
-                border: rank <= 3
-                    ? Border.all(color: rankColor, width: 1)
-                    : null,
-              ),
-              child: Center(
-                child: Text(
-                  rank.toString(),
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: rankColor,
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
-
-            // Avatar
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: isCurrentUser
+                elevation: isCurrentUser ? 4 : 2,
+                shadowColor: isCurrentUser
                     ? const Color(
                         AppConstants.primaryColor,
-                      ).withValues(alpha: 0.2)
-                    : Colors.grey[200],
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Center(
-                child: Text(
-                  user.username.substring(0, 1).toUpperCase(),
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isCurrentUser
-                        ? const Color(AppConstants.primaryColor)
-                        : Colors.grey[700],
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(width: 16),
+                      ).withValues(alpha: 0.3)
+                    : Colors.black.withValues(alpha: 0.1),
+                child: InkWell(
+                  onTap: onTap,
+                  borderRadius: BorderRadius.circular(16),
+                  splashColor: const Color(
+                    AppConstants.primaryColor,
+                  ).withValues(alpha: 0.1),
+                  highlightColor: const Color(
+                    AppConstants.primaryColor,
+                  ).withValues(alpha: 0.05),
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: isCurrentUser
+                          ? LinearGradient(
+                              colors: [
+                                const Color(
+                                  AppConstants.primaryColor,
+                                ).withValues(alpha: 0.1),
+                                const Color(
+                                  AppConstants.secondaryColor,
+                                ).withValues(alpha: 0.05),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      color: isCurrentUser ? null : Colors.white,
+                      border: isCurrentUser
+                          ? Border.all(
+                              color: const Color(
+                                AppConstants.primaryColor,
+                              ).withValues(alpha: 0.3),
+                              width: 1.5,
+                            )
+                          : null,
+                    ),
+                    child: Row(
+                      children: [
+                        // Rank with animation
+                        Container(
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            gradient: rank <= 3
+                                ? LinearGradient(
+                                    colors: [
+                                      rankColor.withValues(alpha: 0.2),
+                                      rankColor.withValues(alpha: 0.1),
+                                    ],
+                                  )
+                                : null,
+                            color: rank > 3 ? Colors.grey[100] : null,
+                            borderRadius: BorderRadius.circular(22),
+                            border: rank <= 3
+                                ? Border.all(
+                                    color: rankColor.withValues(alpha: 0.4),
+                                    width: 1.5,
+                                  )
+                                : Border.all(
+                                    color: Colors.grey[300]!,
+                                    width: 1,
+                                  ),
+                            boxShadow: rank <= 3
+                                ? [
+                                    BoxShadow(
+                                      color: rankColor.withValues(alpha: 0.2),
+                                      blurRadius: 4,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ]
+                                : null,
+                          ),
+                          child: Center(child: rankWidget),
+                        ),
+                        const SizedBox(width: 16),
 
-            // User info
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.username,
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isCurrentUser
-                          ? const Color(AppConstants.primaryColor)
-                          : Colors.black87,
+                        // Avatar with gradient and shadow
+                        Container(
+                          width: 50,
+                          height: 50,
+                          decoration: BoxDecoration(
+                            gradient: isCurrentUser
+                                ? const LinearGradient(
+                                    colors: [
+                                      Color(AppConstants.primaryColor),
+                                      Color(AppConstants.secondaryColor),
+                                    ],
+                                  )
+                                : LinearGradient(
+                                    colors: [
+                                      Colors.grey[300]!,
+                                      Colors.grey[100]!,
+                                    ],
+                                  ),
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(color: Colors.white, width: 2),
+                            boxShadow: [
+                              BoxShadow(
+                                color: isCurrentUser
+                                    ? const Color(
+                                        AppConstants.primaryColor,
+                                      ).withValues(alpha: 0.3)
+                                    : Colors.black.withValues(alpha: 0.1),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              user.username.substring(0, 1).toUpperCase(),
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: isCurrentUser
+                                    ? Colors.white
+                                    : Colors.grey[600],
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+
+                        // User info with improved typography
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      user.username,
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: isCurrentUser
+                                            ? const Color(
+                                                AppConstants.primaryColor,
+                                              )
+                                            : Colors.black87,
+                                        letterSpacing: 0.2,
+                                      ),
+                                    ),
+                                  ),
+                                  if (isCurrentUser)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 8,
+                                        vertical: 2,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient: const LinearGradient(
+                                          colors: [
+                                            Color(AppConstants.accentColor),
+                                            Color(AppConstants.primaryColor),
+                                          ],
+                                        ),
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                      child: const Text(
+                                        'Vous',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              if (user.level != null) ...[
+                                const SizedBox(height: 4),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.star_rounded,
+                                      size: 14,
+                                      color: Colors.amber[600],
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Niveau ${user.level}',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+
+                        // Points with enhanced design
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 6,
+                              ),
+                              decoration: BoxDecoration(
+                                gradient: const LinearGradient(
+                                  colors: [
+                                    Color(AppConstants.accentColor),
+                                    Color(AppConstants.primaryColor),
+                                  ],
+                                ),
+                                borderRadius: BorderRadius.circular(20),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(
+                                      AppConstants.accentColor,
+                                    ).withValues(alpha: 0.3),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(
+                                    Icons.eco,
+                                    size: 16,
+                                    color: Colors.white,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    '${user.points}',
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              'éco-points',
+                              style: TextStyle(
+                                fontSize: 10,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                                letterSpacing: 0.2,
+                              ),
+                            ),
+                          ],
+                        ),
+
+                        // Tap indicator
+                        const SizedBox(width: 8),
+                        Icon(
+                          Icons.chevron_right_rounded,
+                          color: Colors.grey[400],
+                          size: 20,
+                        ),
+                      ],
                     ),
                   ),
-                  if (user.level != null) ...[
-                    const SizedBox(height: 2),
-                    Text(
-                      'Niveau ${user.level}',
-                      style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                    ),
-                  ],
-                ],
+                ),
               ),
             ),
-
-            // Points and badges
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  '${user.points}',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Color(AppConstants.accentColor),
-                  ),
-                ),
-                Text(
-                  'points',
-                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-                ),
-              ],
-            ),
-
-            if (isCurrentUser) ...[
-              const SizedBox(width: 8),
-              const Icon(
-                Icons.person,
-                color: Color(AppConstants.primaryColor),
-                size: 20,
-              ),
-            ],
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -856,7 +1433,8 @@ class LeaderboardScreen extends ConsumerWidget {
                           spacing: 8,
                           runSpacing: 8,
                           alignment: WrapAlignment.center,
-                          children: user.badges != null && user.badges!.isNotEmpty
+                          children:
+                              user.badges != null && user.badges!.isNotEmpty
                               ? user.badges!
                                     .map(
                                       (badge) => _buildBadge(
@@ -916,7 +1494,7 @@ class LeaderboardScreen extends ConsumerWidget {
             ),
             const SizedBox(height: 2),
             Text(
-              title, 
+              title,
               style: TextStyle(fontSize: 11, color: Colors.grey[600]),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,

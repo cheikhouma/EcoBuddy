@@ -181,6 +181,9 @@
   "refresh": "Actualiser",
   
   "filter": "Filtrer",
+
+  "top3":"Top 3 Éco-Champions",
+  "ecoChamp":" Éco-Champions",
   
   "fullLeaderboard": "Classement complet",
   
@@ -702,5 +705,19 @@
 
   "scanObjectsDiscoverImpact": "Scannez vos objets et découvrez leur impact environnemental",
 
-  "takeChallengesEarnPoints": "Relevez des défis et gagnez des points"
+  "takeChallengesEarnPoints": "Relevez des défis et gagnez des points",
+
+    "pointsSystemTitle": "Système de points écologiques",
+  "pointsInfoTooltip": "Informations sur les points",
+  "excellentChoice": "Excellent choix écologique",
+  "excellentChoiceDesc": "Durable, innovant et impactant",
+  "goodChoiceTitle": "Bon choix",
+  "goodChoiceDesc": "Écologiquement responsable",
+  "averageChoice": "Choix moyen",
+  "averageChoiceDesc": "Quelques bénéfices environnementaux",
+  "suboptimalChoice": "Choix peu optimal",
+  "suboptimalChoiceDesc": "Impact limité",
+  "problematicChoice": "Choix problématique",
+  "problematicChoiceDesc": "Peu ou pas écologique",
+  "aiEvaluationNote": "L’IA évalue vos choix selon leur impact environnemental réel."
 }

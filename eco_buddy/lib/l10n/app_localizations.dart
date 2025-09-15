@@ -650,6 +650,18 @@ abstract class AppLocalizations {
   /// **'Filter'**
   String get filter;
 
+  /// No description provided for @ecoChamp.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 3 Eco-Champions'**
+  String get ecoChamp;
+
+  /// No description provided for @top3.
+  ///
+  /// In en, this message translates to:
+  /// **'Top 3 Eco-Champions'**
+  String get top3;
+
   /// Full leaderboard section title
   ///
   /// In en, this message translates to:
@@ -2185,6 +2197,90 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Confirmation required'**
   String get confirmationRequired;
+
+  /// No description provided for @pointsSystemTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Ecological Points System'**
+  String get pointsSystemTitle;
+
+  /// No description provided for @pointsInfoTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Points information'**
+  String get pointsInfoTooltip;
+
+  /// No description provided for @excellentChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Excellent ecological choice'**
+  String get excellentChoice;
+
+  /// No description provided for @excellentChoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Sustainable, innovative, and impactful'**
+  String get excellentChoiceDesc;
+
+  /// No description provided for @goodChoiceTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Good choice'**
+  String get goodChoiceTitle;
+
+  /// No description provided for @goodChoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Environmentally responsible'**
+  String get goodChoiceDesc;
+
+  /// No description provided for @averageChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Average choice'**
+  String get averageChoice;
+
+  /// No description provided for @averageChoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Some environmental benefits'**
+  String get averageChoiceDesc;
+
+  /// No description provided for @suboptimalChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Suboptimal choice'**
+  String get suboptimalChoice;
+
+  /// No description provided for @suboptimalChoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Limited impact'**
+  String get suboptimalChoiceDesc;
+
+  /// No description provided for @problematicChoice.
+  ///
+  /// In en, this message translates to:
+  /// **'Problematic choice'**
+  String get problematicChoice;
+
+  /// No description provided for @problematicChoiceDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Little or no ecological value'**
+  String get problematicChoiceDesc;
+
+  /// No description provided for @aiEvaluationNote.
+  ///
+  /// In en, this message translates to:
+  /// **'AI evaluates your choices based on their real environmental impact.'**
+  String get aiEvaluationNote;
+
+  /// No description provided for @understood.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get understood;
 }
 
 class _AppLocalizationsDelegate

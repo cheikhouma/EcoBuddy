@@ -1,5 +1,4 @@
 import 'package:eco_buddy/l10n/app_localizations.dart';
-import 'package:eco_buddy/l10n/app_localizations_en.dart';
 import 'package:flutter/material.dart';
 import '../constants/app_constants.dart';
 

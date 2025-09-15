@@ -312,6 +312,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filter => 'Filter';
 
   @override
+  String get ecoChamp => 'Top 3 Eco-Champions';
+
+  @override
+  String get top3 => 'Top 3 Eco-Champions';
+
+  @override
   String get fullLeaderboard => 'Full leaderboard';
 
   @override
@@ -1137,4 +1143,47 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get confirmationRequired => 'Confirmation required';
+
+  @override
+  String get pointsSystemTitle => 'Ecological Points System';
+
+  @override
+  String get pointsInfoTooltip => 'Points information';
+
+  @override
+  String get excellentChoice => 'Excellent ecological choice';
+
+  @override
+  String get excellentChoiceDesc => 'Sustainable, innovative, and impactful';
+
+  @override
+  String get goodChoiceTitle => 'Good choice';
+
+  @override
+  String get goodChoiceDesc => 'Environmentally responsible';
+
+  @override
+  String get averageChoice => 'Average choice';
+
+  @override
+  String get averageChoiceDesc => 'Some environmental benefits';
+
+  @override
+  String get suboptimalChoice => 'Suboptimal choice';
+
+  @override
+  String get suboptimalChoiceDesc => 'Limited impact';
+
+  @override
+  String get problematicChoice => 'Problematic choice';
+
+  @override
+  String get problematicChoiceDesc => 'Little or no ecological value';
+
+  @override
+  String get aiEvaluationNote =>
+      'AI evaluates your choices based on their real environmental impact.';
+
+  @override
+  String get understood => 'Got it';
 }

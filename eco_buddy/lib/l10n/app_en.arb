@@ -504,6 +504,12 @@
     "description": "Filter button text"
   },
 
+  "ecoChamp" : "Top 3 Eco-Champions",
+  "@ecoChamp": {},
+
+  "top3" : "Top 3 Eco-Champions",
+  "@top3": {},
+
   "fullLeaderboard": "Full leaderboard",
   "@fullLeaderboard": {
     "description": "Full leaderboard section title"
@@ -1866,5 +1872,34 @@
   "confirmationRequired": "Confirmation required",
   "@confirmationRequired": {
     "description": "Password confirmation validation error"
-  }
+  },
+
+  "pointsSystemTitle": "Ecological Points System",
+  "@pointsSystemTitle": {},
+  "pointsInfoTooltip": "Points information",
+  "@pointsInfoTooltip": {},
+  "excellentChoice": "Excellent ecological choice",
+  "@excellentChoice": {},
+  "excellentChoiceDesc": "Sustainable, innovative, and impactful",
+  "@excellentChoiceDesc": {},
+  "goodChoiceTitle": "Good choice",
+  "@goodChoiceTitle": {},
+  "goodChoiceDesc": "Environmentally responsible",
+  "@goodChoiceDesc": {},
+  "averageChoice": "Average choice",
+  "@averageChoice": {},
+  "averageChoiceDesc": "Some environmental benefits",
+  "@averageChoiceDesc": {},
+  "suboptimalChoice": "Suboptimal choice",
+  "@suboptimalChoice": {},
+  "suboptimalChoiceDesc": "Limited impact",
+  "@suboptimalChoiceDesc": {},
+  "problematicChoice": "Problematic choice",
+  "@problematicChoice": {},
+  "problematicChoiceDesc": "Little or no ecological value",
+  "@problematicChoiceDesc": {},
+  "aiEvaluationNote": "AI evaluates your choices based on their real environmental impact.",
+  "@aiEvaluationNote": {},
+  "understood": "Got it",
+  "@understood": {}
 }

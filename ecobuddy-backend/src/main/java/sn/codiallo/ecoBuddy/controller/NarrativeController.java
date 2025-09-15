@@ -1,7 +1,9 @@
 package sn.codiallo.ecoBuddy.controller;
 
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,6 +57,8 @@ public class NarrativeController {
         return authentication.getName();
     }
 
+    @Setter
+    @Getter
     public static class ErrorResponse {
         private String error;
 
@@ -62,12 +66,5 @@ public class NarrativeController {
             this.error = error;
         }
 
-        public String getError() {
-            return error;
-        }
-
-        public void setError(String error) {
-            this.error = error;
-        }
     }
 }

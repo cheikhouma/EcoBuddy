@@ -26,6 +26,13 @@ class NarrationScreen extends ConsumerWidget {
         foregroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.info_outline),
+            onPressed: () => _showPointsInfoDialog(context),
+            tooltip: AppLocalizations.of(context)!.pointsInfoTooltip,
+          ),
+        ],
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -732,7 +739,11 @@ class NarrationScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildChoiceResultDialog(BuildContext context, WidgetRef ref, NarrationState state) {
+  Widget _buildChoiceResultDialog(
+    BuildContext context,
+    WidgetRef ref,
+    NarrationState state,
+  ) {
     return ChoiceResultDialog(
       pointsEarned: state.lastPointsEarned,
       totalPoints: state.totalPointsEarned,
@@ -740,6 +751,240 @@ class NarrationScreen extends ConsumerWidget {
       isStoryCompleted: state.isCompleted,
       onContinue: () => ref.read(narrationProvider.notifier).continueStory(),
       onFinish: () => ref.read(narrationProvider.notifier).finishStory(),
+    );
+  }
+
+  void _showPointsInfoDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              gradient: LinearGradient(
+                colors: [
+                  Colors.white,
+                  const Color(
+                    AppConstants.primaryColor,
+                  ).withValues(alpha: 0.02),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Header avec icône
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        const Color(
+                          AppConstants.primaryColor,
+                        ).withValues(alpha: 0.2),
+                        const Color(
+                          AppConstants.primaryColor,
+                        ).withValues(alpha: 0.1),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  child: const Icon(
+                    Icons.eco,
+                    size: 30,
+                    color: Color(AppConstants.primaryColor),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Titre
+                Text(
+                  AppLocalizations.of(context)!.pointsSystemTitle,
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 20),
+
+                // Explication des points
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: const Color(
+                        AppConstants.primaryColor,
+                      ).withValues(alpha: 0.2),
+                    ),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildPointRow(
+                        context,
+                        '30+',
+                        AppLocalizations.of(context)!.excellentChoice,
+                        AppLocalizations.of(context)!.excellentChoiceDesc,
+                        const Color(0xFF4CAF50),
+                      ),
+                      _buildPointRow(
+                        context,
+                        '20-29',
+                        AppLocalizations.of(context)!.goodChoiceTitle,
+                        AppLocalizations.of(context)!.goodChoiceDesc,
+                        const Color(0xFF8BC34A),
+                      ),
+                      _buildPointRow(
+                        context,
+                        '10-19',
+                        AppLocalizations.of(context)!.averageChoice,
+                        AppLocalizations.of(context)!.averageChoiceDesc,
+                        const Color(0xFFFFC107),
+                      ),
+                      _buildPointRow(
+                        context,
+                        '5-9',
+                        AppLocalizations.of(context)!.suboptimalChoice,
+                        AppLocalizations.of(context)!.suboptimalChoiceDesc,
+                        const Color(0xFFFF9800),
+                      ),
+                      _buildPointRow(
+                        context,
+                        '0-4',
+                        AppLocalizations.of(context)!.problematicChoice,
+                        AppLocalizations.of(context)!.problematicChoiceDesc,
+                        const Color(0xFFE91E63),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+
+                // Note explicative
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: const Color(
+                      AppConstants.accentColor,
+                    ).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline,
+                        size: 20,
+                        color: const Color(AppConstants.accentColor),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          AppLocalizations.of(context)!.aiEvaluationNote,
+                          style: TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey[700],
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                // Bouton fermer
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).pop(),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(AppConstants.primaryColor),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                    ),
+                    child: Text(
+                      AppLocalizations.of(context)!.understood,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPointRow(
+    BuildContext context,
+    String points,
+    String title,
+    String description,
+    Color color,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 50,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.2),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              points,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  description,
+                  style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -318,6 +318,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get filter => 'Filtrer';
 
   @override
+  String get ecoChamp => ' Éco-Champions';
+
+  @override
+  String get top3 => 'Top 3 Éco-Champions';
+
+  @override
   String get fullLeaderboard => 'Classement complet';
 
   @override
@@ -1152,4 +1158,47 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get confirmationRequired => 'Confirmation requise';
+
+  @override
+  String get pointsSystemTitle => 'Système de points écologiques';
+
+  @override
+  String get pointsInfoTooltip => 'Informations sur les points';
+
+  @override
+  String get excellentChoice => 'Excellent choix écologique';
+
+  @override
+  String get excellentChoiceDesc => 'Durable, innovant et impactant';
+
+  @override
+  String get goodChoiceTitle => 'Bon choix';
+
+  @override
+  String get goodChoiceDesc => 'Écologiquement responsable';
+
+  @override
+  String get averageChoice => 'Choix moyen';
+
+  @override
+  String get averageChoiceDesc => 'Quelques bénéfices environnementaux';
+
+  @override
+  String get suboptimalChoice => 'Choix peu optimal';
+
+  @override
+  String get suboptimalChoiceDesc => 'Impact limité';
+
+  @override
+  String get problematicChoice => 'Choix problématique';
+
+  @override
+  String get problematicChoiceDesc => 'Peu ou pas écologique';
+
+  @override
+  String get aiEvaluationNote =>
+      'L’IA évalue vos choix selon leur impact environnemental réel.';
+
+  @override
+  String get understood => 'Got it';
 }
