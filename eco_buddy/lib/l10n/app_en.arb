@@ -368,16 +368,6 @@
     "description": "Challenge completion example"
   },
 
-  "daysAgo": "{days} day ago",
-  "@daysAgo": {
-    "description": "Days ago format",
-    "placeholders": {
-      "days": {
-        "type": "int"
-      }
-    }
-  },
-
   "storyMagicalForestCompleted": "Story \"The Magical Forest\" completed",
   "@storyMagicalForestCompleted": {
     "description": "Story completion example"
@@ -678,7 +668,7 @@
   "goodChoice":"Good choice",
   "@goodChoice": {},
 
-  "viewResults":"Regarder les resultats",
+  "viewResults":"View results",
   "@viewResults": {},
 
   "continueStory":"Continue story",
@@ -687,15 +677,6 @@
   "storyCompleted":"Story completed",
   "@storyCompleted": {},
 
-  "pointsEarned": "+{points} points earned!",
-  "@pointsEarned": {
-    "description": "Points earned message",
-    "placeholders": {
-      "points": {
-        "type": "int"
-      }
-    }
-  },
 
   "totalPoints_": "Total: {points} points",
   "@totalPoints_": {
@@ -1998,5 +1979,94 @@
   "backToHistory": "Back to History",
   "@backToHistory": {
     "description": "Button text to go back to story history"
+  },
+ "ecoStoryStep1": "🌱 AI analyzing your ecological impact...",
+  "@ecoStoryStep1": {},
+  "ecoStoryStep2": " Generating your personalized adventure...",
+  "@ecoStoryStep2": {},
+  "ecoStoryStep3": " Finalizing your unique story...",
+  "@ecoStoryStep3": {},
+  "ecoChoiceStep1": " Processing your choice...",
+  "@ecoChoiceStep1": {},
+  "ecoChoiceStep2": " Calculating ecological consequences...",
+  "@ecoChoiceStep2": {},
+  "ecoChoiceStep3": " Preparing the continuation of the story...",
+  "@ecoChoiceStep3": {},
+   "today": "Today",
+  "@today": {},
+  "yesterday": "Yesterday",
+  "@yesterday": {},
+  "daysAgo": "{days} day{pluralS} ago",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {},
+      "pluralS": {}
+
+    }
+  },
+  "weeksAgo": "{weeks} week{pluralS} ago",
+  "@weeksAgo": {
+    "placeholders": {
+      "weeks": {},
+      "pluralS": {}
+    }
+  },
+  "monthsAgo": "{months} months ago",
+  "@monthsAgo": {
+    "placeholders": {
+      "months": {}
+    }
+  },
+   "completeProfileTitle": "Complete your profile",
+  "@completeProfileTitle": {},
+  "greetingUser": "Hello {username}! 👋",
+  "@greetingUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "profileDescription": "Tell us where you are to discover challenges and recycling centers near you!",
+  "@profileDescription": {},
+
+  "autoLocationTitle": "Automatic location",
+  "@autoLocationTitle": {},
+  "autoLocationDescription": "Use your GPS position to automatically fill in your information.",
+  "@autoLocationDescription": {},
+  "locationInProgress": "Locating...",
+  "@locationInProgress": {},
+  "locationSuccess": " Location retrieved successfully",
+  "@locationSuccess": {},
+  "locationError": " Geolocation error: {error}",
+  "@locationError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "manualEntryTitle": " Or enter manually",
+  "@manualEntryTitle": {},
+  "cityLabel": "City *",
+  "@cityLabel": {},
+  "cityValidator": "Please enter your city",
+  "@cityValidator": {},
+  "countryLabel": "Country *",
+  "@countryLabel": {},
+  "countryValidator": "Please enter your country",
+  "@countryValidator": {},
+  "regionLabel": "Region (optional)",
+  "@regionLabel": {},
+
+  "privacyTitle": "Privacy",
+  "@privacyTitle": {},
+  "privacyDetails": "• Your data is encrypted and secure\n• It is never shared with third parties\n• You can modify it at any time\n• Used only to improve your experience",
+  "completeProfileButton": "Complete my profile",
+  "@completeProfileButton": {},
+  "profileCompleted": " Profile completed successfully!",
+  "@profileCompleted": {},
+  "errorGeneric": " Error: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": {}
+    }
   }
 }

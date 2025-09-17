@@ -9,7 +9,7 @@ part of 'auth_response.dart';
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
   token: json['token'] as String,
   type: json['type'] as String? ?? 'Bearer',
-  expiresIn: (json['expiresIn'] as num?)?.toInt(),
+  expiresIn: _parseExpiresIn(json['expiresIn']),
   user: User.fromJson(json['user'] as Map<String, dynamic>),
   storyHistory: (json['storyHistory'] as List<dynamic>?)
       ?.map((e) => StoryHistoryModel.fromJson(e as Map<String, dynamic>))

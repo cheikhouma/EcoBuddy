@@ -239,11 +239,6 @@ class AppLocalizationsFr extends AppLocalizations {
   String get challengeRecyclingCompleted => 'Défi \"Recyclage\" terminé';
 
   @override
-  String daysAgo(int days) {
-    return 'Il y a $days jour';
-  }
-
-  @override
   String get storyMagicalForestCompleted =>
       'Histoire \"La Forêt Magique\" complétée';
 
@@ -426,18 +421,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get goodChoice => 'Bon choix';
 
   @override
-  String get viewResults => 'View results';
+  String get viewResults => 'Regarder les resultats';
 
   @override
-  String get continueStory => 'Continue story';
+  String get continueStory => 'Continue l\'histoire';
 
   @override
   String get storyCompleted => 'Histoire complète';
-
-  @override
-  String pointsEarned(Object points) {
-    return '+$points points gagnés !';
-  }
 
   @override
   String totalPoints_(int points) {
@@ -1228,6 +1218,11 @@ class AppLocalizationsFr extends AppLocalizations {
   String get storyDetails => 'Détails de l\'histoire';
 
   @override
+  String pointsEarned(Object points) {
+    return '+$points points gagnés !';
+  }
+
+  @override
   String get chapters => 'Chapitres';
 
   @override
@@ -1253,4 +1248,110 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get backToHistory => 'Retour à l\'historique';
+
+  @override
+  String get ecoStoryStep1 => '🌱 L\'IA analyse votre impact écologique...';
+
+  @override
+  String get ecoStoryStep2 =>
+      '🤖 Génération de votre aventure personnalisée...';
+
+  @override
+  String get ecoStoryStep3 => '✨ Finalisation de votre histoire unique...';
+
+  @override
+  String get ecoChoiceStep1 => '🔮 Traitement de votre choix...';
+
+  @override
+  String get ecoChoiceStep2 => '🌍 Calcul des conséquences écologiques...';
+
+  @override
+  String get ecoChoiceStep3 => '📖 Préparation de la suite de l\'histoire...';
+
+  @override
+  String get today => 'Aujourd\'hui';
+
+  @override
+  String get yesterday => 'Hier';
+
+  @override
+  String daysAgo(Object days, Object pluralS) {
+    return 'Il y a $days jours';
+  }
+
+  @override
+  String weeksAgo(Object weeks, Object pluralS) {
+    return 'Il y a $weeks semaine$pluralS';
+  }
+
+  @override
+  String monthsAgo(Object months) {
+    return 'Il y a $months mois';
+  }
+
+  @override
+  String get completeProfileTitle => 'Compléter votre profil';
+
+  @override
+  String greetingUser(Object username) {
+    return 'Salut $username ! 👋';
+  }
+
+  @override
+  String get profileDescription =>
+      'Dites-nous où vous êtes pour découvrir des défis et centres de recyclage près de chez vous !';
+
+  @override
+  String get autoLocationTitle => '📍 Localisation automatique';
+
+  @override
+  String get autoLocationDescription =>
+      'Utilisez votre position GPS pour remplir automatiquement vos informations.';
+
+  @override
+  String get locationInProgress => 'Localisation...';
+
+  @override
+  String get locationSuccess => '📍 Localisation récupérée avec succès';
+
+  @override
+  String locationError(Object error) {
+    return '❌ Erreur de géolocalisation: $error';
+  }
+
+  @override
+  String get manualEntryTitle => '✏️ Ou saisissez manuellement';
+
+  @override
+  String get cityLabel => 'Ville *';
+
+  @override
+  String get cityValidator => 'Veuillez saisir votre ville';
+
+  @override
+  String get countryLabel => 'Pays *';
+
+  @override
+  String get countryValidator => 'Veuillez saisir votre pays';
+
+  @override
+  String get regionLabel => 'Région (optionnel)';
+
+  @override
+  String get privacyTitle => 'Confidentialité';
+
+  @override
+  String get privacyDetails =>
+      '• Vos données sont chiffrées et sécurisées\n• Elles ne sont jamais partagées avec des tiers\n• Vous pouvez les modifier à tout moment\n• Utilisées uniquement pour améliorer votre expérience';
+
+  @override
+  String get completeProfileButton => 'Compléter mon profil';
+
+  @override
+  String get profileCompleted => '🎉 Profil complété avec succès !';
+
+  @override
+  String errorGeneric(Object error) {
+    return '❌ Erreur: $error';
+  }
 }

@@ -11,6 +11,7 @@ class ChoiceResultDialog extends StatefulWidget {
   final VoidCallback onContinue;
   final VoidCallback onFinish;
   final int previousTotalPoints;
+  final bool isFinishing; // 🚀 NOUVEAU PARAMÈTRE
 
   const ChoiceResultDialog({
     super.key,
@@ -20,6 +21,7 @@ class ChoiceResultDialog extends StatefulWidget {
     required this.isStoryCompleted,
     required this.onContinue,
     required this.onFinish,
+    this.isFinishing = false, // 🚀 DÉFAUT FAUX
   }) : previousTotalPoints = totalPoints - pointsEarned;
 
   @override
@@ -138,7 +140,10 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                   // Points display container
                   Positioned.fill(
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 16,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -161,7 +166,9 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                               if (_showPointAnimation)
                                 PointAnimationWidget(
                                   points: widget.pointsEarned,
-                                  pointColor: const Color(AppConstants.accentColor),
+                                  pointColor: const Color(
+                                    AppConstants.accentColor,
+                                  ),
                                   onComplete: () {
                                     setState(() {
                                       _showPointAnimation = false;
@@ -188,7 +195,11 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                               ),
                             ],
                           ),
-                          Container(width: 1, height: 40, color: Colors.grey[300]),
+                          Container(
+                            width: 1,
+                            height: 40,
+                            color: Colors.grey[300],
+                          ),
                           Column(
                             children: [
                               // 🚀 ANIMATION DU COMPTEUR TOTAL
@@ -238,7 +249,12 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: widget.onFinish,
+                  onPressed: widget.isFinishing
+                      ? null
+                      : () {
+                          print('🔴 Finish button pressed (story completed)');
+                          widget.onFinish();
+                        },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(AppConstants.primaryColor),
                     foregroundColor: Colors.white,
@@ -248,9 +264,20 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                     ),
                     elevation: 2,
                   ),
-                  icon: const Icon(Icons.celebration, size: 20),
+                  icon: widget.isFinishing
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Icon(Icons.celebration, size: 20),
                   label: Text(
-                    AppLocalizations.of(context)!.viewResults,
+                    widget.isFinishing
+                        ? AppLocalizations.of(context)!.save
+                        : AppLocalizations.of(context)!.viewResults,
                     style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
@@ -264,7 +291,14 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                 children: [
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed: widget.onFinish,
+                      onPressed: widget.isFinishing
+                          ? null
+                          : () {
+                              print(
+                                '🔴 Finish button pressed (story continues)',
+                              );
+                              widget.onFinish();
+                            },
                       style: OutlinedButton.styleFrom(
                         backgroundColor: Colors.redAccent.withValues(
                           alpha: 0.2,
@@ -276,9 +310,20 @@ class _ChoiceResultDialogState extends State<ChoiceResultDialog>
                         ),
                         side: const BorderSide(color: Colors.red, width: 1.5),
                       ),
-                      icon: const Icon(Icons.stop, size: 18, color: Colors.red),
+                      icon: widget.isFinishing
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.red,
+                              ),
+                            )
+                          : const Icon(Icons.stop, size: 18, color: Colors.red),
                       label: Text(
-                        AppLocalizations.of(context)!.finish,
+                        widget.isFinishing
+                            ? AppLocalizations.of(context)!.save
+                            : AppLocalizations.of(context)!.finish,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,

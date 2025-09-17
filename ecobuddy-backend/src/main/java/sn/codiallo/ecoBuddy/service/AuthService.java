@@ -67,7 +67,7 @@ public class AuthService {
 
         String token = jwtUtil.generateToken(user);
 
-        // Load user's narrative history
+        // Load a user's narrative history
         List<StoryHistory> storyHistories = storyHistoryRepository.findByUserOrderByCompletedAtDesc(user);
         List<StoryHistoryResponse> historyResponses = storyHistories.stream()
                 .map(StoryHistoryResponse::new)

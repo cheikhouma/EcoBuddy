@@ -246,79 +246,156 @@ class ScannerService {
   Map<String, dynamic> _getMockDataForLabel(String label) {
     final lowerLabel = label.toLowerCase();
 
+    // ✅ ENGLISH VERSION: Complete mock database
     if (lowerLabel.contains('bottle') || lowerLabel.contains('bouteille')) {
       return {
-        'name': 'Bouteille en plastique',
+        'name': 'Plastic Bottle',
         'carbonImpact': 2.5,
         'recyclable': true,
-        'alternative': 'Utilisez une gourde réutilisable en acier inoxydable',
-        'description':
-            'Les bouteilles en plastique PET mettent 450 ans à se décomposer.',
-        'ecoTips':
-            'Recyclez dans le bac jaune, Retirez le bouchon avant recyclage',
+        'alternative': 'Reusable stainless steel or glass water bottle',
+        'description': 'PET bottles take 450 years to decompose and release microplastics.',
+        'ecoTips': 'Recycle in recycling bin, Remove cap and label, Rinse before recycling',
         'pointsEarned': 5,
         'objectType': 'plastic',
-        'funFact':
-            '1 million de bouteilles plastique sont achetées chaque minute dans le monde.',
+        'funFact': '1 million plastic bottles are purchased every minute worldwide!',
       };
     } else if (lowerLabel.contains('can') || lowerLabel.contains('canette')) {
       return {
-        'name': 'Canette en aluminium',
+        'name': 'Aluminum Can',
         'carbonImpact': 1.8,
         'recyclable': true,
-        'alternative': 'Buvez dans des verres réutilisables',
-        'description':
-            'L\'aluminium est recyclable à l\'infini sans perte de qualité.',
-        'ecoTips':
-            'Recyclez dans le bac de tri, Videz complètement avant recyclage',
+        'alternative': 'Returnable glass bottle or water fountain',
+        'description': 'Aluminum is infinitely recyclable without quality loss.',
+        'ecoTips': 'Recycle in sorting bin, Empty completely, Crush to save space',
         'pointsEarned': 8,
         'objectType': 'metal',
-        'funFact':
-            'Recycler une canette économise 95% de l\'énergie nécessaire pour la fabriquer.',
+        'funFact': 'Recycling a can saves 95% of the energy needed to manufacture it.',
       };
     } else if (lowerLabel.contains('bag') || lowerLabel.contains('sac')) {
       return {
-        'name': 'Sac plastique',
+        'name': 'Plastic Bag',
         'carbonImpact': 0.6,
         'recyclable': false,
-        'alternative': 'Utilisez un sac en toile ou en coton bio',
-        'description': 'Les sacs plastique polluent massivement les océans.',
-        'ecoTips':
-            'Réutilisez plusieurs fois, Apportez en magasin pour recyclage spécialisé',
+        'alternative': 'Canvas bag, organic cotton or wicker basket',
+        'description': 'Plastic bags pollute oceans and kill marine wildlife.',
+        'ecoTips': 'Reuse multiple times, Bring to store for specialized recycling, Avoid single-use bags',
         'pointsEarned': 3,
         'objectType': 'plastic',
-        'funFact':
-            '8 millions de tonnes de plastique finissent dans les océans chaque année.',
+        'funFact': '500 billion plastic bags are used worldwide each year.',
+      };
+    } else if (lowerLabel.contains('cup') || lowerLabel.contains('tasse') || lowerLabel.contains('gobelet')) {
+      return {
+        'name': 'Disposable Cup',
+        'carbonImpact': 1.2,
+        'recyclable': false,
+        'alternative': 'Reusable ceramic mug or cup',
+        'description': 'Disposable cups have a plastic film that prevents recycling.',
+        'ecoTips': 'Use your own cup, Choose porcelain when dining in',
+        'pointsEarned': 4,
+        'objectType': 'mixed',
+        'funFact': 'A disposable cup takes 50 years to decompose.',
+      };
+    } else if (lowerLabel.contains('straw') || lowerLabel.contains('paille')) {
+      return {
+        'name': 'Plastic Straw',
+        'carbonImpact': 0.3,
+        'recyclable': false,
+        'alternative': 'Bamboo, stainless steel or glass straw',
+        'description': 'Plastic straws are a scourge for marine life.',
+        'ecoTips': 'Refuse disposable straws, Use a reusable straw',
+        'pointsEarned': 3,
+        'objectType': 'plastic',
+        'funFact': '500 million straws are used daily in the United States.',
+      };
+    } else if (lowerLabel.contains('phone') || lowerLabel.contains('téléphone') || lowerLabel.contains('mobile')) {
+      return {
+        'name': 'Mobile Phone',
+        'carbonImpact': 70.0,
+        'recyclable': true,
+        'alternative': 'Refurbished phone or repair',
+        'description': 'Rare metal extraction causes massive pollution.',
+        'ecoTips': 'Repair instead of replacing, Donate or sell if functional, Recycle at store',
+        'pointsEarned': 15,
+        'objectType': 'electronic',
+        'funFact': '1.4 billion phones are sold each year.',
+      };
+    } else if (lowerLabel.contains('battery') || lowerLabel.contains('pile')) {
+      return {
+        'name': 'Battery',
+        'carbonImpact': 5.0,
+        'recyclable': true,
+        'alternative': 'Rechargeable batteries or battery-free devices',
+        'description': 'Batteries contain toxic heavy metals.',
+        'ecoTips': 'Drop at collection point, Never throw in trash, Choose rechargeable',
+        'pointsEarned': 10,
+        'objectType': 'electronic',
+        'funFact': 'One discarded battery pollutes 1m³ of soil for 50 years.',
+      };
+    } else if (lowerLabel.contains('paper') || lowerLabel.contains('papier')) {
+      return {
+        'name': 'Paper',
+        'carbonImpact': 0.8,
+        'recyclable': true,
+        'alternative': 'Digital version or recycled paper',
+        'description': 'Paper can be recycled 5 to 7 times maximum.',
+        'ecoTips': 'Sort in recycling bin, Remove staples and plastic, Use both sides',
+        'pointsEarned': 2,
+        'objectType': 'paper',
+        'funFact': 'It takes 2-3 tons of wood to make 1 ton of paper.',
+      };
+    } else if (lowerLabel.contains('glass') || lowerLabel.contains('verre')) {
+      return {
+        'name': 'Glass Container',
+        'carbonImpact': 1.5,
+        'recyclable': true,
+        'alternative': 'Reusable containers or bulk buying',
+        'description': 'Glass is infinitely recyclable without quality loss.',
+        'ecoTips': 'Recycle in glass container, Remove caps and lids, Reuse as jars',
+        'pointsEarned': 6,
+        'objectType': 'glass',
+        'funFact': 'Recycling glass saves 30% energy compared to manufacturing.',
+      };
+    } else if (lowerLabel.contains('cigarette')) {
+      return {
+        'name': 'Cigarette Butt',
+        'carbonImpact': 0.2,
+        'recyclable': false,
+        'alternative': 'Quit smoking or electronic cigarette',
+        'description': 'Cigarette butts are the most widespread waste worldwide.',
+        'ecoTips': 'Throw in trash, Use portable ashtray, Never litter',
+        'pointsEarned': 1,
+        'objectType': 'toxic',
+        'funFact': '4.5 trillion cigarette butts are discarded worldwide each year.',
       };
     } else {
       return {
-        'name': 'Objet détecté',
+        'name': 'Detected Object',
         'carbonImpact': 1.0,
         'recyclable': true,
-        'alternative': 'Recherchez des alternatives durables',
-        'description': 'Objet avec impact environnemental variable.',
-        'ecoTips': 'Consultez les consignes de tri locales',
+        'alternative': 'Look for sustainable alternatives',
+        'description': 'Object with environmental impact to evaluate.',
+        'ecoTips': 'Check local sorting guidelines, Prioritize reuse',
         'pointsEarned': 2,
         'objectType': 'unknown',
-        'funFact': 'Chaque geste compte pour préserver notre planète !',
+        'funFact': 'Every action counts to preserve our planet!',
       };
     }
   }
 
-  /// Crée un résultat de fallback en cas d'erreur
+  /// Creates a fallback result in case of error
   ScanResultModel _createFallbackResult(String error) {
     return ScanResultModel(
       id: 'error_${DateTime.now().millisecondsSinceEpoch}',
-      name: 'Objet non identifié',
-      description: 'Impossible d\'analyser cet objet. Erreur: $error',
+      name: 'Unidentified Object',
+      description: 'Unable to analyze this object. Error: $error',
       ecoTips:
-          'Vérifiez les symboles de recyclage sur l\'objet, Consultez votre centre de tri local',
-      alternative: 'Privilégiez des alternatives durables',
+          'Check recycling symbols on object, Consult your local sorting center',
+      alternative: 'Choose sustainable alternatives',
       pointsEarned: 1,
       scanDate: DateTime.now(),
       confidence: 0.0,
       objectType: 'unknown',
-      funFact: 'Chaque geste compte pour préserver notre planète !',
+      funFact: 'Every action counts to preserve our planet!',
     );
   }
 
@@ -370,23 +447,39 @@ class ScannerService {
 
   /// Détermine si un objet détecté est écologiquement pertinent
   bool _isEcologicallyRelevant(String objectLabel) {
+    // ✅ SYNCHRONISÉ avec unified_scanner_screen.dart
     const ecoKeywords = [
-      'bottle',
-      'can',
-      'bag',
-      'container',
-      'cup',
-      'box',
-      'plastic',
-      'glass',
-      'paper',
-      'cardboard',
-      'packaging',
-      'wrapper',
-      'carton',
-      'trash',
-      'waste',
-      'recyclable',
+      // Contenants
+      'bottle', 'bouteille', 'can', 'canette', 'jar', 'bocal',
+      'container', 'conteneur', 'cup', 'tasse', 'glass', 'verre',
+      'mug', 'gobelet', 'bowl', 'bol',
+
+      // Emballages
+      'bag', 'sac', 'box', 'boîte', 'package', 'paquet',
+      'wrapper', 'emballage', 'carton', 'cardboard',
+      'packaging', 'pack', 'pouch', 'sachet',
+
+      // Matériaux
+      'plastic', 'plastique', 'paper', 'papier', 'metal', 'métal',
+      'aluminum', 'aluminium', 'steel', 'acier', 'wood', 'bois',
+      'fabric', 'tissu', 'leather', 'cuir', 'rubber', 'caoutchouc',
+
+      // Déchets et recyclage
+      'trash', 'déchet', 'waste', 'garbage', 'ordure',
+      'recyclable', 'compost', 'biodegradable',
+
+      // Objets spécifiques
+      'straw', 'paille', 'utensil', 'ustensile', 'plate', 'assiette',
+      'fork', 'fourchette', 'spoon', 'cuillère', 'knife', 'couteau',
+      'napkin', 'serviette', 'tissue', 'mouchoir',
+
+      // Électronique
+      'battery', 'pile', 'phone', 'téléphone', 'computer', 'ordinateur',
+      'cable', 'câble', 'charger', 'chargeur',
+
+      // Nouveaux objets courants
+      'cigarette', 'mask', 'masque', 'filter', 'filtre',
+      'pen', 'stylo', 'marker', 'marqueur', 'pencil', 'crayon',
     ];
 
     final lowerLabel = objectLabel.toLowerCase();

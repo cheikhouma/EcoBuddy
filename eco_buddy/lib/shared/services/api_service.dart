@@ -29,7 +29,12 @@ class ApiService {
     );
 
     if (response.statusCode == 200) {
-      return AuthResponse.fromJson(jsonDecode(response.body));
+      print('🔍 Raw response body: ${response.body}');
+      final jsonData = jsonDecode(response.body);
+      print('🔍 Parsed JSON: $jsonData');
+      print('🔍 User data: ${jsonData['user']}');
+
+      return AuthResponse.fromJson(jsonData);
     } else {
       throw Exception('Failed to login: ${response.body}');
     }

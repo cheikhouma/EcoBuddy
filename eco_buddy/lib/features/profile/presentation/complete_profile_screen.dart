@@ -1,3 +1,4 @@
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/constants/app_constants.dart';
@@ -52,8 +53,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       });
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('📍 Localisation récupérée avec succès'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.locationSuccess),
             backgroundColor: Color(AppConstants.primaryColor),
           ),
         );
@@ -62,7 +63,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Erreur de géolocalisation: $e'),
+            content: Text(AppLocalizations.of(context)!.locationError(e)),
             backgroundColor: const Color(AppConstants.errorColor),
           ),
         );
@@ -97,8 +98,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('🎉 Profil complété avec succès !'),
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.profileCompleted),
             backgroundColor: Color(AppConstants.primaryColor),
           ),
         );
@@ -110,7 +111,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Erreur: ${e.toString()}'),
+            content: Text(AppLocalizations.of(context)!.errorGeneric(e)),
             backgroundColor: const Color(AppConstants.errorColor),
           ),
         );
@@ -132,8 +133,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Compléter votre profil',
+        title: Text(
+          AppLocalizations.of(context)!.completeYourProfile,
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(AppConstants.primaryColor),
@@ -172,7 +173,9 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                     ),
                     const SizedBox(height: 16),
                     Text(
-                      'Salut ${user?.username ?? 'EcoBuddy'} ! 👋',
+                      AppLocalizations.of(
+                        context,
+                      )!.greetingUser(user!.username),
                       style: const TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -180,8 +183,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Dites-nous où vous êtes pour découvrir des défis et centres de recyclage près de chez vous !',
+                    Text(
+                      AppLocalizations.of(context)!.profileDescription,
                       style: TextStyle(fontSize: 16, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
@@ -195,8 +198,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      '📍 Localisation automatique',
+                    Text(
+                      AppLocalizations.of(context)!.autoLocationTitle,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -204,8 +207,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                       ),
                     ),
                     const SizedBox(height: 12),
-                    const Text(
-                      'Utilisez votre position GPS pour remplir automatiquement vos informations.',
+                    Text(
+                      AppLocalizations.of(context)!.autoLocationDescription,
                       style: TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 16),
@@ -225,8 +228,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                             : const Icon(Icons.my_location),
                         label: Text(
                           _isLoading
-                              ? 'Localisation...'
-                              : 'Utiliser ma position',
+                              ? AppLocalizations.of(context)!.locationInProgress
+                              : AppLocalizations.of(context)!.useMyPosition,
                         ),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(
@@ -243,8 +246,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
               const SizedBox(height: 24),
 
               // Ou saisie manuelle
-              const Text(
-                '✏️ Ou saisissez manuellement',
+              Text(
+                AppLocalizations.of(context)!.manualEntryTitle,
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -259,11 +262,11 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                   children: [
                     CustomTextField(
                       controller: _cityController,
-                      label: 'Ville *',
+                      label: AppLocalizations.of(context)!.cityLabel,
                       prefixIcon: Icons.location_city,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Veuillez saisir votre ville';
+                          return AppLocalizations.of(context)!.cityValidator;
                         }
                         return null;
                       },
@@ -271,11 +274,11 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _countryController,
-                      label: 'Pays *',
+                      label: AppLocalizations.of(context)!.countryLabel,
                       prefixIcon: Icons.flag,
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
-                          return 'Veuillez saisir votre pays';
+                          return AppLocalizations.of(context)!.countryValidator;
                         }
                         return null;
                       },
@@ -283,7 +286,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                     const SizedBox(height: 16),
                     CustomTextField(
                       controller: _regionController,
-                      label: 'Région (optionnel)',
+                      label: AppLocalizations.of(context)!.regionLabel,
                       prefixIcon: Icons.map,
                     ),
                   ],
@@ -302,7 +305,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                         Icon(Icons.privacy_tip, color: Colors.blue.shade600),
                         const SizedBox(width: 8),
                         Text(
-                          'Confidentialité',
+                          AppLocalizations.of(context)!.privacyTitle,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -312,11 +315,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                       ],
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      '• Vos données sont chiffrées et sécurisées\n'
-                      '• Elles ne sont jamais partagées avec des tiers\n'
-                      '• Vous pouvez les modifier à tout moment\n'
-                      '• Utilisées uniquement pour améliorer votre expérience',
+                    Text(
+                      AppLocalizations.of(context)!.privacyDetails,
                       style: TextStyle(fontSize: 14, color: Colors.black87),
                     ),
                   ],
@@ -338,14 +338,14 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: const BorderSide(color: Colors.grey),
                       ),
-                      child: const Text('Ignorer pour l\'instant'),
+                      child: Text(AppLocalizations.of(context)!.skipForNow),
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
                     flex: 2,
                     child: CustomButton(
-                      text: 'Compléter mon profil',
+                      text: AppLocalizations.of(context)!.completeMyProfile,
                       onPressed: _isLoading ? null : _completeProfile,
                       isLoading: _isLoading,
                     ),

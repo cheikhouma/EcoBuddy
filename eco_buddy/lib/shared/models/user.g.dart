@@ -7,12 +7,12 @@ part of 'user.dart';
 // **************************************************************************
 
 User _$UserFromJson(Map<String, dynamic> json) => User(
-  id: (json['id'] as num?)?.toInt(),
+  id: _parseId(json['id']),
   username: json['username'] as String,
   email: json['email'] as String,
   role: json['role'] as String,
-  points: (json['points'] as num).toInt(),
-  age: (json['age'] as num?)?.toInt(),
+  points: _parseInt(json['points']),
+  age: _parseNullableInt(json['age']),
   city: json['city'] as String?,
   country: json['country'] as String?,
   region: json['region'] as String?,

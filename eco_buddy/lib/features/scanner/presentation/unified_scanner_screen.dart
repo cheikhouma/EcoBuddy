@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:eco_buddy/core/constants/app_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
@@ -14,8 +15,8 @@ import '../domain/models/scan_result_model.dart';
 
 /// Modes de scanning unifiés
 enum ScanMode {
-  quick,    // Scan rapide avec cache
-  ar,       // AR avec ML Kit temps réel
+  quick, // Scan rapide avec cache
+  ar, // AR avec ML Kit temps réel
   detailed, // Analyse détaillée avec TensorFlow Lite
 }
 
@@ -23,18 +24,15 @@ enum ScanMode {
 class UnifiedScannerScreen extends ConsumerStatefulWidget {
   final ScanMode initialMode;
 
-  const UnifiedScannerScreen({
-    super.key,
-    this.initialMode = ScanMode.ar,
-  });
+  const UnifiedScannerScreen({super.key, this.initialMode = ScanMode.ar});
 
   @override
-  ConsumerState<UnifiedScannerScreen> createState() => _UnifiedScannerScreenState();
+  ConsumerState<UnifiedScannerScreen> createState() =>
+      _UnifiedScannerScreenState();
 }
 
 class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
-    with TickerProviderStateMixin {
-
+    with TickerProviderStateMixin, WidgetsBindingObserver {
   // Common state
   CameraController? _cameraController;
   List<CameraDescription> _cameras = [];
@@ -64,9 +62,31 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this); // ✅ Observer du cycle de vie
     _currentMode = widget.initialMode;
     _initializeAnimations();
     _initializeApp();
+  }
+
+  // ✅ NOUVEAU : Gestion du cycle de vie de l'app
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.hidden) {
+      print('🔴 App paused/inactive/hidden - Force stopping camera');
+      _forceStopAllCameraOperations();
+    } else if (state == AppLifecycleState.resumed) {
+      print('🟢 App resumed - Camera can be reinitialized if needed');
+    }
+  }
+
+  // ✅ NOUVEAU : Cleanup immédiat quand le widget est désactivé
+  @override
+  void deactivate() {
+    print('🔴 Scanner deactivate() - Immediate cleanup');
+    _forceStopAllCameraOperations();
+    super.deactivate();
   }
 
   void _initializeAnimations() {
@@ -85,13 +105,12 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
       end: 1.0,
     ).animate(_scanAnimationController);
 
-    _modeTransitionAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _modeTransitionController,
-      curve: Curves.easeInOut,
-    ));
+    _modeTransitionAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _modeTransitionController,
+        curve: Curves.easeInOut,
+      ),
+    );
   }
 
   /// Initialisation unifiée
@@ -117,7 +136,6 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
         _isInitialized = true;
         _status = _getStatusForMode();
       });
-
     } catch (e) {
       setState(() => _status = 'Erreur d\'initialisation: $e');
     }
@@ -136,11 +154,12 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
     await _cameraController!.initialize();
 
-    if (_currentMode == ScanMode.ar) {
-      _startImageStream();
-    } else if (_currentMode == ScanMode.detailed) {
-      _startClassificationTimer();
-    }
+    // ✅ DÉSACTIVÉ : Plus de scan automatique au démarrage
+    // if (_currentMode == ScanMode.ar) {
+    //   _startImageStream();
+    // } else if (_currentMode == ScanMode.detailed) {
+    //   _startClassificationTimer();
+    // }
   }
 
   Future<void> _initializeModeServices() async {
@@ -186,14 +205,19 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
     // Initialiser le nouveau mode
     await _initializeModeServices();
 
-    if (_currentMode == ScanMode.ar) {
-      _startImageStream();
-    } else if (_currentMode == ScanMode.detailed) {
-      _startClassificationTimer();
-    } else {
-      _stopImageStream();
-      _stopClassificationTimer();
-    }
+    // ✅ DÉSACTIVÉ : Plus de scan automatique lors du changement de mode
+    // if (_currentMode == ScanMode.ar) {
+    //   _startImageStream();
+    // } else if (_currentMode == ScanMode.detailed) {
+    //   _startClassificationTimer();
+    // } else {
+    //   _stopImageStream();
+    //   _stopClassificationTimer();
+    // }
+
+    // S'assurer que les scans automatiques sont arrêtés
+    _stopImageStream();
+    _stopClassificationTimer();
 
     // Terminer l'animation
     await _modeTransitionController.reverse();
@@ -212,17 +236,19 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   String _getStatusForMode() {
     switch (_currentMode) {
       case ScanMode.quick:
-        return 'Mode rapide - Appuyez pour scanner';
+        return 'Quick mode - Tap to scan';
       case ScanMode.ar:
-        return 'Mode AR - Pointez vers un objet';
+        return 'AR mode - Tap to scan with ML Kit';
       case ScanMode.detailed:
-        return 'Mode détaillé - Analyse approfondie';
+        return 'Detailed mode - Tap for TensorFlow analysis';
     }
   }
 
   // AR Mode methods
   void _startImageStream() {
-    if (_cameraController?.value.isInitialized != true || _currentMode != ScanMode.ar) return;
+    if (_cameraController?.value.isInitialized != true ||
+        _currentMode != ScanMode.ar)
+      return;
 
     _cameraController!.startImageStream((CameraImage image) {
       if (!_isProcessing &&
@@ -291,15 +317,121 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
     try {
       final XFile image = await _cameraController!.takePicture();
-      final classification = await TFLiteService.classifyFromBytes(await image.readAsBytes());
+      final classification = await TFLiteService.classifyFromBytes(
+        await image.readAsBytes(),
+      );
 
       setState(() => _latestClassification = classification);
 
       if (classification.isEcologicallyRelevant) {
-        await _processDetectedObject(classification.label, classification.confidence);
+        await _processDetectedObject(
+          classification.label,
+          classification.confidence,
+        );
       }
     } catch (e) {
       print('❌ Erreur classification détaillée: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+      }
+    }
+  }
+
+  // ✅ NOUVEAU : Scan manuel AR amélioré
+  Future<void> _scanAR() async {
+    if (_isProcessing || _imageLabeler == null) return;
+
+    setState(() => _isProcessing = true);
+
+    try {
+      final XFile image = await _cameraController!.takePicture();
+      final inputImage = InputImage.fromFilePath(image.path);
+      final labels = await _imageLabeler!.processImage(inputImage);
+
+      print('🔍 AR Scan - Labels détectés: ${labels.length}');
+      print('📋 TOUS LES LABELS ML KIT:');
+      labels.forEach((label) =>
+        print('  - ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%')
+      );
+
+      print('🌱 LABELS ÉCOLOGIQUES FILTRÉS:');
+      final ecoLabelsDebug = labels
+          .where((label) => _isEcologicallyRelevant(label.label))
+          .toList();
+      ecoLabelsDebug.forEach((label) =>
+        print('  ✅ ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%')
+      );
+
+      // ✅ FILTRAGE AMÉLIORÉ : Prendre le meilleur objet écologique
+      final ecoLabels = labels
+          .where((label) => _isEcologicallyRelevant(label.label))
+          .where((label) => label.confidence > 0.5) // Confidence minimum 50%
+          .toList();
+
+      // Trier par confidence décroissante
+      ecoLabels.sort((a, b) => b.confidence.compareTo(a.confidence));
+
+      if (ecoLabels.isNotEmpty) {
+        final bestLabel = ecoLabels.first;
+        print('✅ Meilleur objet détecté: ${bestLabel.label} (${(bestLabel.confidence * 100).toStringAsFixed(1)}%)');
+
+        // ✅ NOUVEAU : Mapper le label vers un objet plus spécifique
+        final mappedLabel = _mapLabelToSpecificObject(bestLabel.label, labels);
+        print('🎯 Label mappé: ${bestLabel.label} → ${mappedLabel}');
+
+        // ✅ DÉMO MODE : Afficher tous les détails avant traitement
+        _showDebugInfo(bestLabel.label, mappedLabel, bestLabel.confidence, labels);
+
+        // Traiter avec le label mappé
+        await _processDetectedObject(mappedLabel, bestLabel.confidence);
+      } else {
+        // Essayer avec tous les labels si aucun objet écologique
+        if (labels.isNotEmpty) {
+          final bestOverall = labels.first;
+          print('⚠️ Aucun objet écologique, test avec: ${bestOverall.label}');
+
+          // Mapper aussi les objets non-écologiques
+          final mappedLabel = _mapLabelToSpecificObject(bestOverall.label, labels);
+          await _processDetectedObject(mappedLabel, bestOverall.confidence);
+        } else {
+          _showErrorSnackBar('No object detected in image');
+        }
+      }
+    } catch (e) {
+      print('❌ AR scan error: $e');
+      _showErrorSnackBar('AR scan error: $e');
+    } finally {
+      if (mounted) {
+        setState(() => _isProcessing = false);
+      }
+    }
+  }
+
+  // ✅ NOUVEAU : Scan manuel détaillé
+  Future<void> _scanDetailed() async {
+    if (_isProcessing) return;
+
+    setState(() => _isProcessing = true);
+
+    try {
+      final XFile image = await _cameraController!.takePicture();
+      final classification = await TFLiteService.classifyFromBytes(
+        await image.readAsBytes(),
+      );
+
+      setState(() => _latestClassification = classification);
+
+      if (classification.isEcologicallyRelevant) {
+        await _processDetectedObject(
+          classification.label,
+          classification.confidence,
+        );
+      } else {
+        _showErrorSnackBar('Object not recognized or not ecological');
+      }
+    } catch (e) {
+      _showErrorSnackBar('Detailed scan error: $e');
     } finally {
       if (mounted) {
         setState(() => _isProcessing = false);
@@ -322,7 +454,7 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
         _showResultDialog(result);
       }
     } catch (e) {
-      _showErrorSnackBar('Erreur lors du scan: $e');
+      _showErrorSnackBar('Scan error: $e');
     } finally {
       if (mounted) {
         setState(() => _isProcessing = false);
@@ -334,13 +466,16 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   Future<void> _processDetectedObject(String label, double confidence) async {
     try {
       final scannerService = ScannerService();
-      final result = await scannerService.scanObjectWithMLKit(label, confidence);
+      final result = await scannerService.scanObjectWithMLKit(
+        label,
+        confidence,
+      );
 
       if (mounted) {
         _showResultDialog(result);
       }
     } catch (e) {
-      _showErrorSnackBar('Erreur lors du traitement: $e');
+      _showErrorSnackBar('Processing error: $e');
     }
   }
 
@@ -353,9 +488,9 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   void _showErrorSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   // Build methods
@@ -372,8 +507,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
-      title: Text('Scanner - ${_getModeDisplayName()}'),
-      backgroundColor: Colors.transparent,
+      title: Text(
+        'Scanner - ${_getModeDisplayName()}',
+        style: TextStyle(color: Colors.white),
+      ),
+      backgroundColor: Color(AppConstants.primaryColor),
       foregroundColor: Colors.white,
       elevation: 0,
       centerTitle: true,
@@ -388,7 +526,7 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                 children: [
                   const Icon(Icons.flash_on, size: 20),
                   const SizedBox(width: 8),
-                  Text(_currentMode == ScanMode.quick ? '✓ Rapide' : 'Rapide'),
+                  Text(_currentMode == ScanMode.quick ? '✓ Quick' : 'Quick'),
                 ],
               ),
             ),
@@ -398,7 +536,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                 children: [
                   const Icon(Icons.camera_alt, size: 20),
                   const SizedBox(width: 8),
-                  Text(_currentMode == ScanMode.ar ? '✓ AR Temps réel' : 'AR Temps réel'),
+                  Text(
+                    _currentMode == ScanMode.ar
+                        ? '✓ AR Real-time'
+                        : 'AR Real-time',
+                  ),
                 ],
               ),
             ),
@@ -408,7 +550,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                 children: [
                   const Icon(Icons.analytics, size: 20),
                   const SizedBox(width: 8),
-                  Text(_currentMode == ScanMode.detailed ? '✓ Détaillé' : 'Détaillé'),
+                  Text(
+                    _currentMode == ScanMode.detailed
+                        ? '✓ Detailed'
+                        : 'Detailed',
+                  ),
                 ],
               ),
             ),
@@ -459,19 +605,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
         ),
 
         // Status bar
-        Positioned(
-          top: 16,
-          left: 16,
-          right: 16,
-          child: _buildStatusBar(),
-        ),
+        Positioned(top: 16, left: 16, right: 16, child: _buildStatusBar()),
 
         // Mode indicator
-        Positioned(
-          bottom: 100,
-          left: 16,
-          child: _buildModeIndicator(),
-        ),
+        Positioned(bottom: 100, left: 16, child: _buildModeIndicator()),
       ],
     );
   }
@@ -523,7 +660,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                     ),
                     Text(
                       '${(_latestClassification!.confidence * 100).toStringAsFixed(1)}%',
-                      style: const TextStyle(color: Colors.white70, fontSize: 14),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 14,
+                      ),
                     ),
                   ],
                 ),
@@ -543,11 +683,7 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
           borderRadius: BorderRadius.circular(100),
         ),
         child: const Center(
-          child: Icon(
-            Icons.camera_alt,
-            color: Colors.green,
-            size: 48,
-          ),
+          child: Icon(Icons.camera_alt, color: Colors.green, size: 48),
         ),
       ),
     );
@@ -587,106 +723,420 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   Widget? _buildFloatingActionButton() {
-    if (_currentMode == ScanMode.quick) {
-      return FloatingActionButton(
-        onPressed: _isProcessing ? null : _quickScan,
-        backgroundColor: Colors.green,
-        child: _isProcessing
-            ? const CircularProgressIndicator(color: Colors.white)
-            : const Icon(Icons.camera_alt, color: Colors.white),
-      );
+    // ✅ BOUTON POUR TOUS LES MODES
+    return FloatingActionButton.extended(
+      onPressed: _isProcessing ? null : _getScanFunction(),
+      backgroundColor: _getModeColor(),
+      icon: _isProcessing
+          ? const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+            )
+          : Icon(_getModeIcon(), color: Colors.white),
+      label: Text(
+        _getScanButtonLabel(),
+        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+      ),
+    );
+  }
+
+  // ✅ FONCTIONS UTILITAIRES POUR LE BOUTON
+  VoidCallback _getScanFunction() {
+    switch (_currentMode) {
+      case ScanMode.quick:
+        return _quickScan;
+      case ScanMode.ar:
+        return _scanAR;
+      case ScanMode.detailed:
+        return _scanDetailed;
     }
-    return null;
+  }
+
+  IconData _getModeIcon() {
+    switch (_currentMode) {
+      case ScanMode.quick:
+        return Icons.flash_on;
+      case ScanMode.ar:
+        return Icons.camera_alt;
+      case ScanMode.detailed:
+        return Icons.analytics;
+    }
+  }
+
+  String _getScanButtonLabel() {
+    switch (_currentMode) {
+      case ScanMode.quick:
+        return 'Scan';
+      case ScanMode.ar:
+        return 'AR Scan';
+      case ScanMode.detailed:
+        return 'Analyze';
+    }
   }
 
   Widget _buildResultDialog(ScanResultModel result) {
     return Dialog(
       backgroundColor: Colors.transparent,
-      child: Card(
-        elevation: 8,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Header
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: _getImpactColor(result.environmentalImpact),
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(16),
-                ),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '🔍 ${result.name}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+      child: Container(
+        constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
+        child: Card(
+          elevation: 12,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ✅ HEADER ENRICHI
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        _getImpactColor(result.environmentalImpact),
+                        _getImpactColor(result.environmentalImpact).withValues(alpha: 0.8),
+                      ],
                     ),
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Mode: ${_getModeDisplayName()}',
-                    style: const TextStyle(color: Colors.white70, fontSize: 14),
-                  ),
-                ],
-              ),
-            ),
-
-            // Content
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (result.description != null)
-                    Text(result.description!),
-                  const SizedBox(height: 12),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Points: +${result.pointsEarned}'),
-                      if (result.carbonImpact != null)
-                        Text('${result.carbonImpact!.toStringAsFixed(1)} kg CO₂'),
+                      Row(
+                        children: [
+                          Text(
+                            _getObjectIcon(result.objectType ?? 'unknown'),
+                            style: const TextStyle(fontSize: 24),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              result.name,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Scanned with ${_getModeDisplayName()} • ${(result.confidence * 100).toStringAsFixed(1)}% confidence',
+                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                      ),
                     ],
                   ),
-                ],
-              ),
-            ),
+                ),
 
-            // Actions
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  TextButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    child: const Text('Fermer'),
+                // ✅ STATS SECTION
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: _buildStatCard(
+                          'Points',
+                          '+${result.pointsEarned}',
+                          Icons.stars,
+                          Colors.amber,
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Carbon Impact',
+                          result.carbonImpact != null
+                              ? '${result.carbonImpact!.toStringAsFixed(1)} kg'
+                              : 'Unknown',
+                          Icons.co2,
+                          _getImpactColor(result.environmentalImpact),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: _buildStatCard(
+                          'Recyclable',
+                          result.recyclable == true ? 'Yes' : 'No',
+                          result.recyclable == true ? Icons.recycling : Icons.delete,
+                          result.recyclable == true ? Colors.green : Colors.red,
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+
+                // ✅ DESCRIPTION SECTION
+                if (result.description != null)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 18, color: Colors.blue),
+                            SizedBox(width: 8),
+                            Text(
+                              'Environmental Impact',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          result.description!,
+                          style: const TextStyle(fontSize: 14, height: 1.4),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
+                // ✅ ALTERNATIVES SECTION
+                if (result.alternative != null)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.eco, size: 18, color: Colors.green),
+                            SizedBox(width: 8),
+                            Text(
+                              'Eco-Friendly Alternative',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.green,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          result.alternative!,
+                          style: const TextStyle(fontSize: 14, height: 1.4),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
+                // ✅ ECO TIPS SECTION
+                if (result.ecoTips != null)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.lightbulb_outline, size: 18, color: Colors.orange),
+                            SizedBox(width: 8),
+                            Text(
+                              'Recycling Tips',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.orange,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ...result.ecoTips!.split(',').map((tip) => Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text('• ', style: TextStyle(color: Colors.orange)),
+                                  Expanded(
+                                    child: Text(
+                                      tip.trim(),
+                                      style: const TextStyle(fontSize: 14, height: 1.4),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            )),
+                      ],
+                    ),
+                  ),
+
+                const SizedBox(height: 16),
+
+                // ✅ FUN FACT SECTION
+                if (result.funFact != null)
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.shade50,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Row(
+                          children: [
+                            Icon(Icons.psychology, size: 18, color: Colors.purple),
+                            SizedBox(width: 8),
+                            Text(
+                              'Did You Know?',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 16,
+                                color: Colors.purple,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          result.funFact!,
+                          style: const TextStyle(
+                            fontSize: 14,
+                            height: 1.4,
+                            fontStyle: FontStyle.italic,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                // ✅ ACTIONS
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => Navigator.of(context).pop(),
+                          icon: const Icon(Icons.close),
+                          label: const Text('Close'),
+                          style: OutlinedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            // TODO: Save to history or share
+                            Navigator.of(context).pop();
+                          },
+                          icon: const Icon(Icons.save, color: Colors.white),
+                          label: const Text('Save', style: TextStyle(color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: _getImpactColor(result.environmentalImpact),
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  // ✅ HELPER METHODS FOR ENRICHED DIALOG
+  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        children: [
+          Icon(icon, color: color, size: 20),
+          const SizedBox(height: 4),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.grey.shade600,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _getObjectIcon(String objectType) {
+    switch (objectType.toLowerCase()) {
+      case 'plastic':
+        return '♻️';
+      case 'metal':
+        return '🥤';
+      case 'glass':
+        return '🍶';
+      case 'paper':
+        return '📄';
+      case 'electronic':
+        return '📱';
+      case 'toxic':
+        return '🚬';
+      case 'mixed':
+        return '☕';
+      default:
+        return '📦';
+    }
   }
 
   // Utility methods
   String _getModeDisplayName() {
     switch (_currentMode) {
       case ScanMode.quick:
-        return 'Rapide';
+        return 'Quick';
       case ScanMode.ar:
         return 'AR';
       case ScanMode.detailed:
-        return 'Détaillé';
+        return 'Detailed';
     }
   }
 
@@ -713,14 +1163,145 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   bool _isEcologicallyRelevant(String objectLabel) {
+    // ✅ AMÉLIORÉ : Plus de mots-clés écologiques pour une meilleure détection
     const ecoKeywords = [
-      'bottle', 'can', 'bag', 'container', 'cup', 'box',
-      'plastic', 'glass', 'paper', 'cardboard', 'packaging',
-      'wrapper', 'carton', 'trash', 'waste',
+      // Contenants
+      'bottle', 'bouteille', 'can', 'canette', 'jar', 'bocal',
+      'container', 'conteneur', 'cup', 'tasse', 'glass', 'verre',
+      'mug', 'gobelet', 'bowl', 'bol',
+
+      // Emballages
+      'bag', 'sac', 'box', 'boîte', 'package', 'paquet',
+      'wrapper', 'emballage', 'carton', 'cardboard',
+      'packaging', 'pack', 'pouch', 'sachet',
+
+      // Matériaux
+      'plastic', 'plastique', 'paper', 'papier', 'metal', 'métal',
+      'aluminum', 'aluminium', 'steel', 'acier', 'wood', 'bois',
+      'fabric', 'tissu', 'leather', 'cuir', 'rubber', 'caoutchouc',
+
+      // Déchets et recyclage
+      'trash', 'déchet', 'waste', 'garbage', 'ordure',
+      'recyclable', 'compost', 'biodegradable',
+
+      // Objets spécifiques
+      'straw', 'paille', 'utensil', 'ustensile', 'plate', 'assiette',
+      'fork', 'fourchette', 'spoon', 'cuillère', 'knife', 'couteau',
+      'napkin', 'serviette', 'tissue', 'mouchoir',
+
+      // Électronique
+      'battery', 'pile', 'phone', 'téléphone', 'computer', 'ordinateur',
+      'cable', 'câble', 'charger', 'chargeur',
+
+      // Nouveaux objets courants
+      'cigarette', 'mask', 'masque', 'filter', 'filtre',
+      'pen', 'stylo', 'marker', 'marqueur', 'pencil', 'crayon',
     ];
 
     final lowerLabel = objectLabel.toLowerCase();
     return ecoKeywords.any((keyword) => lowerLabel.contains(keyword));
+  }
+
+  // ✅ NOUVEAU : Mapper les labels ML Kit vers des objets spécifiques
+  String _mapLabelToSpecificObject(String mlKitLabel, List<ImageLabel> allLabels) {
+    final lowerLabel = mlKitLabel.toLowerCase();
+    final allLabelsText = allLabels.map((l) => l.label.toLowerCase()).toList();
+
+    print('🔍 Mapping ${mlKitLabel} avec contexte: ${allLabelsText.take(5).join(", ")}...');
+
+    // 🍶 BOUTEILLES - Analyser le contexte pour déterminer le type
+    if (lowerLabel.contains('bottle')) {
+      // Chercher des indices sur le matériau dans les autres labels
+      if (allLabelsText.any((l) => l.contains('plastic') || l.contains('water'))) {
+        return 'bottle'; // Bouteille plastique (par défaut)
+      } else if (allLabelsText.any((l) => l.contains('glass') || l.contains('wine') || l.contains('beer'))) {
+        return 'glass'; // Bouteille en verre
+      }
+      return 'bottle'; // Par défaut
+    }
+
+    // 🥤 CANETTES vs BOUTEILLES
+    if (lowerLabel.contains('can')) {
+      if (allLabelsText.any((l) => l.contains('aluminum') || l.contains('drink') || l.contains('soda'))) {
+        return 'can'; // Canette métallique
+      }
+      return 'can';
+    }
+
+    // 🛍️ SACS - Différencier plastique vs tissu
+    if (lowerLabel.contains('bag')) {
+      if (allLabelsText.any((l) => l.contains('plastic') || l.contains('shopping'))) {
+        return 'bag'; // Sac plastique
+      } else if (allLabelsText.any((l) => l.contains('fabric') || l.contains('cloth') || l.contains('canvas'))) {
+        return 'fabric'; // Sac en tissu
+      }
+      return 'bag'; // Par défaut plastique
+    }
+
+    // ☕ TASSES ET GOBELETS
+    if (lowerLabel.contains('cup') || lowerLabel.contains('mug')) {
+      if (allLabelsText.any((l) => l.contains('paper') || l.contains('disposable'))) {
+        return 'cup'; // Gobelet jetable
+      } else if (allLabelsText.any((l) => l.contains('ceramic') || l.contains('porcelain'))) {
+        return 'glass'; // Tasse réutilisable
+      }
+      return 'cup'; // Par défaut jetable
+    }
+
+    // 📱 ÉLECTRONIQUE
+    if (lowerLabel.contains('phone') || lowerLabel.contains('mobile')) {
+      return 'phone';
+    }
+
+    if (lowerLabel.contains('battery')) {
+      return 'battery';
+    }
+
+    // 🚬 CIGARETTES
+    if (lowerLabel.contains('cigarette')) {
+      return 'cigarette';
+    }
+
+    // 📄 PAPIER
+    if (lowerLabel.contains('paper') || lowerLabel.contains('document')) {
+      return 'paper';
+    }
+
+    // 🔧 OBJETS GÉNÉRIQUES - Essayer de deviner
+    if (lowerLabel.contains('container')) {
+      // Analyser le contexte pour deviner le type de contenant
+      if (allLabelsText.any((l) => l.contains('plastic'))) {
+        return 'bottle'; // Probablement une bouteille
+      } else if (allLabelsText.any((l) => l.contains('metal'))) {
+        return 'can'; // Probablement une canette
+      }
+      return 'container'; // Contenant générique
+    }
+
+    // Si aucun mapping spécifique, retourner le label original
+    return mlKitLabel;
+  }
+
+  // ✅ NOUVEAU : Afficher les infos de debug pour comprendre les erreurs
+  void _showDebugInfo(String originalLabel, String mappedLabel, double confidence, List<ImageLabel> allLabels) {
+    // En mode debug, afficher une SnackBar avec les détails
+    final debugMessage = '''
+🔍 ML Kit Original: $originalLabel (${(confidence * 100).toStringAsFixed(1)}%)
+🎯 Mappé vers: $mappedLabel
+📋 Contexte: ${allLabels.take(3).map((l) => l.label).join(", ")}
+''';
+
+    print('🐛 DEBUG INFO:');
+    print(debugMessage);
+
+    // Optionnel : Afficher aussi dans l'UI pour debug
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(debugMessage),
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.blue.withValues(alpha: 0.8),
+      ),
+    );
   }
 
   InputImage? _createInputImageFromCameraImage(CameraImage cameraImage) {
@@ -757,11 +1338,46 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   @override
   void dispose() {
+    print('🔴 Scanner dispose() - Cleaning up all resources');
+    WidgetsBinding.instance.removeObserver(this);
+
+    // ✅ CLEANUP ULTRA-AGRESSIF
+    _forceStopAllCameraOperations();
     _cleanupCurrentMode();
+
+    // Forcer la fermeture immédiate de la caméra
     _cameraController?.dispose();
+    _cameraController = null;
+
     _scanAnimationController.dispose();
     _modeTransitionController.dispose();
+
+    print('✅ Scanner cleanup completed');
     super.dispose();
+  }
+
+  // ✅ NOUVEAU : Arrêt forcé de toutes les opérations caméra
+  void _forceStopAllCameraOperations() {
+    print('🛑 Force stopping ALL camera operations');
+
+    // Arrêter immédiatement tout stream caméra
+    try {
+      _cameraController?.stopImageStream();
+    } catch (e) {
+      print('⚠️ Error stopping image stream: $e');
+    }
+
+    // Arrêter tous les timers
+    _stopClassificationTimer();
+
+    // Vider les détections en cours
+    _detectedLabels.clear();
+    _lastProcessedLabel = null;
+    _latestClassification = null;
+
+    // Marquer comme non initialisé
+    _isInitialized = false;
+    _isProcessing = false;
   }
 }
 
@@ -828,7 +1444,11 @@ class ScanOverlayPainter extends CustomPainter {
         final targetY = centerY + (scanSize / 3) * 0.8 * sin(angle);
 
         canvas.drawCircle(Offset(targetX, targetY), 8, targetPaint);
-        canvas.drawCircle(Offset(targetX, targetY), 4, Paint()..color = Colors.green);
+        canvas.drawCircle(
+          Offset(targetX, targetY),
+          4,
+          Paint()..color = Colors.green,
+        );
       }
     }
   }

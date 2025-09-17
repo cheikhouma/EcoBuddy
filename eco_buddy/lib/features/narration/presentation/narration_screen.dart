@@ -350,7 +350,7 @@ class NarrationScreen extends ConsumerWidget {
                       Icon(Icons.schedule, size: 12, color: Colors.grey[500]),
                       const SizedBox(width: 4),
                       Text(
-                        story.formattedDate,
+                        story.formattedDate(context),
                         style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
@@ -393,22 +393,6 @@ class NarrationScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                ),
-                const SizedBox(height: 8),
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      story.status.icon,
-                      style: const TextStyle(fontSize: 12),
-                    ),
-                    const SizedBox(width: 4),
-                    Icon(
-                      Icons.arrow_forward_ios,
-                      size: 12,
-                      color: Colors.grey[400],
-                    ),
-                  ],
                 ),
               ],
             ),
@@ -504,19 +488,26 @@ class NarrationScreen extends ConsumerWidget {
       margin: const EdgeInsets.only(bottom: 12),
       child: PulsatingChoiceButton(
         isEnabled: !isProcessing,
-        onTap: isProcessing ? null : () { // 🚀 DÉSACTIVER SI EN COURS
-          HapticFeedback.lightImpact();
-          ref.read(narrationProvider.notifier).makeChoice(index);
-        },
+        onTap: isProcessing
+            ? null
+            : () {
+                // 🚀 DÉSACTIVER SI EN COURS
+                HapticFeedback.lightImpact();
+                ref.read(narrationProvider.notifier).makeChoice(index);
+              },
         child: Container(
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: isProcessing ? Colors.grey[100] : Colors.white, // 🚀 COULEUR ADAPTÉE
+            color: isProcessing
+                ? Colors.grey[100]
+                : Colors.white, // 🚀 COULEUR ADAPTÉE
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: isProcessing
-                ? Colors.grey.withValues(alpha: 0.3) // 🚀 BORDURE GRISÉE
-                : const Color(AppConstants.primaryColor).withValues(alpha: 0.2),
+                  ? Colors.grey.withValues(alpha: 0.3) // 🚀 BORDURE GRISÉE
+                  : const Color(
+                      AppConstants.primaryColor,
+                    ).withValues(alpha: 0.2),
               width: 1,
             ),
           ),
@@ -527,30 +518,33 @@ class NarrationScreen extends ConsumerWidget {
                 height: 32,
                 decoration: BoxDecoration(
                   color: isProcessing
-                    ? Colors.grey.withValues(alpha: 0.1) // 🚀 COULEUR GRISÉE
-                    : const Color(AppConstants.primaryColor).withValues(alpha: 0.1),
+                      ? Colors.grey.withValues(alpha: 0.1) // 🚀 COULEUR GRISÉE
+                      : const Color(
+                          AppConstants.primaryColor,
+                        ).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Center(
                   child: isProcessing
-                    ? SizedBox( // 🚀 SPINNER DE CHARGEMENT
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.grey[600],
+                      ? SizedBox(
+                          // 🚀 SPINNER DE CHARGEMENT
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.grey[600],
+                          ),
+                        )
+                      : Text(
+                          String.fromCharCode(65 + index), // A, B, C
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: isProcessing
+                                ? Colors.grey[600] // 🚀 TEXTE GRISÉ
+                                : const Color(AppConstants.primaryColor),
+                          ),
                         ),
-                      )
-                    : Text(
-                        String.fromCharCode(65 + index), // A, B, C
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: isProcessing
-                            ? Colors.grey[600] // 🚀 TEXTE GRISÉ
-                            : const Color(AppConstants.primaryColor),
-                        ),
-                      ),
                 ),
               ),
               const SizedBox(width: 12),
@@ -559,7 +553,9 @@ class NarrationScreen extends ConsumerWidget {
                   choice,
                   style: TextStyle(
                     fontSize: 16,
-                    color: isProcessing ? Colors.grey[600] : Colors.black87, // 🚀 TEXTE GRISÉ
+                    color: isProcessing
+                        ? Colors.grey[600]
+                        : Colors.black87, // 🚀 TEXTE GRISÉ
                     fontWeight: FontWeight.w500,
                   ),
                 ),
@@ -740,6 +736,7 @@ class NarrationScreen extends ConsumerWidget {
       isStoryCompleted: state.isCompleted,
       onContinue: () => ref.read(narrationProvider.notifier).continueStory(),
       onFinish: () => ref.read(narrationProvider.notifier).finishStory(),
+      isFinishing: state.isFinishing, // 🚀 NOUVEAU PARAMÈTRE
     );
   }
 
@@ -987,9 +984,7 @@ class NarrationScreen extends ConsumerWidget {
 
         // 🚀 NOUVEAU LOADING ANIMÉ AVEC MESSAGES CONTEXTUELS
         return Center(
-          child: NarrationLoadingWidget(
-            isGeneratingStory: isNewStory,
-          ),
+          child: NarrationLoadingWidget(isGeneratingStory: isNewStory),
         );
       },
     );

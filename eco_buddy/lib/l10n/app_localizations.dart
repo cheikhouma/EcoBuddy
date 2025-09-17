@@ -518,12 +518,6 @@ abstract class AppLocalizations {
   /// **'\"Recycling\" challenge completed'**
   String get challengeRecyclingCompleted;
 
-  /// Days ago format
-  ///
-  /// In en, this message translates to:
-  /// **'{days} day ago'**
-  String daysAgo(int days);
-
   /// Story completion example
   ///
   /// In en, this message translates to:
@@ -863,7 +857,7 @@ abstract class AppLocalizations {
   /// No description provided for @viewResults.
   ///
   /// In en, this message translates to:
-  /// **'Regarder les resultats'**
+  /// **'View results'**
   String get viewResults;
 
   /// No description provided for @continueStory.
@@ -877,12 +871,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Story completed'**
   String get storyCompleted;
-
-  /// Label for points earned in a story
-  ///
-  /// In en, this message translates to:
-  /// **'Points Earned'**
-  String pointsEarned(Object points);
 
   /// Total points message
   ///
@@ -2324,6 +2312,12 @@ abstract class AppLocalizations {
   /// **'Story Details'**
   String get storyDetails;
 
+  /// Label for points earned in a story
+  ///
+  /// In en, this message translates to:
+  /// **'Points Earned'**
+  String pointsEarned(Object points);
+
   /// Label for number of chapters
   ///
   /// In en, this message translates to:
@@ -2377,6 +2371,186 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to History'**
   String get backToHistory;
+
+  /// No description provided for @ecoStoryStep1.
+  ///
+  /// In en, this message translates to:
+  /// **'🌱 AI analyzing your ecological impact...'**
+  String get ecoStoryStep1;
+
+  /// No description provided for @ecoStoryStep2.
+  ///
+  /// In en, this message translates to:
+  /// **' Generating your personalized adventure...'**
+  String get ecoStoryStep2;
+
+  /// No description provided for @ecoStoryStep3.
+  ///
+  /// In en, this message translates to:
+  /// **' Finalizing your unique story...'**
+  String get ecoStoryStep3;
+
+  /// No description provided for @ecoChoiceStep1.
+  ///
+  /// In en, this message translates to:
+  /// **' Processing your choice...'**
+  String get ecoChoiceStep1;
+
+  /// No description provided for @ecoChoiceStep2.
+  ///
+  /// In en, this message translates to:
+  /// **' Calculating ecological consequences...'**
+  String get ecoChoiceStep2;
+
+  /// No description provided for @ecoChoiceStep3.
+  ///
+  /// In en, this message translates to:
+  /// **' Preparing the continuation of the story...'**
+  String get ecoChoiceStep3;
+
+  /// No description provided for @today.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
+
+  /// No description provided for @yesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get yesterday;
+
+  /// No description provided for @daysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{days} day{pluralS} ago'**
+  String daysAgo(Object days, Object pluralS);
+
+  /// No description provided for @weeksAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{weeks} week{pluralS} ago'**
+  String weeksAgo(Object weeks, Object pluralS);
+
+  /// No description provided for @monthsAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'{months} months ago'**
+  String monthsAgo(Object months);
+
+  /// No description provided for @completeProfileTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete your profile'**
+  String get completeProfileTitle;
+
+  /// No description provided for @greetingUser.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello {username}! 👋'**
+  String greetingUser(Object username);
+
+  /// No description provided for @profileDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Tell us where you are to discover challenges and recycling centers near you!'**
+  String get profileDescription;
+
+  /// No description provided for @autoLocationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic location'**
+  String get autoLocationTitle;
+
+  /// No description provided for @autoLocationDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your GPS position to automatically fill in your information.'**
+  String get autoLocationDescription;
+
+  /// No description provided for @locationInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Locating...'**
+  String get locationInProgress;
+
+  /// No description provided for @locationSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **' Location retrieved successfully'**
+  String get locationSuccess;
+
+  /// No description provided for @locationError.
+  ///
+  /// In en, this message translates to:
+  /// **' Geolocation error: {error}'**
+  String locationError(Object error);
+
+  /// No description provided for @manualEntryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **' Or enter manually'**
+  String get manualEntryTitle;
+
+  /// No description provided for @cityLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'City *'**
+  String get cityLabel;
+
+  /// No description provided for @cityValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your city'**
+  String get cityValidator;
+
+  /// No description provided for @countryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Country *'**
+  String get countryLabel;
+
+  /// No description provided for @countryValidator.
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your country'**
+  String get countryValidator;
+
+  /// No description provided for @regionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Region (optional)'**
+  String get regionLabel;
+
+  /// No description provided for @privacyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get privacyTitle;
+
+  /// No description provided for @privacyDetails.
+  ///
+  /// In en, this message translates to:
+  /// **'• Your data is encrypted and secure\n• It is never shared with third parties\n• You can modify it at any time\n• Used only to improve your experience'**
+  String get privacyDetails;
+
+  /// No description provided for @completeProfileButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Complete my profile'**
+  String get completeProfileButton;
+
+  /// No description provided for @profileCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **' Profile completed successfully!'**
+  String get profileCompleted;
+
+  /// No description provided for @errorGeneric.
+  ///
+  /// In en, this message translates to:
+  /// **' Error: {error}'**
+  String errorGeneric(Object error);
 }
 
 class _AppLocalizationsDelegate

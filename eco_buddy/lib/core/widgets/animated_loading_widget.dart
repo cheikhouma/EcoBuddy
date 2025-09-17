@@ -1,3 +1,4 @@
+import 'package:eco_buddy/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
@@ -91,7 +92,8 @@ class _AnimatedLoadingWidgetState extends State<AnimatedLoadingWidget>
         setState(() {
           // Ajouter un peu de randomness pour réalisme
           final random = Random();
-          final progress = _progressAnimation.value + (random.nextDouble() * 0.02);
+          final progress =
+              _progressAnimation.value + (random.nextDouble() * 0.02);
           if (progress < 0.95) {
             _progressController.value = progress;
           }
@@ -144,11 +146,7 @@ class _AnimatedLoadingWidgetState extends State<AnimatedLoadingWidget>
                       builder: (context, child) {
                         return Transform.rotate(
                           angle: _rotationAnimation.value,
-                          child: Icon(
-                            Icons.eco,
-                            size: 40,
-                            color: color,
-                          ),
+                          child: Icon(Icons.eco, size: 40, color: color),
                         );
                       },
                     ),
@@ -179,10 +177,7 @@ class _AnimatedLoadingWidgetState extends State<AnimatedLoadingWidget>
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(3),
                         gradient: LinearGradient(
-                          colors: [
-                            color,
-                            color.withValues(alpha: 0.8),
-                          ],
+                          colors: [color, color.withValues(alpha: 0.8)],
                         ),
                       ),
                     ),
@@ -230,10 +225,7 @@ class _AnimatedLoadingWidgetState extends State<AnimatedLoadingWidget>
           if (widget.estimatedTime != null)
             Text(
               widget.estimatedTime!,
-              style: TextStyle(
-                fontSize: 12,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
             ),
         ],
       ),
@@ -245,23 +237,20 @@ class _AnimatedLoadingWidgetState extends State<AnimatedLoadingWidget>
 class NarrationLoadingWidget extends StatelessWidget {
   final bool isGeneratingStory;
 
-  const NarrationLoadingWidget({
-    super.key,
-    this.isGeneratingStory = false,
-  });
+  const NarrationLoadingWidget({super.key, this.isGeneratingStory = false});
 
   @override
   Widget build(BuildContext context) {
     final messages = isGeneratingStory
         ? [
-            "🌱 L'IA analyse votre impact écologique...",
-            "🤖 Génération de votre aventure personnalisée...",
-            "✨ Finalisation de votre histoire unique...",
+            AppLocalizations.of(context)!.ecoStoryStep1,
+            AppLocalizations.of(context)!.ecoStoryStep2,
+            AppLocalizations.of(context)!.ecoStoryStep3,
           ]
         : [
-            "🔮 Traitement de votre choix...",
-            "🌍 Calcul des conséquences écologiques...",
-            "📖 Préparation de la suite de l'histoire...",
+            AppLocalizations.of(context)!.ecoChoiceStep1,
+            AppLocalizations.of(context)!.ecoChoiceStep2,
+            AppLocalizations.of(context)!.ecoChoiceStep3,
           ];
 
     return AnimatedLoadingWidget(

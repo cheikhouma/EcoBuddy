@@ -1040,7 +1040,7 @@ class LeaderboardScreen extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 8),
 
                         // User info with improved typography
                         Expanded(
@@ -1067,7 +1067,7 @@ class LeaderboardScreen extends ConsumerWidget {
                                   if (isCurrentUser)
                                     Container(
                                       padding: const EdgeInsets.symmetric(
-                                        horizontal: 8,
+                                        horizontal: 6,
                                         vertical: 2,
                                       ),
                                       decoration: BoxDecoration(
@@ -1080,7 +1080,7 @@ class LeaderboardScreen extends ConsumerWidget {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: const Text(
-                                        'Vous',
+                                        'You',
                                         style: TextStyle(
                                           fontSize: 10,
                                           fontWeight: FontWeight.bold,

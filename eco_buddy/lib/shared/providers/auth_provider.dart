@@ -66,23 +66,25 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
+      print('🔍 Calling repository login...');
       final response = await _authRepository.login(username, password);
-      final user = User(
-        username: response.user.username,
-        email: response.email,
-        role: response.role,
-        points: response.points,
-      );
+      print('✅ Repository response received');
+      print('🔍 Response type: ${response.runtimeType}');
+      print('🔍 Response user: ${response.user}');
 
       state = state.copyWith(
-        user: user,
+        user: response.user,  // Utiliser directement l'objet User désérialisé
         isAuthenticated: true,
         isLoading: false,
       );
+      print("********************");
+      print(response);
 
       // Recharger l'historique des histoires après la connexion
       _reloadNarrationHistory();
     } catch (e) {
+      print("********************");
+      print(e);
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;
     }
@@ -103,16 +105,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
         password,
         age,
       );
-      final user = User(
-        username: response.username,
-        email: response.email,
-        role: response.role,
-        points: response.points,
-        age: age,
-      );
-
       state = state.copyWith(
-        user: user,
+        user: response.user,  // Utiliser directement l'objet User désérialisé
         isAuthenticated: true,
         isLoading: false,
       );
@@ -145,15 +139,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
     try {
       final response = await _authRepository.updateProfile(username, email);
-      final updatedUser = User(
-        username: response.username,
-        email: response.email,
-        role: response.role,
-        points: response.points,
-        age: state.user?.age, // Keep existing age
-      );
-
-      state = state.copyWith(user: updatedUser, isLoading: false);
+      state = state.copyWith(user: response.user, isLoading: false);
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
       rethrow;

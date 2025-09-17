@@ -127,7 +127,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
+            color: const Color(
+              AppConstants.primaryColor,
+            ).withValues(alpha: 0.3),
             blurRadius: 16,
             offset: const Offset(0, 6),
             spreadRadius: 0,
@@ -293,7 +295,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 subtitle: AppLocalizations.of(context)!.discoverObjectImpact,
                 icon: Icons.camera_alt,
                 color: const Color(AppConstants.primaryColor),
-                onTap: () => _navigateToTab(context, 3),
+                onTap: () => _navigateToTab(context, 1),
               ),
             ),
             const SizedBox(width: 12),
@@ -303,7 +305,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 subtitle: AppLocalizations.of(context)!.liveEcologicalAdventure,
                 icon: Icons.auto_stories,
                 color: const Color(AppConstants.secondaryColor),
-                onTap: () => _navigateToTab(context, 1),
+                onTap: () => _navigateToTab(context, 3),
               ),
             ),
           ],
@@ -362,7 +364,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               _buildActivityItem(
                 Icons.emoji_events,
                 AppLocalizations.of(context)!.challengeRecyclingCompleted,
-                AppLocalizations.of(context)!.daysAgo(1),
+                AppLocalizations.of(context)!.daysAgo(1, ""),
                 AppLocalizations.of(context)!.plusPoints(20),
               ),
             ],
@@ -470,10 +472,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
   String _getTimeMessage(BuildContext context) {
     final hour = DateTime.now().hour;
-    if (hour < 6) return 'Nuit calme';
-    if (hour < 12) return 'Matinée productive';
-    if (hour < 18) return 'Après-midi active';
-    return 'Soirée détente';
+    if (hour < 6) return 'Calm night';
+    if (hour < 12) return 'Productive morning';
+    if (hour < 18) return 'Active afternoon';
+    return 'Relaxing evening';
   }
 
   Widget _buildLeaderboardSection(BuildContext context, WidgetRef ref) {

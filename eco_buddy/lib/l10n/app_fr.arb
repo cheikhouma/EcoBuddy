@@ -135,9 +135,7 @@
   "plusPoints": "+{points} points",
   
   "challengeRecyclingCompleted": "Défi \"Recyclage\" terminé",
-  
-  "daysAgo": "Il y a {days} jour",
-  
+    
   "storyMagicalForestCompleted": "Histoire \"La Forêt Magique\" complétée",
   
   "progress": "Progression",
@@ -253,9 +251,9 @@
 
   "goodChoice":"Bon choix",
 
-  "viewResults":"View results",
+  "viewResults":"Regarder les resultats",
 
-  "continueStory":"Continue story",
+  "continueStory":"Continue l'histoire",
 
   "pointsEarneds": "points gagnés !",
   
@@ -754,5 +752,72 @@
   "completionDate": "Date de complétion",
   "status": "Statut",
   "newSimilarStory": "Nouvelle histoire similaire",
-  "backToHistory": "Retour à l'historique"
+  "backToHistory": "Retour à l'historique",
+
+   "ecoStoryStep1": "🌱 L'IA analyse votre impact écologique...",
+  "ecoStoryStep2": "🤖 Génération de votre aventure personnalisée...",
+  "ecoStoryStep3": "✨ Finalisation de votre histoire unique...",
+  "ecoChoiceStep1": "🔮 Traitement de votre choix...",
+  "ecoChoiceStep2": "🌍 Calcul des conséquences écologiques...",
+  "ecoChoiceStep3": "📖 Préparation de la suite de l'histoire...",
+    "today": "Aujourd'hui",
+  "yesterday": "Hier",
+  "daysAgo": "Il y a {days} jours",
+  "@daysAgo": {
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "weeksAgo": "Il y a {weeks} semaine{pluralS}",
+  "@weeksAgo": {
+    "placeholders": {
+      "weeks": {},
+      "pluralS": {}
+    }
+  },
+  "monthsAgo": "Il y a {months} mois",
+  "@monthsAgo": {
+    "placeholders": {
+      "months": {}
+    }
+  },
+  
+  "completeProfileTitle": "Compléter votre profil",
+  "greetingUser": "Salut {username} ! 👋",
+  "@greetingUser": {
+    "placeholders": {
+      "username": {}
+    }
+  },
+  "profileDescription": "Dites-nous où vous êtes pour découvrir des défis et centres de recyclage près de chez vous !",
+
+  "autoLocationTitle": "📍 Localisation automatique",
+  "autoLocationDescription": "Utilisez votre position GPS pour remplir automatiquement vos informations.",
+  "locationInProgress": "Localisation...",
+  "locationSuccess": "📍 Localisation récupérée avec succès",
+  "locationError": "❌ Erreur de géolocalisation: {error}",
+  "@locationError": {
+    "placeholders": {
+      "error": {}
+    }
+  },
+
+  "manualEntryTitle": "✏️ Ou saisissez manuellement",
+  "cityLabel": "Ville *",
+  "cityValidator": "Veuillez saisir votre ville",
+  "countryLabel": "Pays *",
+  "countryValidator": "Veuillez saisir votre pays",
+  "regionLabel": "Région (optionnel)",
+
+  "privacyTitle": "Confidentialité",
+  "privacyDetails": "• Vos données sont chiffrées et sécurisées\n• Elles ne sont jamais partagées avec des tiers\n• Vous pouvez les modifier à tout moment\n• Utilisées uniquement pour améliorer votre expérience",
+
+  "completeProfileButton": "Compléter mon profil",
+  "profileCompleted": "🎉 Profil complété avec succès !",
+  "errorGeneric": "❌ Erreur: {error}",
+  "@errorGeneric": {
+    "placeholders": {
+      "error": {}
+    }
+  }
 }

@@ -233,11 +233,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get challengeRecyclingCompleted => '\"Recycling\" challenge completed';
 
   @override
-  String daysAgo(int days) {
-    return '$days day ago';
-  }
-
-  @override
   String get storyMagicalForestCompleted =>
       'Story \"The Magical Forest\" completed';
 
@@ -420,18 +415,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get goodChoice => 'Good choice';
 
   @override
-  String get viewResults => 'Regarder les resultats';
+  String get viewResults => 'View results';
 
   @override
   String get continueStory => 'Continue story';
 
   @override
   String get storyCompleted => 'Story completed';
-
-  @override
-  String pointsEarned(Object points) {
-    return 'Points Earned';
-  }
 
   @override
   String totalPoints_(int points) {
@@ -1212,6 +1202,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storyDetails => 'Story Details';
 
   @override
+  String pointsEarned(Object points) {
+    return 'Points Earned';
+  }
+
+  @override
   String get chapters => 'Chapters';
 
   @override
@@ -1237,4 +1232,109 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToHistory => 'Back to History';
+
+  @override
+  String get ecoStoryStep1 => '🌱 AI analyzing your ecological impact...';
+
+  @override
+  String get ecoStoryStep2 => ' Generating your personalized adventure...';
+
+  @override
+  String get ecoStoryStep3 => ' Finalizing your unique story...';
+
+  @override
+  String get ecoChoiceStep1 => ' Processing your choice...';
+
+  @override
+  String get ecoChoiceStep2 => ' Calculating ecological consequences...';
+
+  @override
+  String get ecoChoiceStep3 => ' Preparing the continuation of the story...';
+
+  @override
+  String get today => 'Today';
+
+  @override
+  String get yesterday => 'Yesterday';
+
+  @override
+  String daysAgo(Object days, Object pluralS) {
+    return '$days day$pluralS ago';
+  }
+
+  @override
+  String weeksAgo(Object weeks, Object pluralS) {
+    return '$weeks week$pluralS ago';
+  }
+
+  @override
+  String monthsAgo(Object months) {
+    return '$months months ago';
+  }
+
+  @override
+  String get completeProfileTitle => 'Complete your profile';
+
+  @override
+  String greetingUser(Object username) {
+    return 'Hello $username! 👋';
+  }
+
+  @override
+  String get profileDescription =>
+      'Tell us where you are to discover challenges and recycling centers near you!';
+
+  @override
+  String get autoLocationTitle => 'Automatic location';
+
+  @override
+  String get autoLocationDescription =>
+      'Use your GPS position to automatically fill in your information.';
+
+  @override
+  String get locationInProgress => 'Locating...';
+
+  @override
+  String get locationSuccess => ' Location retrieved successfully';
+
+  @override
+  String locationError(Object error) {
+    return ' Geolocation error: $error';
+  }
+
+  @override
+  String get manualEntryTitle => ' Or enter manually';
+
+  @override
+  String get cityLabel => 'City *';
+
+  @override
+  String get cityValidator => 'Please enter your city';
+
+  @override
+  String get countryLabel => 'Country *';
+
+  @override
+  String get countryValidator => 'Please enter your country';
+
+  @override
+  String get regionLabel => 'Region (optional)';
+
+  @override
+  String get privacyTitle => 'Privacy';
+
+  @override
+  String get privacyDetails =>
+      '• Your data is encrypted and secure\n• It is never shared with third parties\n• You can modify it at any time\n• Used only to improve your experience';
+
+  @override
+  String get completeProfileButton => 'Complete my profile';
+
+  @override
+  String get profileCompleted => ' Profile completed successfully!';
+
+  @override
+  String errorGeneric(Object error) {
+    return ' Error: $error';
+  }
 }

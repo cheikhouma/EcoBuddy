@@ -4,11 +4,14 @@ part 'user.g.dart';
 
 @JsonSerializable()
 class User {
-  final int? id;  // Ajout du champ ID manquant (nullable pour compatibilité)
+  @JsonKey(fromJson: _parseId)
+  final int? id;  // Long backend → int (nullable pour compatibilité)
   final String username;
   final String email;
   final String role;  // Backend renvoie enum Role.name() comme String
+  @JsonKey(fromJson: _parseInt)
   final int points;
+  @JsonKey(fromJson: _parseNullableInt)
   final int? age;
   final String? city;
   final String? country;
@@ -64,4 +67,33 @@ class User {
       isLocationCompleted: isLocationCompleted ?? this.isLocationCompleted,
     );
   }
+}
+
+/// Parse id from various types (int, String, Long)
+int? _parseId(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value);
+  if (value is double) return value.toInt();
+  return null;
+}
+
+/// Parse int from various types (int, String, num)
+int _parseInt(dynamic value) {
+  if (value == null) return 0;
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value) ?? 0;
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  return 0;
+}
+
+/// Parse nullable int from various types
+int? _parseNullableInt(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value);
+  if (value is double) return value.toInt();
+  if (value is num) return value.toInt();
+  return null;
 }

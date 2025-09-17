@@ -8,7 +8,7 @@ part of 'story_history_model.dart';
 
 StoryHistoryModel _$StoryHistoryModelFromJson(Map<String, dynamic> json) =>
     StoryHistoryModel(
-      id: json['id'] as String,
+      id: (json['id'] as num).toInt(),
       sessionId: json['sessionId'] as String,
       title: json['title'] as String,
       summary: json['summary'] as String,

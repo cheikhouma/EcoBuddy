@@ -1,10 +1,12 @@
+import 'package:eco_buddy/l10n/app_localizations.dart';
+import 'package:flutter/widgets.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'story_history_model.g.dart';
 
 @JsonSerializable()
 class StoryHistoryModel {
-  final String id;
+  final int id; // Backend envoie int, on garde int pour les opérations
   final String sessionId;
   final String title;
   final String summary;
@@ -32,7 +34,7 @@ class StoryHistoryModel {
   Map<String, dynamic> toJson() => _$StoryHistoryModelToJson(this);
 
   factory StoryHistoryModel.fromStoryModel({
-    required String storyId,
+    required int storyId,
     required String sessionId,
     required String title,
     required String content,
@@ -60,7 +62,7 @@ class StoryHistoryModel {
   }
 
   StoryHistoryModel copyWith({
-    String? id,
+    int? id,
     String? sessionId,
     String? title,
     String? summary,
@@ -83,22 +85,26 @@ class StoryHistoryModel {
     );
   }
 
-  String get formattedDate {
+  String formattedDate(BuildContext context) {
     final now = DateTime.now();
     final difference = now.difference(completedAt);
 
     if (difference.inDays == 0) {
-      return "Aujourd'hui";
+      return AppLocalizations.of(context)!.today;
     } else if (difference.inDays == 1) {
-      return "Hier";
+      return AppLocalizations.of(context)!.yesterday;
     } else if (difference.inDays < 7) {
-      return "Il y a ${difference.inDays} jours";
+      return AppLocalizations.of(
+        context,
+      )!.daysAgo(difference.inDays, difference.inDays > 1 ? "s" : "");
     } else if (difference.inDays < 30) {
       final weeks = (difference.inDays / 7).floor();
-      return "Il y a $weeks semaine${weeks > 1 ? 's' : ''}";
+      return AppLocalizations.of(
+        context,
+      )!.weeksAgo(weeks, weeks > 1 ? "s" : "");
     } else {
       final months = (difference.inDays / 30).floor();
-      return "Il y a $months mois";
+      return AppLocalizations.of(context)!.monthsAgo(months);
     }
   }
 
@@ -108,21 +114,21 @@ class StoryHistoryModel {
         return 'Transport';
       case 'energy':
       case 'energie':
-        return 'Énergie';
+        return 'energie';
       case 'food':
       case 'alimentation':
-        return 'Alimentation';
+        return 'Food';
       case 'waste':
       case 'dechets':
-        return 'Déchets';
+        return 'Waste';
       case 'water':
       case 'eau':
-        return 'Eau';
+        return 'Water';
       case 'biodiversity':
       case 'biodiversite':
-        return 'Biodiversité';
+        return 'Biodiversity';
       default:
-        return 'Général';
+        return 'General';
     }
   }
 }

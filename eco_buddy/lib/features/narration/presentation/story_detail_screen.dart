@@ -197,7 +197,7 @@ class StoryDetailScreen extends ConsumerWidget {
                   Icon(Icons.schedule, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 8),
                   Text(
-                    story.formattedDate,
+                    story.formattedDate(context),
                     style: TextStyle(
                       fontSize: 14,
                       color: Colors.grey[700],
@@ -346,10 +346,10 @@ class StoryDetailScreen extends ConsumerWidget {
         CustomCard(
           child: Column(
             children: [
-              _buildInfoRow(
-                AppLocalizations.of(context)!.sessionId,
-                story.sessionId,
-              ),
+              // _buildInfoRow(
+              //   AppLocalizations.of(context)!.sessionId,
+              //   story.sessionId,
+              // ),
               _buildInfoRow(
                 AppLocalizations.of(context)!.ecologicalTheme,
                 story.themeDisplayName,
@@ -374,6 +374,7 @@ class StoryDetailScreen extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
             width: 120,

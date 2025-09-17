@@ -222,62 +222,62 @@ class ScanCacheService {
     if (lowerLabel.contains('bottle')) {
       return ScanResultModel(
         id: 'cache_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Bouteille en plastique',
+        name: 'Plastic Bottle',
         carbonImpact: 2.5,
         recyclable: true,
-        alternative: 'Utilisez une gourde réutilisable',
-        description: 'Les bouteilles plastique mettent 450 ans à se décomposer.',
-        ecoTips: 'Recyclez dans le bac jaune',
+        alternative: 'Use a reusable water bottle',
+        description: 'Plastic bottles take 450 years to decompose in landfills.',
+        ecoTips: 'Recycle in designated bins, remove caps first',
         pointsEarned: 5,
         scanDate: DateTime.now(),
         confidence: 0.85,
         objectType: 'plastic',
-        funFact: '1 million de bouteilles sont achetées chaque minute.',
+        funFact: '1 million plastic bottles are purchased every minute worldwide.'
       );
     } else if (lowerLabel.contains('can')) {
       return ScanResultModel(
         id: 'cache_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Canette en aluminium',
+        name: 'Aluminum Can',
         carbonImpact: 1.8,
         recyclable: true,
-        alternative: 'Buvez dans des verres réutilisables',
-        description: 'L\'aluminium est recyclable à l\'infini.',
-        ecoTips: 'Recyclez dans le bac de tri',
+        alternative: 'Drink from reusable glasses or cups',
+        description: 'Aluminum can be recycled infinitely without losing quality.',
+        ecoTips: 'Rinse before recycling, crush to save space',
         pointsEarned: 8,
         scanDate: DateTime.now(),
         confidence: 0.90,
         objectType: 'metal',
-        funFact: 'Recycler une canette économise 95% de l\'énergie.',
+        funFact: 'Recycling an aluminum can saves 95% of the energy needed to make a new one.'
       );
     } else if (lowerLabel.contains('bag')) {
       return ScanResultModel(
         id: 'cache_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Sac plastique',
+        name: 'Plastic Bag',
         carbonImpact: 0.6,
         recyclable: false,
-        alternative: 'Utilisez un sac en toile',
-        description: 'Les sacs plastique polluent les océans.',
-        ecoTips: 'Réutilisez plusieurs fois',
+        alternative: 'Use reusable cloth or canvas bags',
+        description: 'Plastic bags are major ocean pollutants and harm marine life.',
+        ecoTips: 'Reuse multiple times, bring to special collection points',
         pointsEarned: 3,
         scanDate: DateTime.now(),
         confidence: 0.80,
         objectType: 'plastic',
-        funFact: '8 millions de tonnes de plastique finissent dans les océans.',
+        funFact: '8 million tons of plastic waste enter our oceans every year.'
       );
     } else {
       return ScanResultModel(
         id: 'cache_${DateTime.now().millisecondsSinceEpoch}',
-        name: 'Objet détecté',
+        name: 'Detected Object',
         carbonImpact: 1.0,
         recyclable: true,
-        alternative: 'Recherchez des alternatives durables',
-        description: 'Objet avec impact environnemental variable.',
-        ecoTips: 'Consultez les consignes de tri locales',
+        alternative: 'Look for sustainable alternatives',
+        description: 'Object with variable environmental impact.',
+        ecoTips: 'Check local recycling guidelines',
         pointsEarned: 2,
         scanDate: DateTime.now(),
         confidence: 0.75,
         objectType: 'unknown',
-        funFact: 'Chaque geste compte pour la planète !',
+        funFact: 'Every small action counts for our planet!'
       );
     }
   }

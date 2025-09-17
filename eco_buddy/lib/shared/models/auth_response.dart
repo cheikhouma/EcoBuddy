@@ -8,7 +8,8 @@ part 'auth_response.g.dart';
 class AuthResponse {
   final String token;
   final String type;
-  final int? expiresIn;      // Durée d'expiration en secondes
+  @JsonKey(fromJson: _parseExpiresIn)
+  final int? expiresIn;      // Durée d'expiration en secondes (Long backend → int)
   final User user;           // Informations utilisateur complètes
   final List<StoryHistoryModel>? storyHistory; // Historique des histoires narratives
 
@@ -28,4 +29,13 @@ class AuthResponse {
   String get email => user.email;
   String get role => user.role;
   int get points => user.points;
+}
+
+/// Parse expiresIn from various types (int, String, Long)
+int? _parseExpiresIn(dynamic value) {
+  if (value == null) return null;
+  if (value is int) return value;
+  if (value is String) return int.tryParse(value);
+  if (value is double) return value.toInt();
+  return null;
 }
