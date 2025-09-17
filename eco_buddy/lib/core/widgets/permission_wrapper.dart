@@ -21,7 +21,6 @@ class PermissionWrapper extends StatefulWidget {
 class _PermissionWrapperState extends State<PermissionWrapper> {
   bool _hasPermission = false;
   bool _isLoading = true;
-  bool _isPermanentlyDenied = false;
 
   @override
   void initState() {
@@ -31,9 +30,9 @@ class _PermissionWrapperState extends State<PermissionWrapper> {
 
   Future<void> _checkPermission() async {
     setState(() => _isLoading = true);
-    
+
     final hasPermission = await PermissionService.requestCameraPermission();
-    
+
     if (mounted) {
       setState(() {
         _hasPermission = hasPermission;
@@ -82,8 +81,8 @@ class _PermissionWrapperState extends State<PermissionWrapper> {
                 ),
                 const SizedBox(height: 16),
                 Text(
-                  widget.errorMessage ?? 
-                  'Cette fonctionnalité nécessite l\'accès à votre ${widget.permissionName.toLowerCase()}.',
+                  widget.errorMessage ??
+                      'Cette fonctionnalité nécessite l\'accès à votre ${widget.permissionName.toLowerCase()}.',
                   style: Theme.of(context).textTheme.bodyMedium,
                   textAlign: TextAlign.center,
                 ),

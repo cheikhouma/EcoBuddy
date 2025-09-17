@@ -48,4 +48,41 @@ class StorageService {
     final token = await getToken();
     return token != null && token.isNotEmpty;
   }
+
+  // Generic data storage for lists
+  Future<void> saveList(String key, List<Map<String, dynamic>> data) async {
+    final jsonString = jsonEncode(data);
+    await _storage.write(key: key, value: jsonString);
+  }
+
+  Future<List<Map<String, dynamic>>?> getList(String key) async {
+    final jsonString = await _storage.read(key: key);
+    if (jsonString != null && jsonString.isNotEmpty) {
+      final List<dynamic> jsonList = jsonDecode(jsonString);
+      return jsonList.cast<Map<String, dynamic>>();
+    }
+    return null;
+  }
+
+  Future<void> deleteKey(String key) async {
+    await _storage.delete(key: key);
+  }
+
+  // Generic string storage methods for caching
+  static Future<void> setString(String key, String value) async {
+    await _storage.write(key: key, value: value);
+  }
+
+  static Future<String?> getString(String key) async {
+    return await _storage.read(key: key);
+  }
+
+  static Future<void> remove(String key) async {
+    await _storage.delete(key: key);
+  }
+
+  static Future<List<String>> getAllKeys() async {
+    final allData = await _storage.readAll();
+    return allData.keys.toList();
+  }
 }

@@ -115,9 +115,7 @@
   "arScanner": "Scanner AR",
   
   "discoverObjectImpact": "Découvrez l'impact de vos objets",
-  
-  "newStory": "Nouvelle histoire",
-  
+    
   "liveEcologicalAdventure": "Vivez une aventure écologique",
   
   "dailyChallenges": "Défis du jour",
@@ -181,6 +179,8 @@
   "refresh": "Actualiser",
   
   "filter": "Filtrer",
+
+  "understood":"Compris",
 
   "top3":"Top 3 Éco-Champions",
   "ecoChamp":" Éco-Champions",
@@ -643,7 +643,25 @@
 
   "generatingStory": "Génération de l'histoire...",
 
-  "creatingUniqueEcoAdventure": "Création d'une aventure écologique unique pour vous",
+  "creatingUniqueEcoAdventure": "Création d'une aventure écologique unique pour vous commençant au chapitre {chapter}",
+  "@creatingUniqueEcoAdventure": {
+    "description": "Sous-titre lors de la génération d'une nouvelle histoire",
+    "placeholders": {
+      "chapter": {
+        "type": "int"
+      }
+    }
+  },
+
+  "continuingYourStory": "Continuation de votre histoire au chapitre {chapter}",
+  "@continuingYourStory": {
+    "description": "Sous-titre lors de la continuation d'une histoire existante",
+    "placeholders": {
+      "chapter": {
+        "type": "int"
+      }
+    }
+  },
 
   "whatDoYouWantToDo": "Que voulez-vous faire ?",
 
@@ -719,5 +737,22 @@
   "suboptimalChoiceDesc": "Impact limité",
   "problematicChoice": "Choix problématique",
   "problematicChoiceDesc": "Peu ou pas écologique",
-  "aiEvaluationNote": "L’IA évalue vos choix selon leur impact environnemental réel."
+  "aiEvaluationNote": "L'IA évalue vos choix selon leur impact environnemental réel.",
+
+  "yourStories": "Vos histoires",
+  "noStoriesYet": "Aucune histoire pour le moment",
+  "startFirstEcoAdventure": "Commencez votre première aventure écologique !",
+  "storiesCompleted": "Histoires terminées",
+  "totalPointsEarned": "Points totaux",
+
+  "storyDetails": "Détails de l'histoire",
+  "chapters": "Chapitres",
+  "storySummary": "Résumé de l'histoire",
+  "detailedInformation": "Informations détaillées",
+  "sessionId": "ID de session",
+  "ecologicalTheme": "Thème écologique",
+  "completionDate": "Date de complétion",
+  "status": "Statut",
+  "newSimilarStory": "Nouvelle histoire similaire",
+  "backToHistory": "Retour à l'historique"
 }

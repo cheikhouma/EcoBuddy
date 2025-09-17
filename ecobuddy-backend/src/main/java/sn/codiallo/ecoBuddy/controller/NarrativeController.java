@@ -8,9 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import sn.codiallo.ecoBuddy.dto.NarrativeChoiceRequest;
-import sn.codiallo.ecoBuddy.dto.NarrativeChoiceResponse;
-import sn.codiallo.ecoBuddy.dto.NarrativeStartResponse;
+import sn.codiallo.ecoBuddy.dto.*;
 import sn.codiallo.ecoBuddy.service.NarrativeService;
 
 @RestController
@@ -42,6 +40,44 @@ public class NarrativeController {
                     request.getChoice(),
                     username
             );
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/history")
+    public ResponseEntity<?> getStoryHistory(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        try {
+            String username = getCurrentUsername();
+            StoryHistoryListResponse response = narrativeService.getStoryHistory(username, page, size);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @PostMapping("/history")
+    public ResponseEntity<?> saveStoryHistory(@Valid @RequestBody SaveStoryHistoryRequest request) {
+        try {
+            String username = getCurrentUsername();
+            StoryHistoryResponse response = narrativeService.saveStoryHistory(request, username);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest()
+                    .body(new ErrorResponse(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/history/{sessionId}")
+    public ResponseEntity<?> getStoryHistoryDetails(@PathVariable String sessionId) {
+        try {
+            String username = getCurrentUsername();
+            StoryHistoryResponse response = narrativeService.getStoryHistoryDetails(sessionId, username);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest()

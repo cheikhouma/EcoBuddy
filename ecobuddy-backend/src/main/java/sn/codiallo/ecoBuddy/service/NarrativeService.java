@@ -7,46 +7,35 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
 import sn.codiallo.ecoBuddy.dto.*;
 import sn.codiallo.ecoBuddy.model.NarrativeSession;
+import sn.codiallo.ecoBuddy.model.StoryHistory;
 import sn.codiallo.ecoBuddy.model.User;
 import sn.codiallo.ecoBuddy.repository.NarrativeSessionRepository;
+import sn.codiallo.ecoBuddy.repository.StoryHistoryRepository;
 import sn.codiallo.ecoBuddy.repository.UserRepository;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class NarrativeService {
 
-    private final WebClient geminiWebClient;
     private final GeminiService geminiService;
     private final NarrativeSessionRepository narrativeSessionRepository;
+    private final StoryHistoryRepository storyHistoryRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
 
     @Value("${gemini.api.key}")
     private String geminiApiKey;
 
-    private static final String INITIAL_PROMPT = """
-        Tu es un narrateur interactif spécialisé dans les histoires environnementales et écologiques.
-        Crée une histoire interactive courte (3-5 étapes) sur le changement climatique et l'écologie.
-        L'histoire doit être engageante, éducative et adaptée à tous les âges.
-        
-        À chaque étape, présente une situation et propose exactement 3 choix possibles.
-        Format de réponse requis (JSON):
-        {
-          "story": "Texte de l'histoire à cette étape",
-          "choices": ["Choix 1", "Choix 2", "Choix 3"]
-        }
-        
-        Commence maintenant une nouvelle histoire :
-        """;
 
     @Transactional
     public NarrativeStartResponse startNarrative(String username) {
@@ -96,6 +85,7 @@ public class NarrativeService {
                     storyResponse.getTitle(),
                     storyResponse.getContent(),
                     storyResponse.getChoices(),
+                    storyResponse.getChoicePoints(), // Array des points pour chaque choix
                     session.getStepCount() + 1, // chapterNumber (commence à 1)
                     storyResponse.getPoints(), // points gagnés pour cette étape
                     user.getPoints(), // points totaux de l'utilisateur
@@ -126,10 +116,14 @@ public class NarrativeService {
         }
 
         try {
+            // Convertir l'index du choix en texte si nécessaire et récupérer les points du choix précédent
+            String choiceText = extractChoiceText(session.getCurrentStory(), choice);
+            Integer pointsEarned = extractPointsForChoice(session.getCurrentStory(), choice);
+
             // Utiliser GeminiService pour générer la suite de l'histoire
-            String responseText = geminiService.generateNarrative(session.getCurrentStory(), List.of(choice));
+            String responseText = geminiService.generateNarrative(session.getCurrentStory(), List.of(choiceText));
             String jsonResponse = geminiService.extractJsonFromResponse(responseText);
-            
+
             ChoiceResponse choiceResponse;
             if (jsonResponse != null) {
                 // Parser la réponse JSON
@@ -139,13 +133,12 @@ public class NarrativeService {
                 log.warn("JSON parsing failed for choice response, using fallback parsing");
                 choiceResponse = parseGeminiChoiceResponse(responseText);
             }
-            
+
             session.setCurrentStory(jsonResponse != null ? jsonResponse : responseText);
             session.setStepCount(session.getStepCount() + 1);
             session.setConversationHistory(updateConversationHistory(session.getConversationHistory(), choice, responseText));
 
-            // Attribuer les points IMMÉDIATEMENT après le choix
-            Integer pointsEarned = choiceResponse.getPointsEarned();
+            // Attribuer les points IMMÉDIATEMENT après le choix (utiliser les points du choix précédent)
             if (pointsEarned > 0) {
                 user.setPoints(user.getPoints() + pointsEarned);
                 userRepository.save(user);
@@ -156,6 +149,9 @@ public class NarrativeService {
             if (choiceResponse.getIsCompleted()) {
                 session.setIsActive(false);
                 log.info("Story completed for user {}", username);
+
+                // Sauvegarder automatiquement dans l'historique
+                saveCompletedStoryToHistory(session, user, choiceResponse);
             }
 
             narrativeSessionRepository.save(session);
@@ -169,6 +165,7 @@ public class NarrativeService {
                     choiceResponse.getTitle(),
                     choiceResponse.getContent(),
                     choiceResponse.getChoices(),
+                    choiceResponse.getChoicePoints(), // Array des points pour chaque choix
                     session.getStepCount(), // chapterNumber
                     pointsEarned, // points gagnés pour ce choix
                     user.getPoints(), // points totaux actualisés
@@ -182,200 +179,75 @@ public class NarrativeService {
         }
     }
 
-    private GeminiRequest createGeminiRequest(String prompt) {
-        GeminiRequest.Part part = new GeminiRequest.Part(prompt);
-        GeminiRequest.Content content = new GeminiRequest.Content(List.of(part));
-        return new GeminiRequest(List.of(content), null, null);
-    }
-
-    private GeminiResponse callGeminiApi(GeminiRequest request) {
-        return geminiWebClient
-                .post()
-                .uri("/v1beta/models/gemini-1.5-flash:generateContent?key=" + geminiApiKey)
-                .bodyValue(request)
-                .retrieve()
-                .bodyToMono(GeminiResponse.class)
-                .block();
-    }
-
-    private String extractTextFromResponse(GeminiResponse response) {
-        return response.getCandidates().get(0)
-                .getContent()
-                .getParts().get(0)
-                .getText();
-    }
-
     private StoryResponse parseGeminiStoryResponse(String responseText) {
         try {
+            // 🚀 PARSING ROBUSTE avec nouveau système
+            StoryData parsed = RobustParser.parseStoryResponse(responseText, false);
+
             StoryResponse response = new StoryResponse();
-            
-            // Parser le format "Titre: xxx | Situation: xxx | Choix: choix1 | choix2 | choix3"
-            if (responseText.contains("Titre:") && responseText.contains("Situation:") && responseText.contains("Choix:")) {
-                
-                // Extraire le titre
-                String title = "";
-                int titleStart = responseText.indexOf("Titre:");
-                int titleEnd = responseText.indexOf("|", titleStart);
-                if (titleStart != -1 && titleEnd != -1) {
-                    title = responseText.substring(titleStart + 6, titleEnd).trim();
-                }
-                
-                // Extraire la situation
-                String situation = "";
-                int situationStart = responseText.indexOf("Situation:");
-                int situationEnd = responseText.indexOf("| Choix:");
-                if (situationStart != -1 && situationEnd != -1) {
-                    situation = responseText.substring(situationStart + 10, situationEnd).trim();
-                }
-                
-                response.setStory(title + "\n\n" + situation);
-                
-                // Extraire les choix - NOUVEAU PARSING
-                List<String> choices = new ArrayList<>();
-                int choixStart = responseText.indexOf("Choix:");
-                if (choixStart != -1) {
-                    String choixSection = responseText.substring(choixStart + 6).trim();
-                    
-                    // Split par | et nettoyer
-                    String[] rawChoices = choixSection.split("\\|");
-                    for (String choice : rawChoices) {
-                        String cleanChoice = choice.trim();
-                        if (!cleanChoice.isEmpty()) {
-                            choices.add(cleanChoice);
-                        }
-                    }
-                }
-                
-                // Vérifier qu'on a au moins 3 choix
-                if (choices.size() >= 3) {
-                    response.setChoices(choices.subList(0, Math.min(3, choices.size())));
-                } else {
-                    // Fallback avec des choix par défaut
-                    response.setChoices(Arrays.asList("Continuer", "Explorer", "Analyser"));
-                }
-                
-            } else {
-                response.setStory(responseText);
-                response.setChoices(Arrays.asList("Continuer", "Explorer", "Analyser"));
-            }
-            
+            response.setStory(parsed.title + "\n\n" + parsed.content);
+            response.setChoices(parsed.choices);
+
+            log.info("✅ Successfully parsed story response: title='{}', choices={}",
+                parsed.title, parsed.choices.size());
+
             return response;
         } catch (Exception e) {
-            log.warn("Error parsing Gemini story response, using fallback: ", e);
-            StoryResponse fallback = new StoryResponse();
-            fallback.setStory(responseText);
-            fallback.setChoices(Arrays.asList("Continuer", "Explorer", "Analyser"));
-            return fallback;
+            log.warn("❌ Error in robust parsing, using enhanced fallback: ", e);
+
+            // 🛡️ FALLBACK AMÉLIORÉ
+            StoryData fallback = RobustParser.createFallbackStory(false);
+            StoryResponse response = new StoryResponse();
+            response.setStory(fallback.title + "\n\n" + fallback.content);
+            response.setChoices(fallback.choices);
+
+            return response;
         }
     }
 
     private ChoiceResponse parseGeminiChoiceResponse(String responseText) {
         try {
+            // 🚀 PARSING ROBUSTE avec nouveau système
+            StoryData parsed = RobustParser.parseStoryResponse(responseText, true);
+
             ChoiceResponse response = new ChoiceResponse();
-            
-            if (responseText.contains("Titre:") && responseText.contains("Situation:") && responseText.contains("Choix:")) {
-                
-                // Extraire le titre
-                String title = "";
-                int titleStart = responseText.indexOf("Titre:");
-                int titleEnd = responseText.indexOf("|", titleStart);
-                if (titleStart != -1 && titleEnd != -1) {
-                    title = responseText.substring(titleStart + 6, titleEnd).trim();
-                }
-                
-                // Extraire la situation
-                String situation = "";
-                int situationStart = responseText.indexOf("Situation:");
-                int situationEnd = responseText.indexOf("| Choix:");
-                if (situationStart != -1 && situationEnd != -1) {
-                    situation = responseText.substring(situationStart + 10, situationEnd).trim();
-                } else {
-                    // Si pas de "| Choix:", prendre jusqu'à "| Points:" ou fin
-                    int pointsPos = responseText.indexOf("| Points:");
-                    if (pointsPos != -1) {
-                        situation = responseText.substring(situationStart + 10, pointsPos).trim();
-                    } else {
-                        situation = responseText.substring(situationStart + 10).trim();
-                    }
-                }
-                
-                response.setStory(title + "\n\n" + situation);
-                
-                // Extraire les choix
-                List<String> choices = new ArrayList<>();
-                int choixStart = responseText.indexOf("Choix:");
-                if (choixStart != -1) {
-                    int pointsStart = responseText.indexOf("| Points:");
-                    String choixSection;
-                    if (pointsStart != -1) {
-                        choixSection = responseText.substring(choixStart + 6, pointsStart).trim();
-                    } else {
-                        choixSection = responseText.substring(choixStart + 6).trim();
-                    }
-                    
-                    // Split par | et nettoyer
-                    String[] rawChoices = choixSection.split("\\|");
-                    for (String choice : rawChoices) {
-                        String cleanChoice = choice.trim();
-                        if (!cleanChoice.isEmpty()) {
-                            choices.add(cleanChoice);
-                        }
-                    }
-                }
-                
-                // Extraire les points
-                Integer pointsEarned = 15; // Default
-                int pointsStart = responseText.indexOf("Points:");
-                if (pointsStart != -1) {
-                    try {
-                        String pointsSection = responseText.substring(pointsStart + 7).trim();
-                        // Prendre seulement les premiers chiffres
-                        String pointsStr = pointsSection.replaceAll("[^0-9].*", "");
-                        if (!pointsStr.isEmpty()) {
-                            pointsEarned = Integer.parseInt(pointsStr);
-                        }
-                    } catch (NumberFormatException e) {
-                        log.warn("Could not parse points from response");
-                    }
-                }
-                
-                // Si pas de choix, l'histoire est terminée
-                if (choices.isEmpty()) {
-                    response.setIsCompleted(true);
-                    response.setPointsEarned(pointsEarned + 10); // Bonus completion
-                    response.setChoices(Arrays.asList());
-                } else {
-                    response.setChoices(choices.size() >= 3 ? choices.subList(0, 3) : choices);
-                    response.setIsCompleted(false);
-                    response.setPointsEarned(pointsEarned);
-                }
-                
-            } else {
-                response.setStory(responseText);
-                response.setChoices(Arrays.asList());
-                response.setIsCompleted(true);
-                response.setPointsEarned(25);
+            response.setTitle(parsed.title);
+            response.setContent(parsed.content);
+            response.setChoices(parsed.choices);
+            response.setIsCompleted(parsed.isCompleted);
+            response.setPointsEarned(parsed.points);
+
+            // 🚀 GÉNÉRATION POINTS PAR CHOIX (pour la prochaine décision)
+            List<Integer> choicePoints = new ArrayList<>();
+            for (int i = 0; i < parsed.choices.size(); i++) {
+                // Attribuer des points variables selon la position (pour variété)
+                int points = 15 + (i % 3) * 5; // 15, 20, 25 selon position
+                choicePoints.add(points);
             }
-            
+            response.setChoicePoints(choicePoints);
+
+            log.info("✅ Successfully parsed choice response: title='{}', choices={}, points={}",
+                parsed.title, parsed.choices.size(), parsed.points);
+
             return response;
         } catch (Exception e) {
-            log.warn("Error parsing Gemini choice response, using fallback: ", e);
-            ChoiceResponse fallback = new ChoiceResponse();
-            fallback.setStory(responseText);
-            fallback.setChoices(Arrays.asList());
-            fallback.setIsCompleted(true);
-            fallback.setPointsEarned(15);
-            return fallback;
-        }
-    }
+            log.warn("❌ Error in robust choice parsing, using enhanced fallback: ", e);
 
-    private String extractJsonFromText(String text) {
-        int jsonStart = text.indexOf("{");
-        int jsonEnd = text.lastIndexOf("}") + 1;
-        if (jsonStart >= 0 && jsonEnd > jsonStart) {
-            return text.substring(jsonStart, jsonEnd);
+            // 🛡️ FALLBACK AMÉLIORÉ pour les choix
+            StoryData fallback = RobustParser.createFallbackStory(true);
+            ChoiceResponse fallbackResponse = new ChoiceResponse();
+            fallbackResponse.setTitle(fallback.title);
+            fallbackResponse.setContent(fallback.content);
+            fallbackResponse.setChoices(fallback.choices);
+            fallbackResponse.setIsCompleted(fallback.isCompleted);
+            fallbackResponse.setPointsEarned(fallback.points);
+
+            // Points par défaut pour les choix
+            List<Integer> choicePoints = Arrays.asList(15, 20, 25);
+            fallbackResponse.setChoicePoints(choicePoints);
+
+            return fallbackResponse;
         }
-        return text;
     }
 
     private String updateConversationHistory(String history, String prompt, String response) {
@@ -457,15 +329,14 @@ public class NarrativeService {
     private StoryResponse parseJsonStoryResponse(String jsonResponse) {
         try {
             StoryResponse response = new StoryResponse();
-            
+
             // Parse JSON avec Jackson
             var jsonNode = objectMapper.readTree(jsonResponse);
-            
+
             response.setTitle(jsonNode.path("title").asText("Aventure Écologique"));
             response.setContent(jsonNode.path("content").asText(""));
-            response.setPoints(jsonNode.path("points").asInt(0));
             response.setIsCompleted(jsonNode.path("isCompleted").asBoolean(false));
-            
+
             // Parser les choix
             List<String> choices = new ArrayList<>();
             var choicesArray = jsonNode.path("choices");
@@ -473,7 +344,26 @@ public class NarrativeService {
                 choicesArray.forEach(choice -> choices.add(choice.asText()));
             }
             response.setChoices(choices);
-            
+
+            // Parser les points pour chaque choix (nouveau format)
+            List<Integer> choicePoints = new ArrayList<>();
+            var pointsArray = jsonNode.path("points");
+            if (pointsArray.isArray()) {
+                pointsArray.forEach(points -> choicePoints.add(points.asInt(10))); // défaut 10 points
+            } else if (pointsArray.isInt()) {
+                // Compatibilité ancien format : si c'est un seul nombre, l'utiliser pour tous les choix
+                int singlePoints = pointsArray.asInt(0);
+                for (int i = 0; i < choices.size(); i++) {
+                    choicePoints.add(singlePoints);
+                }
+            } else {
+                // Si pas de points définis, utiliser des valeurs par défaut
+                for (int i = 0; i < choices.size(); i++) {
+                    choicePoints.add(15); // défaut 15 points par choix
+                }
+            }
+            response.setChoicePoints(choicePoints);
+
             return response;
         } catch (JsonProcessingException e) {
             log.error("Error parsing JSON story response: ", e);
@@ -484,15 +374,15 @@ public class NarrativeService {
     private ChoiceResponse parseJsonChoiceResponse(String jsonResponse) {
         try {
             ChoiceResponse response = new ChoiceResponse();
-            
+
             // Parse JSON avec Jackson
             var jsonNode = objectMapper.readTree(jsonResponse);
-            
+
             response.setTitle(jsonNode.path("title").asText("Suite de l'Histoire"));
             response.setContent(jsonNode.path("content").asText(""));
             response.setPointsEarned(jsonNode.path("points").asInt(15));
             response.setIsCompleted(jsonNode.path("isCompleted").asBoolean(false));
-            
+
             // Parser les choix
             List<String> choices = new ArrayList<>();
             var choicesArray = jsonNode.path("choices");
@@ -500,7 +390,26 @@ public class NarrativeService {
                 choicesArray.forEach(choice -> choices.add(choice.asText()));
             }
             response.setChoices(choices);
-            
+
+            // Parser les points pour chaque choix (nouveau format)
+            List<Integer> choicePoints = new ArrayList<>();
+            var pointsArray = jsonNode.path("points");
+            if (pointsArray.isArray()) {
+                pointsArray.forEach(points -> choicePoints.add(points.asInt(10))); // défaut 10 points
+            } else if (pointsArray.isInt()) {
+                // Compatibilité ancien format : si c'est un seul nombre, l'utiliser pour tous les choix
+                int singlePoints = pointsArray.asInt(15);
+                for (int i = 0; i < choices.size(); i++) {
+                    choicePoints.add(singlePoints);
+                }
+            } else {
+                // Si pas de points définis, utiliser des valeurs par défaut
+                for (int i = 0; i < choices.size(); i++) {
+                    choicePoints.add(15); // défaut 15 points par choix
+                }
+            }
+            response.setChoicePoints(choicePoints);
+
             return response;
         } catch (JsonProcessingException e) {
             log.error("Error parsing JSON choice response: ", e);
@@ -513,6 +422,7 @@ public class NarrativeService {
         private String title;
         private String content;
         private List<String> choices;
+        private List<Integer> choicePoints;
         private Integer points = 0;
         private Boolean isCompleted = false;
 
@@ -521,10 +431,11 @@ public class NarrativeService {
         public void setTitle(String title) { this.title = title; }
         public String getContent() { return content; }
         public void setContent(String content) { this.content = content; }
-        public String getStory() { return content; } // Compatibilité
         public void setStory(String story) { this.content = story; } // Compatibilité
         public List<String> getChoices() { return choices != null ? choices : Arrays.asList("Continuer", "Explorer", "Réfléchir"); }
         public void setChoices(List<String> choices) { this.choices = choices; }
+        public List<Integer> getChoicePoints() { return choicePoints != null ? choicePoints : Arrays.asList(15, 15, 15); }
+        public void setChoicePoints(List<Integer> choicePoints) { this.choicePoints = choicePoints; }
         public Integer getPoints() { return points != null ? points : 0; }
         public void setPoints(Integer points) { this.points = points; }
         public Boolean getIsCompleted() { return isCompleted != null ? isCompleted : false; }
@@ -539,5 +450,377 @@ public class NarrativeService {
         public void setIsCompleted(Boolean isCompleted) { this.isCompleted = isCompleted; }
         public Integer getPointsEarned() { return pointsEarned; }
         public void setPointsEarned(Integer pointsEarned) { this.pointsEarned = pointsEarned; }
+    }
+
+    // ========== MÉTHODES POUR LA GESTION DE L'HISTORIQUE ==========
+
+    @Transactional
+    public StoryHistoryListResponse getStoryHistory(String username, int page, int size) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Récupérer l'historique
+        List<StoryHistory> stories = storyHistoryRepository.findByUserOrderByCompletedAtDesc(user);
+
+        // Pagination simple
+        int startIndex = Math.min(page * size, stories.size());
+        int endIndex = Math.min(startIndex + size, stories.size());
+        List<StoryHistory> paginatedStories = stories.subList(startIndex, endIndex);
+
+        // Convertir en DTOs
+        List<StoryHistoryResponse> storyResponses = paginatedStories.stream()
+                .map(StoryHistoryResponse::new)
+                .toList();
+
+        // Calculer les statistiques
+        Long completedCount = storyHistoryRepository.countByUserAndStatus(user, StoryHistory.StoryStatus.COMPLETED);
+        Long totalPoints = storyHistoryRepository.sumTotalPointsByUser(user);
+        Long totalCount = (long) stories.size();
+
+        StoryHistoryListResponse.StoryHistoryStatsResponse stats =
+                new StoryHistoryListResponse.StoryHistoryStatsResponse(completedCount, totalPoints, totalCount);
+
+        return new StoryHistoryListResponse(storyResponses, stats);
+    }
+
+    @Transactional
+    public StoryHistoryResponse saveStoryHistory(SaveStoryHistoryRequest request, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Vérifier si l'histoire existe déjà
+        if (storyHistoryRepository.existsBySessionIdAndUser(request.getSessionId(), user)) {
+            throw new RuntimeException("Story history already exists for this session");
+        }
+
+        // Créer l'entité
+        StoryHistory storyHistory = new StoryHistory();
+        storyHistory.setUser(user);
+        storyHistory.setSessionId(request.getSessionId());
+        storyHistory.setTitle(request.getTitle());
+        storyHistory.setSummary(request.getSummary());
+        storyHistory.setTotalPoints(request.getTotalPoints());
+        storyHistory.setChapterCount(request.getChapterCount());
+        storyHistory.setStatus(StoryHistory.StoryStatus.valueOf(request.getStatus().toUpperCase()));
+        storyHistory.setTheme(request.getTheme() != null ? request.getTheme() : "general");
+
+        storyHistory = storyHistoryRepository.save(storyHistory);
+
+        log.info("Saved story history for user {} with session {}", username, request.getSessionId());
+
+        return new StoryHistoryResponse(storyHistory);
+    }
+
+    public StoryHistoryResponse getStoryHistoryDetails(String sessionId, String username) {
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        StoryHistory storyHistory = storyHistoryRepository.findBySessionIdAndUser(sessionId, user)
+                .orElseThrow(() -> new RuntimeException("Story history not found"));
+
+        return new StoryHistoryResponse(storyHistory);
+    }
+
+    private void saveCompletedStoryToHistory(NarrativeSession session, User user, ChoiceResponse choiceResponse) {
+        try {
+            // Éviter les doublons
+            if (storyHistoryRepository.existsBySessionIdAndUser(session.getSessionId(), user)) {
+                log.info("Story history already exists for session {}", session.getSessionId());
+                return;
+            }
+
+            // Extraire le titre et le résumé depuis le contenu de l'histoire
+            String[] titleAndContent = separateTitleAndContent(session.getCurrentStory());
+
+            StoryHistory storyHistory = new StoryHistory();
+            storyHistory.setUser(user);
+            storyHistory.setSessionId(session.getSessionId());
+            storyHistory.setTitle(titleAndContent[0]);
+            storyHistory.setSummary(createSummary(titleAndContent[1]));
+            storyHistory.setTotalPoints(user.getPoints()); // Points totaux actuels de l'utilisateur
+            storyHistory.setChapterCount(session.getStepCount());
+            storyHistory.setStatus(StoryHistory.StoryStatus.COMPLETED);
+            storyHistory.setTheme(extractThemeFromContent(session.getCurrentStory()));
+
+            storyHistoryRepository.save(storyHistory);
+
+            log.info("Auto-saved completed story to history for user {} with session {}",
+                    user.getUsername(), session.getSessionId());
+
+        } catch (Exception e) {
+            log.error("Error saving completed story to history: ", e);
+            // Ne pas faire échouer l'histoire principale si la sauvegarde de l'historique échoue
+        }
+    }
+
+    private String createSummary(String content) {
+        if (content == null || content.trim().isEmpty()) {
+            return "Une aventure écologique passionnante !";
+        }
+
+        // Créer un résumé de 100 caractères max
+        String summary = content.length() > 100
+            ? content.substring(0, 100).trim() + "..."
+            : content.trim();
+
+        return summary;
+    }
+
+    private String extractThemeFromContent(String content) {
+        if (content == null) return "general";
+
+        String contentLower = content.toLowerCase();
+
+        if (contentLower.matches(".*\\b(transport|voiture|vélo|bus|train|avion)\\b.*")) {
+            return "transport";
+        } else if (contentLower.matches(".*\\b(énergie|électricité|chauffage|solaire|éolienne)\\b.*")) {
+            return "energy";
+        } else if (contentLower.matches(".*\\b(nourriture|alimentation|bio|local|végétarien)\\b.*")) {
+            return "food";
+        } else if (contentLower.matches(".*\\b(déchet|recyclage|plastique|tri)\\b.*")) {
+            return "waste";
+        } else if (contentLower.matches(".*\\b(eau|robinet|douche|pluie)\\b.*")) {
+            return "water";
+        } else if (contentLower.matches(".*\\b(nature|forêt|animal|biodiversité)\\b.*")) {
+            return "biodiversity";
+        }
+
+        return "general";
+    }
+
+    private String extractChoiceText(String currentStory, String choice) {
+        try {
+            // Si le choix est un nombre (index), extraire le texte du choix correspondant
+            int choiceIndex = Integer.parseInt(choice);
+
+            // Parser les choix depuis l'histoire actuelle
+            if (currentStory != null) {
+                // Essayer de parser le JSON d'abord
+                try {
+                    var jsonNode = objectMapper.readTree(currentStory);
+                    var choicesArray = jsonNode.path("choices");
+                    if (choicesArray.isArray() && choiceIndex >= 0 && choiceIndex < choicesArray.size()) {
+                        return choicesArray.get(choiceIndex).asText();
+                    }
+                } catch (Exception e) {
+                    // Fallback vers l'ancien format si JSON échoue
+                    if (currentStory.contains("Choix:")) {
+                        int choixStart = currentStory.indexOf("Choix:");
+                        String choixSection = currentStory.substring(choixStart + 6).trim();
+                        String[] rawChoices = choixSection.split("\\|");
+
+                        if (choiceIndex >= 0 && choiceIndex < rawChoices.length) {
+                            return rawChoices[choiceIndex].trim();
+                        }
+                    }
+                }
+            }
+
+            // Si on ne peut pas extraire le choix, retourner un choix générique
+            return "Choix " + (choiceIndex + 1);
+
+        } catch (NumberFormatException e) {
+            // Si ce n'est pas un nombre, c'est déjà le texte du choix
+            return choice;
+        }
+    }
+
+    private Integer extractPointsForChoice(String currentStory, String choice) {
+        try {
+            // Si le choix est un nombre (index), extraire les points correspondants
+            int choiceIndex = Integer.parseInt(choice);
+
+            // Parser les points depuis l'histoire actuelle
+            if (currentStory != null) {
+                try {
+                    var jsonNode = objectMapper.readTree(currentStory);
+                    var pointsArray = jsonNode.path("points");
+                    if (pointsArray.isArray() && choiceIndex >= 0 && choiceIndex < pointsArray.size()) {
+                        return pointsArray.get(choiceIndex).asInt(15); // défaut 15 points
+                    }
+                } catch (Exception e) {
+                    log.warn("Could not parse points from current story JSON");
+                }
+            }
+
+            // Si on ne peut pas extraire les points, retourner une valeur par défaut
+            return 15;
+
+        } catch (NumberFormatException e) {
+            // Si ce n'est pas un nombre, retourner une valeur par défaut
+            return 15;
+        }
+    }
+
+    // 🛡️ CLASSE UTILITAIRE POUR PARSING ROBUSTE
+    private static class RobustParser {
+        private static final Pattern TITLE_PATTERN = Pattern.compile("(?i)(?:titre?|title)\\s*[:|=]\\s*([^|\\n]+?)\\s*(?:[|\\n]|$)");
+        private static final Pattern CONTENT_PATTERN = Pattern.compile("(?i)(?:situation|content|story)\\s*[:|=]\\s*([^|]+?)\\s*(?:[|\\n].*choix|[|\\n].*choice|$)", Pattern.DOTALL);
+        private static final Pattern CHOICES_PATTERN = Pattern.compile("(?i)(?:choix|choice)\\s*[:|=]\\s*(.+?)(?:[|\\n].*points?|$)", Pattern.DOTALL);
+        private static final Pattern POINTS_PATTERN = Pattern.compile("(?i)points?\\s*[:|=]\\s*(\\d+)");
+
+        public static StoryData parseStoryResponse(String response, boolean isChoice) {
+            if (response == null || response.trim().isEmpty()) {
+                return createFallbackStory(isChoice);
+            }
+
+            StoryData story = new StoryData();
+
+            // 🚀 ÉTAPE 1 : Nettoyer la réponse
+            String cleanResponse = response.trim()
+                .replaceAll("\\*+", "")  // Supprimer les astérisques
+                .replaceAll("\\#+", "")  // Supprimer les hashtags
+                .replaceAll("```\\w*", "") // Supprimer les blocs de code
+                .replaceAll("\\n\\s*\\n", "\n"); // Normaliser les sauts de ligne
+
+            // 🚀 ÉTAPE 2 : Parser avec regex robustes
+            story.title = extractWithPattern(TITLE_PATTERN, cleanResponse,
+                isChoice ? "Suite de l'Histoire" : "Nouvelle Aventure Écologique");
+            story.content = extractWithPattern(CONTENT_PATTERN, cleanResponse,
+                "Une situation écologique intéressante se présente à vous...");
+            story.choices = extractChoices(cleanResponse);
+            story.points = extractPoints(cleanResponse, isChoice);
+            story.isCompleted = story.choices.isEmpty();
+
+            // 🚀 ÉTAPE 3 : Validation et nettoyage
+            validateAndCleanStory(story, isChoice);
+
+            return story;
+        }
+
+        private static String extractWithPattern(Pattern pattern, String text, String defaultValue) {
+            try {
+                Matcher matcher = pattern.matcher(text);
+                if (matcher.find()) {
+                    String extracted = matcher.group(1).trim();
+                    return extracted.isEmpty() ? defaultValue : extracted;
+                }
+            } catch (Exception e) {
+                // Log silencieusement et continuer
+            }
+            return defaultValue;
+        }
+
+        private static List<String> extractChoices(String text) {
+            List<String> choices = new ArrayList<>();
+
+            try {
+                Matcher matcher = CHOICES_PATTERN.matcher(text);
+                if (matcher.find()) {
+                    String choicesText = matcher.group(1).trim();
+
+                    // 🚀 PARSING MULTIPLE : Essayer différents formats
+                    // Format 1: Séparés par |
+                    String[] splitByPipe = choicesText.split("\\|");
+                    if (splitByPipe.length >= 2) {
+                        for (String choice : splitByPipe) {
+                            String clean = choice.trim().replaceAll("^[\"'\\[\\(]|[\"'\\]\\)]$", "");
+                            if (!clean.isEmpty() && clean.length() > 3) {
+                                choices.add(clean);
+                            }
+                        }
+                    }
+
+                    // Format 2: Liste numérotée/lettrée
+                    if (choices.size() < 2) {
+                        choices.clear();
+                        Pattern listPattern = Pattern.compile("(?:^|\\n)\\s*[\\da-zA-Z][.)]\\s*(.+?)(?=\\n\\s*[\\da-zA-Z][.)]|$)", Pattern.MULTILINE);
+                        Matcher listMatcher = listPattern.matcher(choicesText);
+                        while (listMatcher.find()) {
+                            String choice = listMatcher.group(1).trim();
+                            if (!choice.isEmpty() && choice.length() > 3) {
+                                choices.add(choice);
+                            }
+                        }
+                    }
+
+                    // Format 3: Lignes séparées
+                    if (choices.size() < 2) {
+                        choices.clear();
+                        String[] lines = choicesText.split("\\n");
+                        for (String line : lines) {
+                            String clean = line.trim().replaceAll("^[-•*]\\s*", "");
+                            if (!clean.isEmpty() && clean.length() > 5) {
+                                choices.add(clean);
+                            }
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                // Log et continuer avec fallback
+            }
+
+            // 🚀 VALIDATION ET LIMITATION
+            choices = choices.stream()
+                .filter(c -> c != null && c.length() >= 3 && c.length() <= 100)
+                .limit(3)
+                .collect(java.util.stream.Collectors.toList());
+
+            return choices;
+        }
+
+        private static int extractPoints(String text, boolean isChoice) {
+            try {
+                Matcher matcher = POINTS_PATTERN.matcher(text);
+                if (matcher.find()) {
+                    int points = Integer.parseInt(matcher.group(1));
+                    return Math.max(0, Math.min(35, points)); // Clamp entre 0-35
+                }
+            } catch (Exception e) {
+                // Ignorer et utiliser défaut
+            }
+            return isChoice ? 15 : 0; // Défaut différent selon contexte
+        }
+
+        private static void validateAndCleanStory(StoryData story, boolean isChoice) {
+            // 🚀 VALIDATION TITRE
+            if (story.title == null || story.title.trim().isEmpty() || story.title.length() > 60) {
+                story.title = isChoice ? "Suite de l'Histoire" : "Nouvelle Aventure Écologique";
+            }
+
+            // 🚀 VALIDATION CONTENU
+            if (story.content == null || story.content.trim().isEmpty()) {
+                story.content = "Une nouvelle situation écologique se présente. Que décidez-vous de faire ?";
+            } else if (story.content.length() > 500) {
+                story.content = story.content.substring(0, 497) + "...";
+            }
+
+            // 🚀 VALIDATION CHOIX
+            if (story.choices.isEmpty() && !story.isCompleted) {
+                story.choices = Arrays.asList(
+                    "Analyser la situation plus en détail",
+                    "Agir immédiatement",
+                    "Consulter des experts"
+                );
+            }
+
+            // 🚀 VALIDATION POINTS
+            if (story.points < 0 || story.points > 35) {
+                story.points = isChoice ? 15 : 0;
+            }
+        }
+
+        private static StoryData createFallbackStory(boolean isChoice) {
+            StoryData fallback = new StoryData();
+            fallback.title = isChoice ? "Suite de l'Histoire" : "Défi Écologique";
+            fallback.content = "Face à cette situation environnementale, plusieurs options s'offrent à vous. Chaque choix aura un impact différent sur l'écosystème.";
+            fallback.choices = Arrays.asList(
+                "Privilégier une solution durable",
+                "Chercher un compromis équilibré",
+                "Évaluer toutes les alternatives"
+            );
+            fallback.points = isChoice ? 15 : 0;
+            fallback.isCompleted = false;
+            return fallback;
+        }
+    }
+
+    // 🛡️ CLASSE DE DONNÉES POUR PARSING
+    private static class StoryData {
+        String title;
+        String content;
+        List<String> choices = new ArrayList<>();
+        int points;
+        boolean isCompleted;
     }
 }

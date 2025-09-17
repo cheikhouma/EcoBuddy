@@ -1,4 +1,5 @@
-import 'dart:typed_data';
+// ignore_for_file: avoid_print
+
 import 'dart:io';
 import 'package:flutter/services.dart';
 import 'package:tflite_flutter/tflite_flutter.dart';
@@ -148,7 +149,7 @@ class TFLiteService {
 
       // Préparer les données d'entrée selon le type attendu
       late final dynamic input;
-      
+
       if (isFloat) {
         // Modèle attend des float32 normalisés
         input = List.generate(
@@ -162,30 +163,41 @@ class TFLiteService {
               final blue = (pixel.b * 255).toInt().clamp(0, 255);
 
               switch (c) {
-                case 0: return red / 255.0;
-                case 1: return green / 255.0;  
-                case 2: return blue / 255.0;
-                default: return 0.0;
+                case 0:
+                  return red / 255.0;
+                case 1:
+                  return green / 255.0;
+                case 2:
+                  return blue / 255.0;
+                default:
+                  return 0.0;
               }
             }),
           ),
         );
       } else {
         // Modèle attend des uint8 (0-255) - convertir en 4D tensor manuellement
-        input = List.generate(1, (_) => 
-          List.generate(224, (y) =>
-            List.generate(224, (x) =>
-              List.generate(3, (c) {
+        input = List.generate(
+          1,
+          (_) => List.generate(
+            224,
+            (y) => List.generate(
+              224,
+              (x) => List.generate(3, (c) {
                 final pixel = image.getPixelSafe(x, y);
                 switch (c) {
-                  case 0: return (pixel.r * 255).toInt().clamp(0, 255);
-                  case 1: return (pixel.g * 255).toInt().clamp(0, 255);
-                  case 2: return (pixel.b * 255).toInt().clamp(0, 255);
-                  default: return 0;
+                  case 0:
+                    return (pixel.r * 255).toInt().clamp(0, 255);
+                  case 1:
+                    return (pixel.g * 255).toInt().clamp(0, 255);
+                  case 2:
+                    return (pixel.b * 255).toInt().clamp(0, 255);
+                  default:
+                    return 0;
                 }
-              })
-            )
-          )
+              }),
+            ),
+          ),
         );
       }
 

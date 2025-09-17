@@ -429,8 +429,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get storyCompleted => 'Story completed';
 
   @override
-  String pointsEarned(int points) {
-    return '+$points points earned!';
+  String pointsEarned(Object points) {
+    return 'Points Earned';
   }
 
   @override
@@ -460,8 +460,14 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get creatingUniqueEcoAdventure =>
-      'Creating a unique ecological adventure for you';
+  String creatingUniqueEcoAdventure(int chapter) {
+    return 'Creating a unique ecological adventure for you starting in chapter $chapter';
+  }
+
+  @override
+  String continuingYourStory(int chapter) {
+    return 'Continuing your story at chapter $chapter';
+  }
 
   @override
   String get whatDoYouWantToDo => 'What do you want to do?';
@@ -1186,4 +1192,49 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get understood => 'Got it';
+
+  @override
+  String get yourStories => 'Your Stories';
+
+  @override
+  String get noStoriesYet => 'No stories yet';
+
+  @override
+  String get startFirstEcoAdventure => 'Start your first ecological adventure!';
+
+  @override
+  String get storiesCompleted => 'Stories Completed';
+
+  @override
+  String get totalPointsEarned => 'Total Points';
+
+  @override
+  String get storyDetails => 'Story Details';
+
+  @override
+  String get chapters => 'Chapters';
+
+  @override
+  String get storySummary => 'Story Summary';
+
+  @override
+  String get detailedInformation => 'Detailed Information';
+
+  @override
+  String get sessionId => 'Session ID';
+
+  @override
+  String get ecologicalTheme => 'Ecological Theme';
+
+  @override
+  String get completionDate => 'Completion Date';
+
+  @override
+  String get status => 'Status';
+
+  @override
+  String get newSimilarStory => 'New Similar Story';
+
+  @override
+  String get backToHistory => 'Back to History';
 }

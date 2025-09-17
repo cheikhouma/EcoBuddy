@@ -5,7 +5,11 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/providers/narration_provider.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/widgets/card_widget.dart';
+import '../../../core/widgets/animated_loading_widget.dart';
+import '../../../core/widgets/point_animation_widget.dart';
+import '../domain/models/story_history_model.dart';
 import 'widgets/choice_result_dialog.dart';
+import 'story_detail_screen.dart';
 
 class NarrationScreen extends ConsumerWidget {
   const NarrationScreen({super.key});
@@ -15,12 +19,12 @@ class NarrationScreen extends ConsumerWidget {
     final narrationState = ref.watch(narrationProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: const Color(0xFFFAFBFC),
       appBar: AppBar(
         automaticallyImplyLeading: false,
         title: Text(
           AppLocalizations.of(context)!.interactiveStories,
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
         ),
         backgroundColor: const Color(AppConstants.primaryColor),
         foregroundColor: Colors.white,
@@ -33,395 +37,456 @@ class NarrationScreen extends ConsumerWidget {
             tooltip: AppLocalizations.of(context)!.pointsInfoTooltip,
           ),
         ],
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                const Color(AppConstants.primaryColor),
-                const Color(AppConstants.primaryColor).withValues(alpha: 0.8),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
+      ),
+      floatingActionButton: narrationState.when(
+        data: (state) => !state.hasActiveStory
+            ? FloatingActionButton(
+                onPressed: () =>
+                    ref.read(narrationProvider.notifier).startNewStory(),
+                backgroundColor: const Color(AppConstants.primaryColor),
+                foregroundColor: Colors.white,
+                child: const Icon(Icons.add),
+              )
+            : null,
+        loading: () => null,
+        error: (_, __) => null,
       ),
       body: narrationState.when(
         data: (state) => Stack(
           children: [
-            _buildNarrationContent(context, ref, state),
+            _buildMainContent(context, ref, state),
             // Afficher le dialogue si nécessaire
             if (state.showChoiceDialog)
               _buildChoiceResultDialog(context, ref, state),
           ],
         ),
-        loading: () => Center(
-          child: Container(
-            padding: const EdgeInsets.all(32),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  width: 80,
-                  height: 80,
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      AppConstants.primaryColor,
-                    ).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(40),
-                  ),
-                  child: const CircularProgressIndicator(
-                    valueColor: AlwaysStoppedAnimation<Color>(
-                      Color(AppConstants.primaryColor),
-                    ),
-                    strokeWidth: 3,
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Text(
-                  AppLocalizations.of(context)!.generatingStory,
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  AppLocalizations.of(context)!.creatingUniqueEcoAdventure,
-                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-                  textAlign: TextAlign.center,
-                ),
-              ],
-            ),
-          ),
-        ),
+        loading: () => _buildLoadingScreen(context),
         error: (error, _) => _buildErrorContent(context, ref, error.toString()),
       ),
     );
   }
 
-  Widget _buildNarrationContent(
+  Widget _buildMainContent(
     BuildContext context,
     WidgetRef ref,
     NarrationState state,
   ) {
-    if (state.currentStory == null) {
-      return _buildStartScreen(context, ref);
+    // Si une histoire est en cours, afficher l'interface de lecture
+    if (state.hasActiveStory) {
+      return _buildActiveStoryContent(context, ref, state);
     }
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.grey[50]!, Colors.white],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-      ),
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Story progress indicator
-            _buildProgressIndicator(context, state),
-            const SizedBox(height: 20),
-
-            // Story content
-            Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(16),
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white,
-                    const Color(
-                      AppConstants.primaryColor,
-                    ).withValues(alpha: 0.02),
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.08),
-                    offset: const Offset(0, 4),
-                    blurRadius: 12,
-                    spreadRadius: 0,
-                  ),
-                ],
-              ),
-              child: CustomCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Container(
-                          width: 4,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: const Color(AppConstants.primaryColor),
-                            borderRadius: BorderRadius.circular(2),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            state.currentStory!.title,
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                              letterSpacing: -0.5,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[50],
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        state.currentStory!.content,
-                        style: const TextStyle(
-                          fontSize: 17,
-                          height: 1.7,
-                          color: Colors.black87,
-                          letterSpacing: 0.2,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-
-            // Choices
-            if (state.currentStory!.choices.isNotEmpty) ...[
-              Container(
-                margin: const EdgeInsets.only(bottom: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: const Color(
-                          AppConstants.primaryColor,
-                        ).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(
-                        Icons.psychology,
-                        size: 20,
-                        color: Color(AppConstants.primaryColor),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Text(
-                      AppLocalizations.of(context)!.whatDoYouWantToDo,
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 16),
-              ...state.currentStory!.choices.asMap().entries.map(
-                (entry) =>
-                    _buildChoiceButton(context, ref, entry.key, entry.value),
-              ),
-            ] else ...[
-              // Story completed
-              _buildStoryCompletedSection(context, ref, state),
-            ],
-          ],
-        ),
-      ),
-    );
+    // Sinon, afficher l'historique des histoires
+    return _buildHistoryContent(context, ref, state);
   }
 
-  Widget _buildStartScreen(BuildContext context, WidgetRef ref) {
-    return Padding(
+  Widget _buildActiveStoryContent(
+    BuildContext context,
+    WidgetRef ref,
+    NarrationState state,
+  ) {
+    return SingleChildScrollView(
       padding: const EdgeInsets.all(16.0),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
+          // Story progress indicator
+          _buildProgressIndicator(context, state),
+          const SizedBox(height: 20),
+
+          // Story content
+          CustomCard(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      AppConstants.primaryColor,
-                    ).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(60),
-                  ),
-                  child: const Icon(
-                    Icons.auto_stories,
-                    size: 60,
-                    color: Color(AppConstants.primaryColor),
-                  ),
-                ),
-                const SizedBox(height: 24),
                 Text(
-                  AppLocalizations.of(context)!.welcomeToInteractiveStories,
-                  style: TextStyle(
-                    fontSize: 24,
+                  state.currentStory!.title,
+                  style: const TextStyle(
+                    fontSize: 22,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
-                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 16),
-                Text(
-                  AppLocalizations.of(context)!.liveEcologicalAdventures,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                    height: 1.5,
+                ChapterTransition(
+                  transitionKey: state.currentStory!.id,
+                  child: TypewriterText(
+                    text: state.currentStory!.content,
+                    speed: const Duration(milliseconds: 40),
+                    textStyle: const TextStyle(
+                      fontSize: 16,
+                      height: 1.6,
+                      color: Colors.black87,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
                 ),
               ],
             ),
           ),
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: () =>
-                  ref.read(narrationProvider.notifier).startNewStory(),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(AppConstants.primaryColor),
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                AppLocalizations.of(context)!.startNewStory,
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          const SizedBox(height: 20),
+
+          // Choices
+          if (state.currentStory!.choices.isNotEmpty) ...[
+            Text(
+              AppLocalizations.of(context)!.whatDoYouWantToDo,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
               ),
             ),
-          ),
+            const SizedBox(height: 12),
+            ...state.currentStory!.choices.asMap().entries.map(
+              (entry) =>
+                  _buildChoiceButton(context, ref, entry.key, entry.value),
+            ),
+          ] else ...[
+            // Story completed
+            _buildStoryCompletedSection(context, ref, state),
+          ],
         ],
       ),
     );
   }
 
-  Widget _buildProgressIndicator(BuildContext context, NarrationState state) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          colors: [
-            const Color(AppConstants.primaryColor).withValues(alpha: 0.1),
-            const Color(AppConstants.primaryColor).withValues(alpha: 0.05),
-          ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(
-              AppConstants.primaryColor,
-            ).withValues(alpha: 0.1),
-            offset: const Offset(0, 2),
-            blurRadius: 8,
+  Widget _buildHistoryContent(
+    BuildContext context,
+    WidgetRef ref,
+    NarrationState state,
+  ) {
+    if (!state.hasHistory) {
+      return _buildEmptyHistoryScreen(context, ref);
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Stats header
+          _buildHistoryStats(context, state),
+          const SizedBox(height: 24),
+
+          // History title
+          Text(
+            AppLocalizations.of(context)!.yourStories,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
+            ),
           ),
+          const SizedBox(height: 16),
+
+          // History list
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: state.storyHistory!.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 16),
+            itemBuilder: (context, index) {
+              final story = state.storyHistory![index];
+              return _buildHistoryItem(context, story);
+            },
+          ),
+          const SizedBox(height: 100), // Space for FAB
         ],
       ),
-      child: CustomCard(
-        backgroundColor: Colors.white,
-        child: Row(
+    );
+  }
+
+  Widget _buildEmptyHistoryScreen(BuildContext context, WidgetRef ref) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Container(
-              padding: const EdgeInsets.all(12),
+              width: 80,
+              height: 80,
               decoration: BoxDecoration(
                 color: const Color(
                   AppConstants.primaryColor,
-                ).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12),
+                ).withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(40),
               ),
               child: const Icon(
                 Icons.auto_stories,
+                size: 40,
                 color: Color(AppConstants.primaryColor),
-                size: 24,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Text(
+              AppLocalizations.of(context)!.noStoriesYet,
+              style: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppLocalizations.of(context)!.startFirstEcoAdventure,
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHistoryStats(BuildContext context, NarrationState state) {
+    return Row(
+      children: [
+        Expanded(
+          child: StatCard(
+            title: AppLocalizations.of(context)!.storiesCompleted,
+            value: '${state.completedStoriesCount}',
+            icon: Icons.check_circle,
+            color: const Color(0xFF4CAF50),
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: StatCard(
+            title: AppLocalizations.of(context)!.totalPointsEarned,
+            value: '${state.totalHistoryPoints}',
+            icon: Icons.eco,
+            color: const Color(AppConstants.accentColor),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHistoryItem(BuildContext context, StoryHistoryModel story) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => StoryDetailScreen(story: story),
+          ),
+        );
+      },
+      child: CustomCard(
+        backgroundColor: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: _getThemeColor(story.theme).withValues(alpha: 0.1),
+            blurRadius: 8,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        child: Row(
+          children: [
+            // Theme icon
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    _getThemeColor(story.theme).withValues(alpha: 0.2),
+                    _getThemeColor(story.theme).withValues(alpha: 0.1),
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(
+                  color: _getThemeColor(story.theme).withValues(alpha: 0.3),
+                  width: 1.5,
+                ),
+              ),
+              child: Icon(
+                _getThemeIcon(story.theme),
+                color: _getThemeColor(story.theme),
+                size: 28,
               ),
             ),
             const SizedBox(width: 16),
+
+            // Story info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    AppLocalizations.of(context)!.storyProgress,
-                    style: TextStyle(
+                    story.title,
+                    style: const TextStyle(
                       fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w700,
                       color: Colors.black87,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
                   Row(
                     children: [
-                      Icon(Icons.book, size: 16, color: Colors.grey[600]),
-                      const SizedBox(width: 6),
-                      Text(
-                        AppLocalizations.of(
-                          context,
-                        )!.chapter(state.currentStory!.chapterNumber),
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
                         ),
+                        decoration: BoxDecoration(
+                          color: _getThemeColor(
+                            story.theme,
+                          ).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          story.themeDisplayName,
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: _getThemeColor(story.theme),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Icon(Icons.schedule, size: 12, color: Colors.grey[500]),
+                      const SizedBox(width: 4),
+                      Text(
+                        story.formattedDate,
+                        style: TextStyle(fontSize: 12, color: Colors.grey[600]),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(
-                  AppConstants.accentColor,
-                ).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.stars,
-                    size: 16,
-                    color: Color(AppConstants.accentColor),
+
+            // Points and status
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
                   ),
-                  const SizedBox(width: 4),
-                  Text(
-                    '${state.currentStory!.points}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Color(AppConstants.accentColor),
+                  decoration: BoxDecoration(
+                    color: const Color(
+                      AppConstants.accentColor,
+                    ).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.eco,
+                        size: 14,
+                        color: Color(AppConstants.accentColor),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        '${story.totalPoints}',
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Color(AppConstants.accentColor),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      story.status.icon,
+                      style: const TextStyle(fontSize: 12),
                     ),
-                  ),
-                ],
-              ),
+                    const SizedBox(width: 4),
+                    Icon(
+                      Icons.arrow_forward_ios,
+                      size: 12,
+                      color: Colors.grey[400],
+                    ),
+                  ],
+                ),
+              ],
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildProgressIndicator(BuildContext context, NarrationState state) {
+    return CustomCard(
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(
+                AppConstants.primaryColor,
+              ).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: const Icon(
+              Icons.auto_stories,
+              color: Color(AppConstants.primaryColor),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  AppLocalizations.of(context)!.storyProgress,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.chapter(state.currentStory!.chapterNumber),
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(
+                AppConstants.accentColor,
+              ).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.stars,
+                  size: 14,
+                  color: Color(AppConstants.accentColor),
+                ),
+                const SizedBox(width: 4),
+                Text(
+                  '${state.currentStory!.points}',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Color(AppConstants.accentColor),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -432,99 +497,74 @@ class NarrationScreen extends ConsumerWidget {
     int index,
     String choice,
   ) {
+    final narrationState = ref.watch(narrationProvider);
+    final isProcessing = narrationState.value?.isProcessingChoice ?? false;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      width: double.infinity,
-      child: Material(
-        elevation: 0,
-        borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: () {
-            HapticFeedback.lightImpact();
-            ref.read(narrationProvider.notifier).makeChoice(index);
-          },
-          child: Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(
-                color: const Color(
-                  AppConstants.primaryColor,
-                ).withValues(alpha: 0.15),
-                width: 1.5,
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.04),
-                  offset: const Offset(0, 2),
-                  blurRadius: 8,
-                  spreadRadius: 0,
-                ),
-              ],
+      margin: const EdgeInsets.only(bottom: 12),
+      child: PulsatingChoiceButton(
+        isEnabled: !isProcessing,
+        onTap: isProcessing ? null : () { // 🚀 DÉSACTIVER SI EN COURS
+          HapticFeedback.lightImpact();
+          ref.read(narrationProvider.notifier).makeChoice(index);
+        },
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: isProcessing ? Colors.grey[100] : Colors.white, // 🚀 COULEUR ADAPTÉE
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isProcessing
+                ? Colors.grey.withValues(alpha: 0.3) // 🚀 BORDURE GRISÉE
+                : const Color(AppConstants.primaryColor).withValues(alpha: 0.2),
+              width: 1,
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        const Color(
-                          AppConstants.primaryColor,
-                        ).withValues(alpha: 0.15),
-                        const Color(
-                          AppConstants.primaryColor,
-                        ).withValues(alpha: 0.08),
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Text(
-                      String.fromCharCode(65 + index), // A, B, C
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Color(AppConstants.primaryColor),
+          ),
+          child: Row(
+            children: [
+              Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  color: isProcessing
+                    ? Colors.grey.withValues(alpha: 0.1) // 🚀 COULEUR GRISÉE
+                    : const Color(AppConstants.primaryColor).withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: isProcessing
+                    ? SizedBox( // 🚀 SPINNER DE CHARGEMENT
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.grey[600],
+                        ),
+                      )
+                    : Text(
+                        String.fromCharCode(65 + index), // A, B, C
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: isProcessing
+                            ? Colors.grey[600] // 🚀 TEXTE GRISÉ
+                            : const Color(AppConstants.primaryColor),
+                        ),
                       ),
-                    ),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  choice,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: isProcessing ? Colors.grey[600] : Colors.black87, // 🚀 TEXTE GRISÉ
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Text(
-                    choice,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      height: 1.5,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: const Color(
-                      AppConstants.primaryColor,
-                    ).withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(
-                    Icons.arrow_forward_ios,
-                    size: 14,
-                    color: Color(AppConstants.primaryColor),
-                  ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -536,155 +576,104 @@ class NarrationScreen extends ConsumerWidget {
     WidgetRef ref,
     NarrationState state,
   ) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-        gradient: LinearGradient(
-          colors: [
-            const Color(AppConstants.accentColor).withValues(alpha: 0.15),
-            const Color(AppConstants.accentColor).withValues(alpha: 0.08),
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(AppConstants.accentColor).withValues(alpha: 0.2),
-            offset: const Offset(0, 4),
-            blurRadius: 16,
+    return CustomCard(
+      child: Column(
+        children: [
+          Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              color: const Color(
+                AppConstants.accentColor,
+              ).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(30),
+            ),
+            child: const Icon(
+              Icons.celebration,
+              size: 30,
+              color: Color(AppConstants.accentColor),
+            ),
           ),
-        ],
-      ),
-      child: CustomCard(
-        backgroundColor: Colors.transparent,
-        child: Column(
-          children: [
-            Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: const Color(
-                  AppConstants.accentColor,
-                ).withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(40),
-              ),
-              child: const Icon(
-                Icons.celebration,
-                size: 40,
-                color: Color(AppConstants.accentColor),
-              ),
+          const SizedBox(height: 16),
+          Text(
+            AppLocalizations.of(context)!.congratulations,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
-            const SizedBox(height: 20),
-            Text(
-              AppLocalizations.of(context)!.congratulations,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            AppLocalizations.of(context)!.storyCompletedSuccessfully,
+            style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+          ),
+          const SizedBox(height: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: const Color(
+                AppConstants.accentColor,
+              ).withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(20),
             ),
-            const SizedBox(height: 8),
-            Text(
-              AppLocalizations.of(context)!.storyCompletedSuccessfully,
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.black54,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(
-                  AppConstants.accentColor,
-                ).withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(25),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(
-                    Icons.eco,
-                    size: 20,
-                    color: Color(AppConstants.accentColor),
-                  ),
-                  const SizedBox(width: 8),
-                  Text(
-                    AppLocalizations.of(
-                      context,
-                    )!.ecologicalPointsEarned(state.totalPointsEarned),
-                    style: const TextStyle(
-                      fontSize: 16,
-                      color: Color(AppConstants.accentColor),
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () =>
-                        ref.read(narrationProvider.notifier).startNewStory(),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(AppConstants.primaryColor),
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      elevation: 2,
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.auto_stories, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          AppLocalizations.of(context)!.newStory,
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
-                  ),
+                const Icon(
+                  Icons.eco,
+                  size: 16,
+                  color: Color(AppConstants.accentColor),
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () =>
-                        ref.read(narrationProvider.notifier).reset(),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(AppConstants.primaryColor),
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      side: const BorderSide(
-                        color: Color(AppConstants.primaryColor),
-                        width: 1.5,
-                      ),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.home, size: 20),
-                        SizedBox(width: 8),
-                        Text(
-                          AppLocalizations.of(context)!.mainMenu,
-                          style: TextStyle(fontWeight: FontWeight.w600),
-                        ),
-                      ],
-                    ),
+                const SizedBox(width: 8),
+                Text(
+                  AppLocalizations.of(
+                    context,
+                  )!.ecologicalPointsEarned(state.totalPointsEarned),
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Color(AppConstants.accentColor),
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ],
             ),
-          ],
-        ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton(
+                  onPressed: () =>
+                      ref.read(narrationProvider.notifier).startNewStory(),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(AppConstants.primaryColor),
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.newStory),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: OutlinedButton(
+                  onPressed: () => ref.read(narrationProvider.notifier).reset(),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: const Color(AppConstants.primaryColor),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                  ),
+                  child: Text(AppLocalizations.of(context)!.mainMenu),
+                ),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
@@ -771,7 +760,7 @@ class NarrationScreen extends ConsumerWidget {
                   Colors.white,
                   const Color(
                     AppConstants.primaryColor,
-                  ).withValues(alpha: 0.02),
+                  ).withValues(alpha: 0.01),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
@@ -986,5 +975,71 @@ class NarrationScreen extends ConsumerWidget {
         ],
       ),
     );
+  }
+
+  Widget _buildLoadingScreen(BuildContext context) {
+    return Consumer(
+      builder: (context, ref, child) {
+        final narrationState = ref.watch(narrationProvider);
+
+        // Déterminer si c'est une nouvelle histoire ou une continuation
+        final isNewStory = narrationState.value?.currentStory == null;
+
+        // 🚀 NOUVEAU LOADING ANIMÉ AVEC MESSAGES CONTEXTUELS
+        return Center(
+          child: NarrationLoadingWidget(
+            isGeneratingStory: isNewStory,
+          ),
+        );
+      },
+    );
+  }
+
+  Color _getThemeColor(String theme) {
+    switch (theme.toLowerCase()) {
+      case 'transport':
+        return const Color(0xFF2196F3); // Bleu
+      case 'energy':
+      case 'energie':
+        return const Color(0xFFFFC107); // Jaune
+      case 'food':
+      case 'alimentation':
+        return const Color(0xFF4CAF50); // Vert
+      case 'waste':
+      case 'dechets':
+        return const Color(0xFF795548); // Marron
+      case 'water':
+      case 'eau':
+        return const Color(0xFF00BCD4); // Cyan
+      case 'biodiversity':
+      case 'biodiversite':
+        return const Color(0xFF8BC34A); // Vert clair
+      default:
+        return const Color(AppConstants.primaryColor); // Vert principal
+    }
+  }
+
+  IconData _getThemeIcon(String theme) {
+    switch (theme.toLowerCase()) {
+      case 'transport':
+        return Icons.directions_car;
+      case 'energy':
+      case 'energie':
+        return Icons.flash_on;
+      case 'food':
+      case 'alimentation':
+        return Icons.restaurant;
+      case 'waste':
+      case 'dechets':
+        return Icons.delete;
+      case 'water':
+      case 'eau':
+        return Icons.water_drop;
+      case 'biodiversity':
+      case 'biodiversite':
+        return Icons.nature;
+      default:
+        return Icons.eco;
+    }
   }
 }

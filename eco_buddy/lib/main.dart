@@ -5,13 +5,14 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/constants/app_constants.dart';
 import 'core/theme/app_theme.dart';
 import 'shared/services/tflite_service.dart';
+import 'shared/services/scan_cache_service.dart';
 import 'features/splash/presentation/splash_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
 import 'features/main/presentation/main_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
-import 'features/scanner/presentation/ar_scanner_screen.dart';
+import 'features/scanner/presentation/unified_scanner_screen.dart';
 import 'features/profile/presentation/complete_profile_screen.dart';
 import 'core/widgets/permission_wrapper.dart';
 
@@ -20,6 +21,9 @@ void main() async {
 
   // Initialiser TensorFlow Lite au démarrage
   await TFLiteService.initialize();
+
+  // 🚀 Pré-charger le cache des objets courants en arrière-plan
+  ScanCacheService.preloadCommonObjects();
 
   runApp(const ProviderScope(child: EcoBuddyApp()));
 }
@@ -52,11 +56,29 @@ class EcoBuddyApp extends ConsumerWidget {
             const MainScreen(), // Redirect dashboard to main
         '/settings': (context) => const SettingsScreen(),
         '/complete-profile': (context) => const CompleteProfileScreen(),
+        '/scanner': (context) => const PermissionWrapper(
+          permissionName: 'Caméra',
+          errorMessage:
+              'Le scanner nécessite l\'accès à la caméra pour détecter les objets.',
+          child: UnifiedScannerScreen(initialMode: ScanMode.ar),
+        ),
         '/ar_scanner': (context) => const PermissionWrapper(
           permissionName: 'Caméra',
           errorMessage:
               'Le scanner AR nécessite l\'accès à la caméra pour détecter les objets en temps réel.',
-          child: ARScannerScreen(),
+          child: UnifiedScannerScreen(initialMode: ScanMode.ar),
+        ),
+        '/quick_scanner': (context) => const PermissionWrapper(
+          permissionName: 'Caméra',
+          errorMessage:
+              'Le scanner rapide nécessite l\'accès à la caméra.',
+          child: UnifiedScannerScreen(initialMode: ScanMode.quick),
+        ),
+        '/detailed_scanner': (context) => const PermissionWrapper(
+          permissionName: 'Caméra',
+          errorMessage:
+              'Le scanner détaillé nécessite l\'accès à la caméra.',
+          child: UnifiedScannerScreen(initialMode: ScanMode.detailed),
         ),
       },
     );

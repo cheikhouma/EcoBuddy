@@ -11,6 +11,9 @@ AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
   type: json['type'] as String? ?? 'Bearer',
   expiresIn: (json['expiresIn'] as num?)?.toInt(),
   user: User.fromJson(json['user'] as Map<String, dynamic>),
+  storyHistory: (json['storyHistory'] as List<dynamic>?)
+      ?.map((e) => StoryHistoryModel.fromJson(e as Map<String, dynamic>))
+      .toList(),
 );
 
 Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
@@ -19,4 +22,5 @@ Map<String, dynamic> _$AuthResponseToJson(AuthResponse instance) =>
       'type': instance.type,
       'expiresIn': instance.expiresIn,
       'user': instance.user,
+      'storyHistory': instance.storyHistory,
     };

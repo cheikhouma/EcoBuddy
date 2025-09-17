@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:permission_handler/permission_handler.dart';
 
 class PermissionService {
@@ -6,17 +8,17 @@ class PermissionService {
     try {
       // Vérifier le statut actuel
       final status = await Permission.camera.status;
-      
+
       if (status.isGranted) {
         print('✅ Permission caméra déjà accordée');
         return true;
       }
-      
+
       if (status.isDenied || status.isRestricted) {
         print('⚠️ Demande permission caméra...');
         // Demander la permission
         final result = await Permission.camera.request();
-        
+
         if (result.isGranted) {
           print('✅ Permission caméra accordée');
           return true;
@@ -25,14 +27,14 @@ class PermissionService {
           return false;
         }
       }
-      
+
       if (status.isPermanentlyDenied) {
         print('❌ Permission caméra définitivement refusée');
         // Optionnel : ouvrir les paramètres
         await openAppSettings();
         return false;
       }
-      
+
       return false;
     } catch (e) {
       print('❌ Erreur permission caméra: $e');
@@ -61,7 +63,8 @@ class PermissionService {
   }
 
   /// Vérifie et demande multiple permissions (pour AR complet)
-  static Future<Map<Permission, PermissionStatus>> requestARPermissions() async {
+  static Future<Map<Permission, PermissionStatus>>
+  requestARPermissions() async {
     try {
       return await [
         Permission.camera,

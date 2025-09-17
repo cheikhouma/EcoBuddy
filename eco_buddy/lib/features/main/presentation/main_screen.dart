@@ -3,7 +3,7 @@ import 'package:eco_buddy/features/challenges/presentation/challenges_screen.dar
 import 'package:eco_buddy/features/dashboard/presentation/dashboard_screen.dart';
 import 'package:eco_buddy/features/leaderboard/presentation/leaderboard_screen.dart';
 import 'package:eco_buddy/features/narration/presentation/narration_screen.dart';
-import 'package:eco_buddy/features/scanner/presentation/scanner_screen.dart';
+import 'package:eco_buddy/features/scanner/presentation/unified_scanner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -19,9 +19,9 @@ class MainScreenState extends ConsumerState<MainScreen> {
 
   final List<Widget> _screens = const [
     DashboardScreen(),
-    NarrationScreen(),
+    UnifiedScannerScreen(initialMode: ScanMode.ar),
     ChallengesScreen(),
-    ScannerScreen(),
+    NarrationScreen(),
     LeaderboardScreen(),
   ];
 

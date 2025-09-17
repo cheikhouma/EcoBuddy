@@ -878,11 +878,11 @@ abstract class AppLocalizations {
   /// **'Story completed'**
   String get storyCompleted;
 
-  /// Points earned message
+  /// Label for points earned in a story
   ///
   /// In en, this message translates to:
-  /// **'+{points} points earned!'**
-  String pointsEarned(int points);
+  /// **'Points Earned'**
+  String pointsEarned(Object points);
 
   /// Total points message
   ///
@@ -920,11 +920,17 @@ abstract class AppLocalizations {
   /// **'{minutes}min remaining'**
   String minutesRemaining(int minutes);
 
-  /// Subtitle while generating story
+  /// Subtitle while generating new story
   ///
   /// In en, this message translates to:
-  /// **'Creating a unique ecological adventure for you'**
-  String get creatingUniqueEcoAdventure;
+  /// **'Creating a unique ecological adventure for you starting in chapter {chapter}'**
+  String creatingUniqueEcoAdventure(int chapter);
+
+  /// Subtitle while continuing existing story
+  ///
+  /// In en, this message translates to:
+  /// **'Continuing your story at chapter {chapter}'**
+  String continuingYourStory(int chapter);
 
   /// Choices section title
   ///
@@ -2281,6 +2287,96 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get understood;
+
+  /// Title for user's story history
+  ///
+  /// In en, this message translates to:
+  /// **'Your Stories'**
+  String get yourStories;
+
+  /// Message when user has no stories
+  ///
+  /// In en, this message translates to:
+  /// **'No stories yet'**
+  String get noStoriesYet;
+
+  /// Encouragement to start first story
+  ///
+  /// In en, this message translates to:
+  /// **'Start your first ecological adventure!'**
+  String get startFirstEcoAdventure;
+
+  /// Label for completed stories count
+  ///
+  /// In en, this message translates to:
+  /// **'Stories Completed'**
+  String get storiesCompleted;
+
+  /// Label for total points earned
+  ///
+  /// In en, this message translates to:
+  /// **'Total Points'**
+  String get totalPointsEarned;
+
+  /// Title for story details screen
+  ///
+  /// In en, this message translates to:
+  /// **'Story Details'**
+  String get storyDetails;
+
+  /// Label for number of chapters
+  ///
+  /// In en, this message translates to:
+  /// **'Chapters'**
+  String get chapters;
+
+  /// Title for story summary section
+  ///
+  /// In en, this message translates to:
+  /// **'Story Summary'**
+  String get storySummary;
+
+  /// Title for detailed information section
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed Information'**
+  String get detailedInformation;
+
+  /// Label for session ID
+  ///
+  /// In en, this message translates to:
+  /// **'Session ID'**
+  String get sessionId;
+
+  /// Label for ecological theme
+  ///
+  /// In en, this message translates to:
+  /// **'Ecological Theme'**
+  String get ecologicalTheme;
+
+  /// Label for completion date
+  ///
+  /// In en, this message translates to:
+  /// **'Completion Date'**
+  String get completionDate;
+
+  /// Label for status
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get status;
+
+  /// Button text to start new similar story
+  ///
+  /// In en, this message translates to:
+  /// **'New Similar Story'**
+  String get newSimilarStory;
+
+  /// Button text to go back to story history
+  ///
+  /// In en, this message translates to:
+  /// **'Back to History'**
+  String get backToHistory;
 }
 
 class _AppLocalizationsDelegate

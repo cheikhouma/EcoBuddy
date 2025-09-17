@@ -52,8 +52,9 @@ class ScannerNotifier extends StateNotifier<AsyncValue<ScannerState>> {
     final currentState = state.value;
     if (currentState == null ||
         !currentState.isCameraReady ||
-        currentState.isScanning)
+        currentState.isScanning) {
       return;
+    }
 
     state = AsyncValue.data(currentState.copyWith(isScanning: true));
 

@@ -38,9 +38,9 @@ class BottomNavBar extends StatelessWidget {
                 index: 0,
               ),
               _buildNavItem(
-                icon: Icons.auto_stories_outlined,
-                activeIcon: Icons.auto_stories,
-                label: AppLocalizations.of(context)!.stories,
+                icon: Icons.camera_alt_outlined,
+                activeIcon: Icons.camera_alt,
+                label: AppLocalizations.of(context)!.arScanner,
                 index: 1,
               ),
               _buildNavItem(
@@ -50,9 +50,10 @@ class BottomNavBar extends StatelessWidget {
                 index: 2,
               ),
               _buildNavItem(
-                icon: Icons.camera_alt_outlined,
-                activeIcon: Icons.camera_alt,
-                label: AppLocalizations.of(context)!.arScanner,
+                icon: Icons.auto_stories_outlined,
+                activeIcon: Icons.auto_stories,
+                label: AppLocalizations.of(context)!.stories,
+
                 index: 3,
               ),
               _buildNavItem(

@@ -33,21 +33,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header with greeting and profile
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 800),
-                tween: Tween(begin: 0.0, end: 1.0),
-                builder: (context, value, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 30 * (1 - value)),
-                    child: Opacity(
-                      opacity: value,
-                      child: _buildHeader(
-                        context,
-                        user?.username ?? AppLocalizations.of(context)!.user,
-                      ),
-                    ),
-                  );
-                },
+              _buildHeader(
+                context,
+                user?.username ?? AppLocalizations.of(context)!.user,
               ),
               const SizedBox(height: 24),
 
@@ -69,34 +57,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 ),
 
               // Stats Cards Row
-              TweenAnimationBuilder<double>(
-                duration: const Duration(milliseconds: 1000),
-                tween: Tween(begin: 0.0, end: 1.0),
-                builder: (context, value, child) {
-                  return Transform.translate(
-                    offset: Offset(0, 20 * (1 - value)),
-                    child: Opacity(
-                      opacity: value,
-                      child: _buildStatsRow(context, user?.points ?? 0),
-                    ),
-                  );
-                },
-              ),
+              _buildStatsRow(context, user?.points ?? 0),
               const SizedBox(height: 24),
 
-              // Quick Actions Grid
+              // Quick Actions
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 4),
+                margin: const EdgeInsets.only(left: 4),
                 child: Row(
                   children: [
                     Container(
                       width: 4,
-                      height: 24,
+                      height: 20,
                       decoration: BoxDecoration(
-                        gradient: const LinearGradient(
+                        gradient: LinearGradient(
                           colors: [
-                            Color(AppConstants.primaryColor),
-                            Color(AppConstants.accentColor),
+                            const Color(AppConstants.primaryColor),
+                            const Color(AppConstants.accentColor),
                           ],
                         ),
                         borderRadius: BorderRadius.circular(2),
@@ -107,32 +83,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       AppLocalizations.of(context)!.quickActions,
                       style: const TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: Colors.black87,
                         letterSpacing: 0.3,
-                      ),
-                    ),
-                    const Spacer(),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: const Color(AppConstants.accentColor).withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '4',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(AppConstants.accentColor),
-                          letterSpacing: 0.5,
-                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               _buildQuickActions(context),
               const SizedBox(height: 24),
 
@@ -157,22 +116,21 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        gradient: const LinearGradient(
+        gradient: LinearGradient(
+          colors: [
+            const Color(AppConstants.primaryColor),
+            const Color(AppConstants.primaryColor).withValues(alpha: 0.85),
+          ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
-          colors: [
-            Color(AppConstants.primaryColor),
-            Color(AppConstants.secondaryColor),
-            Color(AppConstants.accentColor),
-          ],
-          stops: [0.0, 0.7, 1.0],
         ),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
             color: const Color(AppConstants.primaryColor).withValues(alpha: 0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            blurRadius: 16,
+            offset: const Offset(0, 6),
+            spreadRadius: 0,
           ),
         ],
       ),
@@ -188,46 +146,42 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       _getGreeting(context),
                       style: TextStyle(
                         fontSize: 16,
-                        color: Colors.white.withValues(alpha: 0.95),
+                        color: Colors.white.withValues(alpha: 0.9),
                         fontWeight: FontWeight.w500,
-                        letterSpacing: 0.5,
+                        letterSpacing: 0.3,
                       ),
                     ),
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Text(
                       username,
                       style: const TextStyle(
                         fontSize: 28,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w700,
                         color: Colors.white,
-                        letterSpacing: 0.8,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(0, 2),
-                            blurRadius: 4,
-                            color: Colors.black26,
-                          ),
-                        ],
+                        letterSpacing: -0.5,
                       ),
                     ),
                     const SizedBox(height: 12),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: Colors.white.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(20),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.3),
+                          color: Colors.white.withValues(alpha: 0.2),
                           width: 1,
                         ),
                       ),
                       child: Text(
                         AppLocalizations.of(context)!.continueEcologicalJourney,
                         style: TextStyle(
-                          fontSize: 13,
+                          fontSize: 12,
                           color: Colors.white.withValues(alpha: 0.95),
                           fontWeight: FontWeight.w500,
-                          letterSpacing: 0.3,
+                          letterSpacing: 0.2,
                         ),
                       ),
                     ),
@@ -238,44 +192,45 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               GestureDetector(
                 onTap: () => Navigator.pushNamed(context, '/settings'),
                 child: Container(
-                  width: 64,
-                  height: 64,
+                  width: 52,
+                  height: 52,
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
-                        Colors.white.withValues(alpha: 0.25),
-                        Colors.white.withValues(alpha: 0.15),
+                        Colors.white.withValues(alpha: 0.2),
+                        Colors.white.withValues(alpha: 0.1),
                       ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
                     ),
-                    borderRadius: BorderRadius.circular(32),
+                    borderRadius: BorderRadius.circular(26),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.3),
-                      width: 2,
+                      width: 1.5,
                     ),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withValues(alpha: 0.1),
                         blurRadius: 8,
-                        offset: const Offset(0, 4),
+                        offset: const Offset(0, 2),
                       ),
                     ],
                   ),
                   child: const Icon(
                     Icons.person_rounded,
                     color: Colors.white,
-                    size: 32,
+                    size: 26,
                   ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          // Weather or time indicator
+          const SizedBox(height: 16),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.15),
-              borderRadius: BorderRadius.circular(25),
+              color: Colors.white.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(24),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -289,10 +244,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 Text(
                   _getTimeMessage(context),
                   style: TextStyle(
-                    fontSize: 12,
+                    fontSize: 13,
                     color: Colors.white.withValues(alpha: 0.9),
                     fontWeight: FontWeight.w500,
-                    letterSpacing: 0.3,
+                    letterSpacing: 0.2,
                   ),
                 ),
               ],
@@ -328,41 +283,54 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   }
 
   Widget _buildQuickActions(BuildContext context) {
-    return GridView.count(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      crossAxisCount: 2,
-      mainAxisSpacing: 16,
-      crossAxisSpacing: 16,
-      childAspectRatio: 1.2,
+    return Column(
       children: [
-        QuickActionCard(
-          title: AppLocalizations.of(context)!.arScanner,
-          subtitle: AppLocalizations.of(context)!.discoverObjectImpact,
-          icon: Icons.camera_alt,
-          color: const Color(AppConstants.primaryColor),
-          onTap: () => _navigateToTab(context, 3),
+        Row(
+          children: [
+            Expanded(
+              child: QuickActionCard(
+                title: AppLocalizations.of(context)!.arScanner,
+                subtitle: AppLocalizations.of(context)!.discoverObjectImpact,
+                icon: Icons.camera_alt,
+                color: const Color(AppConstants.primaryColor),
+                onTap: () => _navigateToTab(context, 3),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: QuickActionCard(
+                title: AppLocalizations.of(context)!.newStory,
+                subtitle: AppLocalizations.of(context)!.liveEcologicalAdventure,
+                icon: Icons.auto_stories,
+                color: const Color(AppConstants.secondaryColor),
+                onTap: () => _navigateToTab(context, 1),
+              ),
+            ),
+          ],
         ),
-        QuickActionCard(
-          title: AppLocalizations.of(context)!.newStory,
-          subtitle: AppLocalizations.of(context)!.liveEcologicalAdventure,
-          icon: Icons.auto_stories,
-          color: const Color(AppConstants.secondaryColor),
-          onTap: () => _navigateToTab(context, 1),
-        ),
-        QuickActionCard(
-          title: AppLocalizations.of(context)!.dailyChallenges,
-          subtitle: AppLocalizations.of(context)!.takeOnNewChallenges,
-          icon: Icons.emoji_events,
-          color: const Color(AppConstants.warningColor),
-          onTap: () => _navigateToTab(context, 2),
-        ),
-        QuickActionCard(
-          title: AppLocalizations.of(context)!.leaderboard,
-          subtitle: AppLocalizations.of(context)!.seeYourPosition,
-          icon: Icons.leaderboard,
-          color: const Color(AppConstants.accentColor),
-          onTap: () => _navigateToTab(context, 4),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: QuickActionCard(
+                title: AppLocalizations.of(context)!.dailyChallenges,
+                subtitle: AppLocalizations.of(context)!.takeOnNewChallenges,
+                icon: Icons.emoji_events,
+                color: const Color(AppConstants.warningColor),
+                onTap: () => _navigateToTab(context, 2),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: QuickActionCard(
+                title: AppLocalizations.of(context)!.leaderboard,
+                subtitle: AppLocalizations.of(context)!.seeYourPosition,
+                icon: Icons.leaderboard,
+                color: const Color(AppConstants.accentColor),
+                onTap: () => _navigateToTab(context, 4),
+              ),
+            ),
+          ],
         ),
       ],
     );
@@ -372,50 +340,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 24,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(AppConstants.secondaryColor),
-                      Color(AppConstants.accentColor),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                AppLocalizations.of(context)!.recentActivity,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black87,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: const Color(AppConstants.secondaryColor).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.history,
-                  size: 16,
-                  color: const Color(AppConstants.secondaryColor),
-                ),
-              ),
-            ],
+        Text(
+          AppLocalizations.of(context)!.recentActivity,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         CustomCard(
           child: Column(
             children: [
@@ -425,19 +358,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 AppLocalizations.of(context)!.hoursAgo(2),
                 AppLocalizations.of(context)!.plusPoints(5),
               ),
-              const Divider(),
+              const Divider(height: 1),
               _buildActivityItem(
                 Icons.emoji_events,
                 AppLocalizations.of(context)!.challengeRecyclingCompleted,
                 AppLocalizations.of(context)!.daysAgo(1),
                 AppLocalizations.of(context)!.plusPoints(20),
-              ),
-              const Divider(),
-              _buildActivityItem(
-                Icons.auto_stories,
-                AppLocalizations.of(context)!.storyMagicalForestCompleted,
-                AppLocalizations.of(context)!.daysAgo(2),
-                AppLocalizations.of(context)!.plusPoints(15),
               ),
             ],
           ),
@@ -508,62 +434,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 4),
-          child: Row(
-            children: [
-              Container(
-                width: 4,
-                height: 24,
-                decoration: BoxDecoration(
-                  gradient: const LinearGradient(
-                    colors: [
-                      Color(AppConstants.warningColor),
-                      Color(AppConstants.accentColor),
-                    ],
-                  ),
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(width: 12),
-              Text(
-                AppLocalizations.of(context)!.progress,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.w800,
-                  color: Colors.black87,
-                  letterSpacing: 0.3,
-                ),
-              ),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: const Color(AppConstants.warningColor).withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(
-                  Icons.trending_up,
-                  size: 16,
-                  color: const Color(AppConstants.warningColor),
-                ),
-              ),
-            ],
+        Text(
+          AppLocalizations.of(context)!.progress,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         ProgressCard(
           title: AppLocalizations.of(context)!.ecoCitizenLevel,
           progress: 0.6,
           progressText: '60%',
           color: const Color(AppConstants.primaryColor),
-        ),
-        const SizedBox(height: 16),
-        ProgressCard(
-          title: AppLocalizations.of(context)!.monthlyGoal,
-          progress: 0.4,
-          progressText: AppLocalizations.of(context)!.challengesGoal(8, 20),
-          color: const Color(AppConstants.warningColor),
         ),
       ],
     );
@@ -598,30 +482,37 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              AppLocalizations.of(context)!.leaderboard,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-              ),
-            ),
-            TextButton(
-              onPressed: () => _navigateToTab(context, 4),
-              child: Text(
-                AppLocalizations.of(context)!.seeAll,
-                style: TextStyle(
-                  color: Color(AppConstants.primaryColor),
-                  fontWeight: FontWeight.w600,
+        Container(
+          margin: const EdgeInsets.only(left: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 4,
+                height: 20,
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(
+                    colors: [
+                      Color(AppConstants.accentColor),
+                      Color(AppConstants.primaryColor),
+                    ],
+                  ),
+                  borderRadius: BorderRadius.circular(2),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Text(
+                AppLocalizations.of(context)!.leaderboard,
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                  letterSpacing: 0.3,
+                ),
+              ),
+            ],
+          ),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 12),
         leaderboardState.when(
           data: (state) => _buildLeaderboardContent(context, state),
           loading: () => _buildLeaderboardLoading(context),
@@ -640,7 +531,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       return CustomCard(
         child: Column(
           children: [
-            Icon(Icons.leaderboard_outlined, size: 48, color: Colors.grey[400]),
+            Icon(Icons.leaderboard_outlined, size: 40, color: Colors.grey[400]),
             const SizedBox(height: 12),
             Text(
               AppLocalizations.of(context)!.noLeaderboardData,
@@ -664,32 +555,17 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return CustomCard(
       child: Column(
         children: [
-          // Top 3 podium
-          if (state.topUsers.length >= 3) ...[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildPodiumPosition(context, 2, state.topUsers[1]),
-                _buildPodiumPosition(context, 1, state.topUsers[0]),
-                _buildPodiumPosition(context, 3, state.topUsers[2]),
-              ],
-            ),
-            const SizedBox(height: 24),
-            const Divider(),
-            const SizedBox(height: 16),
-          ],
-
-          // Rest of leaderboard
+          // Simple list without podium
           ...state.topUsers
-              .take(5)
-              .map((user) => _buildLeaderboardRow(context, user)),
+              .take(3)
+              .map((user) => _buildSimpleLeaderboardRow(context, user)),
 
-          if (state.topUsers.length > 5) ...[
+          if (state.topUsers.length > 3) ...[
             const SizedBox(height: 8),
             Text(
               AppLocalizations.of(
                 context,
-              )!.andOthers(state.topUsers.length - 5),
+              )!.andOthers(state.topUsers.length - 3),
               style: TextStyle(
                 fontSize: 12,
                 color: Colors.grey[600],
@@ -702,176 +578,64 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     );
   }
 
-  Widget _buildPodiumPosition(
+  Widget _buildSimpleLeaderboardRow(
     BuildContext context,
-    int position,
     LeaderboardUser user,
   ) {
-    Color positionColor;
-    double size;
-
-    switch (position) {
-      case 1:
-        positionColor = const Color(0xFFFFD700); // Gold
-        size = 80;
-        break;
-      case 2:
-        positionColor = const Color(0xFFC0C0C0); // Silver
-        size = 70;
-        break;
-      case 3:
-        positionColor = const Color(0xFFCD7F32); // Bronze
-        size = 60;
-        break;
-      default:
-        positionColor = Colors.grey;
-        size = 50;
-    }
-
-    return Column(
-      children: [
-        Stack(
-          children: [
-            Container(
-              width: size,
-              height: size,
-              decoration: BoxDecoration(
-                color: positionColor.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(size / 2),
-                border: Border.all(color: positionColor, width: 3),
-              ),
-              child: Center(
-                child: Text(
-                  user.username[0].toUpperCase(),
-                  style: TextStyle(
-                    fontSize: size * 0.4,
-                    fontWeight: FontWeight.bold,
-                    color: positionColor,
-                  ),
-                ),
-              ),
-            ),
-            Positioned(
-              right: -5,
-              top: -5,
-              child: Container(
-                width: 25,
-                height: 25,
-                decoration: BoxDecoration(
-                  color: positionColor,
-                  borderRadius: BorderRadius.circular(12.5),
-                ),
-                child: Center(
-                  child: Text(
-                    position.toString(),
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Text(
-          user.username,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-          overflow: TextOverflow.ellipsis,
-        ),
-        Text(
-          AppLocalizations.of(context)!.userPoints(user.points),
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLeaderboardRow(BuildContext context, LeaderboardUser user) {
+    // Simple row inspired by login/signup simplicity
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
+          // Simple rank circle
           Container(
-            width: 32,
-            height: 32,
+            width: 38,
+            height: 38,
             decoration: BoxDecoration(
               color: const Color(
                 AppConstants.primaryColor,
               ).withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(16),
+              borderRadius: BorderRadius.circular(14),
             ),
             child: Center(
               child: Text(
                 user.rank.toString(),
                 style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
                   color: Color(AppConstants.primaryColor),
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 16),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: const Color(
-                AppConstants.secondaryColor,
-              ).withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(
-              child: Text(
-                user.username[0].toUpperCase(),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(AppConstants.secondaryColor),
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 12),
+
+          // Simple avatar
+          const SizedBox(width: 12),
+
+          // Username and points in simple layout
           Expanded(
-            child: Text(
-              user.username,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Text(
-                AppLocalizations.of(context)!.userPoints(user.points),
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Color(AppConstants.accentColor),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.username,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
                 ),
-              ),
-              Text(
-                AppLocalizations.of(
-                  context,
-                )!.userChallenges(user.challengesCompleted ?? 0),
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
-            ],
+                Text(
+                  AppLocalizations.of(context)!.userPoints(user.points),
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

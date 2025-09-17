@@ -16,6 +16,7 @@ public class NarrativeStartResponse {
     private String title;
     private String content;
     private List<String> choices;
+    private List<Integer> choicePoints; // Points pour chaque choix
     private int chapterNumber;
     private int pointsEarned; // Points gagnés pour cette étape
     private int totalPoints;  // Points totaux de l'utilisateur

@@ -4,57 +4,33 @@ class StoryException implements Exception {
   final String? code;
   final dynamic originalError;
 
-  const StoryException(
-    this.message, {
-    this.code,
-    this.originalError,
-  });
+  const StoryException(this.message, {this.code, this.originalError});
 
   @override
   String toString() => 'StoryException: $message';
 }
 
 class NetworkStoryException extends StoryException {
-  const NetworkStoryException(String message, {dynamic originalError})
-      : super(
-          message,
-          code: 'NETWORK_ERROR',
-          originalError: originalError,
-        );
+  const NetworkStoryException(super.message, {super.originalError})
+    : super(code: 'NETWORK_ERROR');
 }
 
 class AIServiceException extends StoryException {
-  const AIServiceException(String message, {dynamic originalError})
-      : super(
-          message,
-          code: 'AI_SERVICE_ERROR',
-          originalError: originalError,
-        );
+  const AIServiceException(super.message, {super.originalError})
+    : super(code: 'AI_SERVICE_ERROR');
 }
 
 class AuthenticationStoryException extends StoryException {
-  const AuthenticationStoryException(String message, {dynamic originalError})
-      : super(
-          message,
-          code: 'AUTH_ERROR',
-          originalError: originalError,
-        );
+  const AuthenticationStoryException(super.message, {super.originalError})
+    : super(code: 'AUTH_ERROR');
 }
 
 class SessionExpiredException extends StoryException {
-  const SessionExpiredException(String message, {dynamic originalError})
-      : super(
-          message,
-          code: 'SESSION_EXPIRED',
-          originalError: originalError,
-        );
+  const SessionExpiredException(super.message, {super.originalError})
+    : super(code: 'SESSION_EXPIRED');
 }
 
 class ParsingException extends StoryException {
-  const ParsingException(String message, {dynamic originalError})
-      : super(
-          message,
-          code: 'PARSING_ERROR',
-          originalError: originalError,
-        );
+  const ParsingException(super.message, {super.originalError})
+    : super(code: 'PARSING_ERROR');
 }

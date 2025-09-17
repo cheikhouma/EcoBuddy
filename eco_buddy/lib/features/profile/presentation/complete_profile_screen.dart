@@ -11,7 +11,8 @@ class CompleteProfileScreen extends ConsumerStatefulWidget {
   const CompleteProfileScreen({super.key});
 
   @override
-  ConsumerState<CompleteProfileScreen> createState() => _CompleteProfileScreenState();
+  ConsumerState<CompleteProfileScreen> createState() =>
+      _CompleteProfileScreenState();
 }
 
 class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
@@ -19,9 +20,8 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
   final _cityController = TextEditingController();
   final _countryController = TextEditingController();
   final _regionController = TextEditingController();
-  
+
   bool _isLoading = false;
-  bool _useCurrentLocation = false;
   double? _latitude;
   double? _longitude;
 
@@ -42,29 +42,31 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       // TODO: Implémenter la géolocalisation réelle avec geolocator
       // Pour l'instant, on utilise des coordonnées factices pour Paris
       await Future.delayed(const Duration(seconds: 2));
-      
+
       setState(() {
         _latitude = 48.8566;
         _longitude = 2.3522;
         _cityController.text = 'Paris';
         _countryController.text = 'France';
         _regionController.text = 'Île-de-France';
-        _useCurrentLocation = true;
       });
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('📍 Localisation récupérée avec succès'),
-          backgroundColor: Color(AppConstants.primaryColor),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('📍 Localisation récupérée avec succès'),
+            backgroundColor: Color(AppConstants.primaryColor),
+          ),
+        );
+      }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('❌ Erreur de géolocalisation: $e'),
-          backgroundColor: const Color(AppConstants.errorColor),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Erreur de géolocalisation: $e'),
+            backgroundColor: const Color(AppConstants.errorColor),
+          ),
+        );
+      }
     } finally {
       setState(() {
         _isLoading = false;
@@ -83,7 +85,9 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       await ApiService.updateLocation(
         city: _cityController.text.trim(),
         country: _countryController.text.trim(),
-        region: _regionController.text.trim().isEmpty ? null : _regionController.text.trim(),
+        region: _regionController.text.trim().isEmpty
+            ? null
+            : _regionController.text.trim(),
         latitude: _latitude,
         longitude: _longitude,
       );
@@ -178,10 +182,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                     const SizedBox(height: 8),
                     const Text(
                       'Dites-nous où vous êtes pour découvrir des défis et centres de recyclage près de chez vous !',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ],
@@ -222,9 +223,15 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                                 ),
                               )
                             : const Icon(Icons.my_location),
-                        label: Text(_isLoading ? 'Localisation...' : 'Utiliser ma position'),
+                        label: Text(
+                          _isLoading
+                              ? 'Localisation...'
+                              : 'Utiliser ma position',
+                        ),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(AppConstants.secondaryColor),
+                          backgroundColor: const Color(
+                            AppConstants.secondaryColor,
+                          ),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 16),
                         ),
@@ -324,7 +331,9 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
                     child: OutlinedButton(
                       onPressed: _isLoading
                           ? null
-                          : () => Navigator.of(context).pushReplacementNamed('/dashboard'),
+                          : () => Navigator.of(
+                              context,
+                            ).pushReplacementNamed('/dashboard'),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                         side: const BorderSide(color: Colors.grey),

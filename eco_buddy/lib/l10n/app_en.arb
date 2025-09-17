@@ -17,7 +17,9 @@
   },
 
   "home":"Home",
+  "@home": {},
   "scanner": "Scanner",
+  "@scanner": {},
   "errorLoading": "Loading error",
   "@errorLoading": {
     "description": "Generic loading error"
@@ -746,9 +748,24 @@
   },
 
 
-  "creatingUniqueEcoAdventure": "Creating a unique ecological adventure for you",
+  "creatingUniqueEcoAdventure": "Creating a unique ecological adventure for you starting in chapter {chapter}",
   "@creatingUniqueEcoAdventure": {
-    "description": "Subtitle while generating story"
+    "description": "Subtitle while generating new story",
+    "placeholders": {
+      "chapter": {
+        "type": "int"
+      }
+    }
+  },
+
+  "continuingYourStory": "Continuing your story at chapter {chapter}",
+  "@continuingYourStory": {
+    "description": "Subtitle while continuing existing story",
+    "placeholders": {
+      "chapter": {
+        "type": "int"
+      }
+    }
   },
 
   "whatDoYouWantToDo": "What do you want to do?",
@@ -1901,5 +1918,85 @@
   "aiEvaluationNote": "AI evaluates your choices based on their real environmental impact.",
   "@aiEvaluationNote": {},
   "understood": "Got it",
-  "@understood": {}
+  "@understood": {},
+
+  "yourStories": "Your Stories",
+  "@yourStories": {
+    "description": "Title for user's story history"
+  },
+
+  "noStoriesYet": "No stories yet",
+  "@noStoriesYet": {
+    "description": "Message when user has no stories"
+  },
+
+  "startFirstEcoAdventure": "Start your first ecological adventure!",
+  "@startFirstEcoAdventure": {
+    "description": "Encouragement to start first story"
+  },
+
+  "storiesCompleted": "Stories Completed",
+  "@storiesCompleted": {
+    "description": "Label for completed stories count"
+  },
+
+  "totalPointsEarned": "Total Points",
+  "@totalPointsEarned": {
+    "description": "Label for total points earned"
+  },
+
+  "storyDetails": "Story Details",
+  "@storyDetails": {
+    "description": "Title for story details screen"
+  },
+
+  "pointsEarned": "Points Earned",
+  "@pointsEarned": {
+    "description": "Label for points earned in a story"
+  },
+
+  "chapters": "Chapters",
+  "@chapters": {
+    "description": "Label for number of chapters"
+  },
+
+  "storySummary": "Story Summary",
+  "@storySummary": {
+    "description": "Title for story summary section"
+  },
+
+  "detailedInformation": "Detailed Information",
+  "@detailedInformation": {
+    "description": "Title for detailed information section"
+  },
+
+  "sessionId": "Session ID",
+  "@sessionId": {
+    "description": "Label for session ID"
+  },
+
+  "ecologicalTheme": "Ecological Theme",
+  "@ecologicalTheme": {
+    "description": "Label for ecological theme"
+  },
+
+  "completionDate": "Completion Date",
+  "@completionDate": {
+    "description": "Label for completion date"
+  },
+
+  "status": "Status",
+  "@status": {
+    "description": "Label for status"
+  },
+
+  "newSimilarStory": "New Similar Story",
+  "@newSimilarStory": {
+    "description": "Button text to start new similar story"
+  },
+
+  "backToHistory": "Back to History",
+  "@backToHistory": {
+    "description": "Button text to go back to story history"
+  }
 }

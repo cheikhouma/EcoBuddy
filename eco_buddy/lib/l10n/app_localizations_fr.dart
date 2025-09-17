@@ -435,7 +435,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get storyCompleted => 'Histoire complète';
 
   @override
-  String pointsEarned(int points) {
+  String pointsEarned(Object points) {
     return '+$points points gagnés !';
   }
 
@@ -466,8 +466,14 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get creatingUniqueEcoAdventure =>
-      'Création d\'une aventure écologique unique pour vous';
+  String creatingUniqueEcoAdventure(int chapter) {
+    return 'Création d\'une aventure écologique unique pour vous commençant au chapitre $chapter';
+  }
+
+  @override
+  String continuingYourStory(int chapter) {
+    return 'Continuation de votre histoire au chapitre $chapter';
+  }
 
   @override
   String get whatDoYouWantToDo => 'Que voulez-vous faire ?';
@@ -1197,8 +1203,54 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get aiEvaluationNote =>
-      'L’IA évalue vos choix selon leur impact environnemental réel.';
+      'L\'IA évalue vos choix selon leur impact environnemental réel.';
 
   @override
-  String get understood => 'Got it';
+  String get understood => 'Compris';
+
+  @override
+  String get yourStories => 'Vos histoires';
+
+  @override
+  String get noStoriesYet => 'Aucune histoire pour le moment';
+
+  @override
+  String get startFirstEcoAdventure =>
+      'Commencez votre première aventure écologique !';
+
+  @override
+  String get storiesCompleted => 'Histoires terminées';
+
+  @override
+  String get totalPointsEarned => 'Points totaux';
+
+  @override
+  String get storyDetails => 'Détails de l\'histoire';
+
+  @override
+  String get chapters => 'Chapitres';
+
+  @override
+  String get storySummary => 'Résumé de l\'histoire';
+
+  @override
+  String get detailedInformation => 'Informations détaillées';
+
+  @override
+  String get sessionId => 'ID de session';
+
+  @override
+  String get ecologicalTheme => 'Thème écologique';
+
+  @override
+  String get completionDate => 'Date de complétion';
+
+  @override
+  String get status => 'Statut';
+
+  @override
+  String get newSimilarStory => 'Nouvelle histoire similaire';
+
+  @override
+  String get backToHistory => 'Retour à l\'historique';
 }

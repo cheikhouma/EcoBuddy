@@ -149,18 +149,13 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
     final authState = ref.watch(authProvider);
 
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Color(AppConstants.primaryColor),
 
       body: Center(
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(60),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF2E7D32), Color(0xFF388E3C), Color(0xFF43A047)],
-              stops: [0.0, 0.5, 1.0],
-            ),
+            color: Color(AppConstants.primaryColor),
           ),
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24.0),
@@ -168,6 +163,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
               key: _formKey,
               child: Column(
                 children: [
+                  SizedBox(height: 40),
                   // Header
                   ClipOval(
                     child: Image.asset(
@@ -231,8 +227,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             onChanged: (value) {
                               // Remove validation error on type
                               if (authState.error != null) {
-                                ref.read(authProvider.notifier).state =
-                                    authState.copyWith(error: null);
+                                ref.read(authProvider.notifier).clearError();
                               }
                             },
                           ),
