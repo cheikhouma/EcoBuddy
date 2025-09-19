@@ -110,9 +110,14 @@ class ApiService {
       headers: await _authHeaders,
     );
 
+    print('🔍 Location status response: ${response.statusCode}');
+    print('🔍 Location status body: ${response.body}');
+
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data['isLocationCompleted'] ?? false;
+      final isCompleted = data['isLocationCompleted'] ?? false;
+      print('🔍 Location completed: $isCompleted');
+      return isCompleted;
     } else {
       throw Exception('Failed to get location status');
     }

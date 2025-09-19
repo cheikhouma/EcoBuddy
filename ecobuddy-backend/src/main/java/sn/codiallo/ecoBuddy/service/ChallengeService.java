@@ -81,11 +81,13 @@ public class ChallengeService {
         // Créer ou mettre à jour l'entrée UserChallenge
         UserChallenge userChallenge = userChallengeRepository.findByUserAndChallenge(user, challenge)
                 .orElse(new UserChallenge());
-        
+
         userChallenge.setUser(user);
         userChallenge.setChallenge(challenge);
         userChallenge.setCompleted(true);
         userChallenge.setPointsEarned(challenge.getPoints());
+        userChallenge.setProgressPercentage(1.0); // 100% complété
+        userChallenge.setCompletedAt(java.time.LocalDateTime.now());
         
         userChallengeRepository.save(userChallenge);
 
@@ -107,25 +109,23 @@ public class ChallengeService {
      * Calcule la progression d'un utilisateur pour un défi donné
      */
     private Double calculateProgress(Challenge challenge, User user) {
-        // Logique de base : si complété = 100%, sinon 0%
+        // Si complété = 100%
         boolean completed = userChallengeRepository.existsByUserAndChallengeAndCompleted(
                 user, challenge, true);
-        
+
         if (completed) {
             return 1.0; // 100%
         }
-        
-        // Pour les défis en cours, on peut implémenter une logique plus complexe
-        // Par exemple basée sur le temps écoulé ou des actions intermédiaires
-        // Pour l'instant, simple : en cours = progrès aléatoire entre 0 et 0.5
+
+        // Récupérer l'entrée UserChallenge pour la progression stockée
         UserChallenge userChallenge = userChallengeRepository.findByUserAndChallenge(user, challenge)
                 .orElse(null);
-        
+
         if (userChallenge != null && !userChallenge.getCompleted()) {
-            // Défi commencé mais pas terminé, progression basée sur le temps
-            return Math.min(0.5, Math.random() * 0.5); // Entre 0 et 50%
+            // Retourner la progression stockée
+            return userChallenge.getProgressPercentage();
         }
-        
+
         return 0.0; // Pas encore commencé
     }
     
@@ -180,5 +180,60 @@ public class ChallengeService {
                         uc.getChallenge().getDifficulty()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateChallengeProgress(String challengeId, String username) {
+        // Conversion String -> Long pour la DB
+        Long challengeIdLong;
+        try {
+            challengeIdLong = Long.parseLong(challengeId);
+        } catch (NumberFormatException e) {
+            throw new RuntimeException("Invalid challenge ID format");
+        }
+
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Challenge challenge = challengeRepository.findById(challengeIdLong)
+                .orElseThrow(() -> new RuntimeException("Challenge not found"));
+
+        if (!challenge.getIsActive()) {
+            throw new RuntimeException("Challenge is not active");
+        }
+
+        // Créer ou récupérer l'entrée UserChallenge
+        UserChallenge userChallenge = userChallengeRepository.findByUserAndChallenge(user, challenge)
+                .orElse(new UserChallenge());
+
+        // Si le challenge est déjà complété, ne rien faire
+        if (userChallenge.getCompleted()) {
+            return;
+        }
+
+        // Si c'est un nouveau challenge, l'initialiser
+        if (userChallenge.getId() == null) {
+            userChallenge.setUser(user);
+            userChallenge.setChallenge(challenge);
+            userChallenge.setProgressSteps(0);
+            userChallenge.setProgressPercentage(0.0);
+        }
+
+        // Incrémenter les étapes de progression
+        int newSteps = userChallenge.getProgressSteps() + 1;
+        userChallenge.setProgressSteps(newSteps);
+
+        // Calculer le nombre total d'étapes basé sur les requirements
+        int totalSteps = challenge.getRequirements() != null ?
+            challenge.getRequirements().split("\\|").length : 4; // Par défaut 4 étapes
+
+        // Calculer le pourcentage
+        double newPercentage = Math.min(1.0, (double) newSteps / totalSteps);
+        userChallenge.setProgressPercentage(newPercentage);
+
+        userChallengeRepository.save(userChallenge);
+
+        log.info("User {} updated progress for challenge {} to {}%",
+                username, challenge.getTitle(), (int)(newPercentage * 100));
     }
 }

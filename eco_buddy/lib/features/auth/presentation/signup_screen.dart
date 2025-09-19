@@ -121,7 +121,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             );
 
         if (mounted) {
-          Navigator.of(context).pushReplacementNamed('/dashboard');
+          Navigator.of(context).pushReplacementNamed('/registration-success');
         }
       } catch (e) {
         if (mounted) {
@@ -283,6 +283,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
                             hintText: AppLocalizations.of(
                               context,
                             )!.repeatPassword,
+                            textInputAction: TextInputAction.done,
                             prefixIcon: Icons.lock_outline,
                             controller: _confirmPasswordController,
                             focusNode: _confirmPasswordFocus,

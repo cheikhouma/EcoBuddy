@@ -171,6 +171,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
                             // Password field
                             CustomTextField(
+                              textInputAction: TextInputAction.done,
                               label: AppLocalizations.of(context)!.password,
                               hintText: AppLocalizations.of(
                                 context,

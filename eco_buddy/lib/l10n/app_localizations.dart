@@ -2551,6 +2551,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **' Error: {error}'**
   String errorGeneric(Object error);
+
+  /// Registration success screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to EcoBuddy! '**
+  String get registrationSuccessTitle;
+
+  /// Registration success message
+  ///
+  /// In en, this message translates to:
+  /// **'Thank you for joining our community! Your account has been created successfully. You can now log in to start your ecological journey.'**
+  String get registrationSuccessMessage;
+
+  /// Ready to start message
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to start your adventure?'**
+  String get readyToStart;
+
+  /// Go to login button
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Login'**
+  String get goToLogin;
+
+  /// Skip to main app link
+  ///
+  /// In en, this message translates to:
+  /// **'Skip to app'**
+  String get skipToApp;
 }
 
 class _AppLocalizationsDelegate

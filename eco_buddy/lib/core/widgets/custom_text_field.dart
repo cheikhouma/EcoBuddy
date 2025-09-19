@@ -7,6 +7,7 @@ class CustomTextField extends StatefulWidget {
   final IconData? prefixIcon;
   final IconData? suffixIcon;
   final bool obscureText;
+  final TextInputAction textInputAction;
   final TextEditingController? controller;
   final String? Function(String?)? validator;
   final TextInputType keyboardType;
@@ -32,6 +33,7 @@ class CustomTextField extends StatefulWidget {
     this.keyboardType = TextInputType.text,
     this.inputFormatters,
     this.onSuffixIconPressed,
+    this.textInputAction = TextInputAction.next,
     this.enabled = true,
     this.maxLines = 1,
     this.maxLength,
@@ -69,6 +71,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         ),
         const SizedBox(height: 8),
         TextFormField(
+          textInputAction: widget.textInputAction,
           controller: widget.controller,
           validator: widget.validator,
           keyboardType: widget.keyboardType,
@@ -99,11 +102,11 @@ class _CustomTextFieldState extends State<CustomTextField> {
                     },
                   )
                 : widget.suffixIcon != null
-                    ? IconButton(
-                        icon: Icon(widget.suffixIcon, size: 20),
-                        onPressed: widget.onSuffixIconPressed,
-                      )
-                    : null,
+                ? IconButton(
+                    icon: Icon(widget.suffixIcon, size: 20),
+                    onPressed: widget.onSuffixIconPressed,
+                  )
+                : null,
             filled: true,
             fillColor: Colors.grey[50],
             border: OutlineInputBorder(

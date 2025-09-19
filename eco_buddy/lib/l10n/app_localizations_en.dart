@@ -1337,4 +1337,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String errorGeneric(Object error) {
     return ' Error: $error';
   }
+
+  @override
+  String get registrationSuccessTitle => 'Welcome to EcoBuddy! ';
+
+  @override
+  String get registrationSuccessMessage =>
+      'Thank you for joining our community! Your account has been created successfully. You can now log in to start your ecological journey.';
+
+  @override
+  String get readyToStart => 'Ready to start your adventure?';
+
+  @override
+  String get goToLogin => 'Go to Login';
+
+  @override
+  String get skipToApp => 'Skip to app';
 }

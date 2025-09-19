@@ -15,12 +15,14 @@ class AuthState {
   final bool isLoading;
   final String? error;
   final bool isAuthenticated;
+  final bool registrationSuccess;
 
   const AuthState({
     this.user,
     this.isLoading = false,
     this.error,
     this.isAuthenticated = false,
+    this.registrationSuccess = false,
   });
 
   AuthState copyWith({
@@ -28,12 +30,14 @@ class AuthState {
     bool? isLoading,
     String? error,
     bool? isAuthenticated,
+    bool? registrationSuccess,
   }) {
     return AuthState(
       user: user ?? this.user,
       isLoading: isLoading ?? this.isLoading,
       error: error,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
+      registrationSuccess: registrationSuccess ?? this.registrationSuccess,
     );
   }
 }
@@ -73,7 +77,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       print('🔍 Response user: ${response.user}');
 
       state = state.copyWith(
-        user: response.user,  // Utiliser directement l'objet User désérialisé
+        user: response.user, // Utiliser directement l'objet User désérialisé
         isAuthenticated: true,
         isLoading: false,
       );
@@ -106,9 +110,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         age,
       );
       state = state.copyWith(
-        user: response.user,  // Utiliser directement l'objet User désérialisé
-        isAuthenticated: true,
+        user: response.user, // Utiliser directement l'objet User désérialisé
+        isAuthenticated: false,
         isLoading: false,
+        registrationSuccess: true,
       );
 
       // Recharger l'historique des histoires après l'inscription
@@ -148,6 +153,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   void clearError() {
     state = state.copyWith(error: null);
+  }
+
+  void clearRegistrationSuccess() {
+    state = state.copyWith(registrationSuccess: false);
   }
 
   /// Recharge l'historique des histoires via le NarrationProvider

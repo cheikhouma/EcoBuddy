@@ -1348,10 +1348,26 @@ class AppLocalizationsFr extends AppLocalizations {
   String get completeProfileButton => 'Compléter mon profil';
 
   @override
-  String get profileCompleted => '🎉 Profil complété avec succès !';
+  String get profileCompleted => ' Profil complété avec succès !';
 
   @override
   String errorGeneric(Object error) {
-    return '❌ Erreur: $error';
+    return ' Erreur: $error';
   }
+
+  @override
+  String get registrationSuccessTitle => 'Bienvenue sur EcoBuddy! ';
+
+  @override
+  String get registrationSuccessMessage =>
+      'Merci de rejoindre notre communauté ! Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter pour commencer votre aventure écologique.';
+
+  @override
+  String get readyToStart => 'Prêt à commencer votre aventure ?';
+
+  @override
+  String get goToLogin => 'Aller à la connexion';
+
+  @override
+  String get skipToApp => 'Passer à l\'application';
 }

@@ -2068,5 +2068,30 @@
     "placeholders": {
       "error": {}
     }
+  },
+
+  "registrationSuccessTitle": "Welcome to EcoBuddy! ",
+  "@registrationSuccessTitle": {
+    "description": "Registration success screen title"
+  },
+
+  "registrationSuccessMessage": "Thank you for joining our community! Your account has been created successfully. You can now log in to start your ecological journey.",
+  "@registrationSuccessMessage": {
+    "description": "Registration success message"
+  },
+
+  "readyToStart": "Ready to start your adventure?",
+  "@readyToStart": {
+    "description": "Ready to start message"
+  },
+
+  "goToLogin": "Go to Login",
+  "@goToLogin": {
+    "description": "Go to login button"
+  },
+
+  "skipToApp": "Skip to app",
+  "@skipToApp": {
+    "description": "Skip to main app link"
   }
 }

@@ -813,11 +813,36 @@
   "privacyDetails": "• Vos données sont chiffrées et sécurisées\n• Elles ne sont jamais partagées avec des tiers\n• Vous pouvez les modifier à tout moment\n• Utilisées uniquement pour améliorer votre expérience",
 
   "completeProfileButton": "Compléter mon profil",
-  "profileCompleted": "🎉 Profil complété avec succès !",
-  "errorGeneric": "❌ Erreur: {error}",
+  "profileCompleted": " Profil complété avec succès !",
+  "errorGeneric": " Erreur: {error}",
   "@errorGeneric": {
     "placeholders": {
       "error": {}
     }
+  },
+
+  "registrationSuccessTitle": "Bienvenue sur EcoBuddy! ",
+  "@registrationSuccessTitle": {
+    "description": "Registration success screen title"
+  },
+
+  "registrationSuccessMessage": "Merci de rejoindre notre communauté ! Votre compte a été créé avec succès. Vous pouvez maintenant vous connecter pour commencer votre aventure écologique.",
+  "@registrationSuccessMessage": {
+    "description": "Registration success message"
+  },
+
+  "readyToStart": "Prêt à commencer votre aventure ?",
+  "@readyToStart": {
+    "description": "Ready to start message"
+  },
+
+  "goToLogin": "Aller à la connexion",
+  "@goToLogin": {
+    "description": "Go to login button"
+  },
+
+  "skipToApp": "Passer à l'application",
+  "@skipToApp": {
+    "description": "Skip to main app link"
   }
 }

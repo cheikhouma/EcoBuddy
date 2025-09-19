@@ -18,11 +18,22 @@ class DashboardScreen extends ConsumerStatefulWidget {
 
 class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   bool _showLocationPrompt = true;
+  Future<bool>? _locationStatusFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _locationStatusFuture = _checkLocationStatus();
+  }
 
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final user = authState.user;
+
+    // Debug location completion status
+    print('🔍 User location completed: ${user?.isLocationCompleted}');
+    print('🔍 Show location prompt: $_showLocationPrompt');
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFBFC),
@@ -35,15 +46,22 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               // Header with greeting and profile
               _buildHeader(
                 context,
-                user?.username ?? AppLocalizations.of(context)!.user,
+                user?.username.toUpperCase() ??
+                    AppLocalizations.of(context)!.user,
               ),
               const SizedBox(height: 24),
 
               // Location completion prompt
-              if (_showLocationPrompt)
+              if (_showLocationPrompt && !(user?.isLocationCompleted ?? false))
                 FutureBuilder<bool>(
-                  future: _checkLocationStatus(),
+                  future: _locationStatusFuture,
                   builder: (context, snapshot) {
+                    // Si l'utilisateur local indique que c'est complété, ne pas montrer le prompt
+                    if (user?.isLocationCompleted == true) {
+                      return const SizedBox.shrink();
+                    }
+
+                    // Sinon, vérifier avec l'API
                     if (snapshot.hasData && !snapshot.data!) {
                       return Column(
                         children: [
@@ -55,7 +73,36 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     return const SizedBox.shrink();
                   },
                 ),
-
+              Container(
+                margin: const EdgeInsets.only(left: 4),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 4,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [
+                            Color(AppConstants.accentColor),
+                            Color(AppConstants.primaryColor),
+                          ],
+                        ),
+                        borderRadius: BorderRadius.circular(2),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Text(
+                      "Statistics",
+                      style: const TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black87,
+                        letterSpacing: 0.3,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               // Stats Cards Row
               _buildStatsRow(context, user?.points ?? 0),
               const SizedBox(height: 24),
@@ -275,7 +322,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         Expanded(
           child: StatCard(
             title: AppLocalizations.of(context)!.challengesCompleted,
-            value: '12',
+            value: '0',
             icon: Icons.emoji_events,
             color: const Color(AppConstants.warningColor),
           ),
@@ -354,19 +401,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         CustomCard(
           child: Column(
             children: [
-              _buildActivityItem(
-                Icons.camera_alt,
-                AppLocalizations.of(context)!.plasticBottleScan,
-                AppLocalizations.of(context)!.hoursAgo(2),
-                AppLocalizations.of(context)!.plusPoints(5),
-              ),
-              const Divider(height: 1),
-              _buildActivityItem(
-                Icons.emoji_events,
-                AppLocalizations.of(context)!.challengeRecyclingCompleted,
-                AppLocalizations.of(context)!.daysAgo(1, ""),
-                AppLocalizations.of(context)!.plusPoints(20),
-              ),
+              Center(child: Text("There is no recents activity for you.")),
             ],
           ),
         ),
@@ -445,11 +480,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           ),
         ),
         const SizedBox(height: 12),
-        ProgressCard(
-          title: AppLocalizations.of(context)!.ecoCitizenLevel,
-          progress: 0.6,
-          progressText: '60%',
-          color: const Color(AppConstants.primaryColor),
+        Center(
+          child: Text(
+            "There is no progress for you. Let's start a challenges to see your progress",
+          ),
         ),
       ],
     );
@@ -703,13 +737,20 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     try {
       return await ApiService.getLocationStatus();
     } catch (e) {
+      print('❌ Error checking location status: $e');
       return false; // En cas d'erreur, on considère que la localisation n'est pas complétée
     }
   }
 
+  void _refreshLocationStatus() {
+    setState(() {
+      _locationStatusFuture = _checkLocationStatus();
+    });
+  }
+
   Widget _buildLocationPrompt(BuildContext context) {
     return CustomCard(
-      backgroundColor: Colors.grey,
+      backgroundColor: const Color.fromARGB(255, 220, 217, 217),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -766,14 +807,34 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               Expanded(
                 flex: 2,
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.of(context).pushNamed('/complete-profile');
+                  onPressed: () async {
+                    final result = await Navigator.of(
+                      context,
+                    ).pushNamed('/complete-profile');
+                    if (result == true) {
+                      // Profile was completed successfully, refresh location status
+                      // Add a small delay to ensure server has processed the update
+                      await Future.delayed(const Duration(milliseconds: 500));
+                      setState(() {
+                        _showLocationPrompt = false; // Hide immediately
+                        _locationStatusFuture = _checkLocationStatus();
+                      });
+
+                      // Double check after a longer delay in case of server lag
+                      Future.delayed(const Duration(seconds: 2), () {
+                        if (mounted) {
+                          setState(() {
+                            _locationStatusFuture = _checkLocationStatus();
+                          });
+                        }
+                      });
+                    }
                   },
                   label: Text(AppLocalizations.of(context)!.complete),
                   icon: const Icon(Icons.arrow_forward_ios_outlined),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(AppConstants.secondaryColor),
-                    foregroundColor: Colors.black,
+                    foregroundColor: Colors.white,
                   ),
                 ),
               ),

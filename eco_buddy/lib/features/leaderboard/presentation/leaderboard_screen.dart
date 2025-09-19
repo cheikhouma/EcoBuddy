@@ -21,6 +21,8 @@ class LeaderboardScreen extends ConsumerWidget {
       body: CustomScrollView(
         slivers: [
           SliverAppBar(
+            actionsPadding: EdgeInsets.all(20),
+            automaticallyImplyLeading: false,
             expandedHeight: 250,
             floating: false,
             pinned: true,

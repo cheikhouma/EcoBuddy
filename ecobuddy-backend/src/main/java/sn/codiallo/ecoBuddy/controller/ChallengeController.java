@@ -50,7 +50,7 @@ public class ChallengeController {
     public ResponseEntity<?> updateChallengeProgress(@RequestBody ProgressRequest request) {
         try {
             String username = getCurrentUsername();
-            // For now, just return success - implement progress logic later
+            challengeService.updateChallengeProgress(request.getChallengeId(), username);
             return ResponseEntity.ok(new SuccessResponse("Challenge progress updated successfully"));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest()

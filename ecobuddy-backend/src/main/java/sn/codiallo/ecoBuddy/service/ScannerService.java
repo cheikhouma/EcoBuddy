@@ -109,7 +109,7 @@ public class ScannerService {
         response.setName(objectName);
         response.setCarbonImpact(5.0); // Impact carbone moyen
         response.setRecyclable(true); // Présumer recyclable par défaut
-        response.setAlternative("Recherchez des alternatives écologiques");
+        response.setAlternative("Look for eco-friendly alternatives");
         response.setDescription("Informations non disponibles pour cet objet");
         response.setEcoTips("Consultez votre centre de recyclage local pour plus d'informations");
         response.setPointsEarned(SCAN_POINTS_REWARD);
@@ -232,7 +232,7 @@ public class ScannerService {
         } else if (lowerLabel.contains("bag")) {
             return "8 millions de tonnes de plastique finissent dans les océans chaque année.";
         } else if (lowerLabel.contains("glass")) {
-            return "Le verre peut être recyclé à l'infini sans perdre sa qualité !";
+            return "Glass can be recycled infinitely without losing its quality!";
         } else if (lowerLabel.contains("paper")) {
             return "Il faut environ 17 arbres pour produire 1 tonne de papier.";
         }
@@ -262,11 +262,11 @@ public class ScannerService {
     private String generateAlternative(String objectLabel) {
         String lowerLabel = objectLabel.toLowerCase();
         if (lowerLabel.contains("bottle")) return "Utilisez une gourde réutilisable en acier inoxydable";
-        if (lowerLabel.contains("can")) return "Buvez dans des verres réutilisables";
+        if (lowerLabel.contains("can")) return "Drink from reusable glasses";
         if (lowerLabel.contains("bag")) return "Utilisez un sac en toile ou en coton bio";
-        if (lowerLabel.contains("cup")) return "Utilisez une tasse réutilisable";
-        if (lowerLabel.contains("phone")) return "Gardez votre téléphone plus longtemps (3-4 ans minimum)";
-        return "Recherchez des alternatives durables et réutilisables";
+        if (lowerLabel.contains("cup")) return "Use a reusable cup";
+        if (lowerLabel.contains("phone")) return "Keep your phone longer (3-4 years minimum)";
+        return "Look for eco-friendly alternatives";
     }
     
     private String generateDescription(String objectLabel) {
@@ -274,7 +274,7 @@ public class ScannerService {
         if (lowerLabel.contains("bottle")) return "Les bouteilles en plastique PET mettent 450 ans à se décomposer.";
         if (lowerLabel.contains("can")) return "L'aluminium est recyclable à l'infini sans perte de qualité.";
         if (lowerLabel.contains("bag")) return "Les sacs plastique polluent massivement les océans.";
-        if (lowerLabel.contains("glass")) return "Le verre est recyclable à l'infini mais sa production est énergivore.";
+        if (lowerLabel.contains("glass")) return "Glass is infinitely recyclable but its production is energy-intensive.";
         if (lowerLabel.contains("paper")) return "Le papier est biodégradable mais sa production consomme beaucoup d'eau.";
         return "Impact environnemental variable selon le matériau et l'usage.";
     }
@@ -284,7 +284,7 @@ public class ScannerService {
         if (lowerLabel.contains("bottle")) return "Recyclez dans le bac jaune, Retirez le bouchon avant recyclage";
         if (lowerLabel.contains("can")) return "Recyclez dans le bac de tri, Videz complètement avant recyclage";
         if (lowerLabel.contains("bag")) return "Réutilisez plusieurs fois, Apportez en magasin pour recyclage spécialisé";
-        if (lowerLabel.contains("glass")) return "Rincez le contenant, Retirez les bouchons, Triez par couleur si demandé";
+        if (lowerLabel.contains("glass")) return "Rinse the container, Remove caps and lids, Sort by color if required";
         if (lowerLabel.contains("paper")) return "Retirez les adhésifs et agrafes, Déposez dans le bac papier";
         return "Consultez les consignes de tri locales, Réutilisez quand c'est possible";
     }
@@ -294,7 +294,7 @@ public class ScannerService {
         if (lowerLabel.contains("bottle")) return "Bouteille en plastique";
         if (lowerLabel.contains("can")) return "Canette en aluminium";
         if (lowerLabel.contains("bag")) return "Sac plastique";
-        if (lowerLabel.contains("glass")) return "Objet en verre";
+        if (lowerLabel.contains("glass")) return "Glass object";
         if (lowerLabel.contains("paper")) return "Papier";
         if (lowerLabel.contains("phone")) return "Smartphone";
         return objectLabel.substring(0, 1).toUpperCase() + objectLabel.substring(1);
@@ -501,9 +501,9 @@ public class ScannerService {
             );
         } else if (lower.contains("glass")) {
             return Arrays.asList(
-                "Retirez les bouchons et couvercles",
-                "Rincez rapidement",
-                "Déposez dans les conteneurs verre"
+                "Remove caps and lids",
+                "Rinse quickly",
+                "Deposit in glass containers"
             );
         } else if (lower.contains("paper")) {
             return Arrays.asList(

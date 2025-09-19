@@ -33,8 +33,17 @@ public class UserChallenge {
     
     @Column(nullable = false)
     private Integer pointsEarned = 0;
-    
+
+    @Column(name = "progress_percentage", nullable = false)
+    private Double progressPercentage = 0.0;
+
+    @Column(name = "progress_steps", nullable = false)
+    private Integer progressSteps = 0;
+
     @CreationTimestamp
-    @Column(name = "completed_at", nullable = false)
+    @Column(name = "started_at", nullable = false)
+    private LocalDateTime startedAt;
+
+    @Column(name = "completed_at")
     private LocalDateTime completedAt;
 }

@@ -10,6 +10,7 @@ import 'features/splash/presentation/splash_screen.dart';
 import 'features/onboarding/presentation/onboarding_screen.dart';
 import 'features/auth/presentation/login_screen.dart';
 import 'features/auth/presentation/signup_screen.dart';
+import 'features/auth/presentation/registration_success_screen.dart';
 import 'features/main/presentation/main_screen.dart';
 import 'features/settings/presentation/settings_screen.dart';
 import 'features/scanner/presentation/unified_scanner_screen.dart';
@@ -51,6 +52,7 @@ class EcoBuddyApp extends ConsumerWidget {
         '/onboarding': (context) => const OnboardingScreen(),
         '/login': (context) => const LoginScreen(),
         '/signup': (context) => const SignupScreen(),
+        '/registration-success': (context) => const RegistrationSuccessScreen(),
         '/main': (context) => const MainScreen(),
         '/dashboard': (context) =>
             const MainScreen(), // Redirect dashboard to main

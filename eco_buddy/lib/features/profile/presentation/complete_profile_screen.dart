@@ -7,6 +7,7 @@ import '../../../core/widgets/custom_button.dart';
 import '../../../core/widgets/custom_text_field.dart';
 import '../../../shared/providers/auth_provider.dart';
 import '../../../shared/services/api_service.dart';
+import '../../../shared/services/location_service.dart';
 
 class CompleteProfileScreen extends ConsumerStatefulWidget {
   const CompleteProfileScreen({super.key});
@@ -40,17 +41,17 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
     });
 
     try {
-      // TODO: Implémenter la géolocalisation réelle avec geolocator
-      // Pour l'instant, on utilise des coordonnées factices pour Paris
-      await Future.delayed(const Duration(seconds: 2));
+      // Utiliser le service de géolocalisation réel
+      LocationData locationData = await LocationService.getCurrentLocation();
 
       setState(() {
-        _latitude = 48.8566;
-        _longitude = 2.3522;
-        _cityController.text = 'Paris';
-        _countryController.text = 'France';
-        _regionController.text = 'Île-de-France';
+        _latitude = locationData.latitude;
+        _longitude = locationData.longitude;
+        _cityController.text = locationData.city;
+        _countryController.text = locationData.country;
+        _regionController.text = locationData.region ?? '';
       });
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -61,6 +62,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
       }
     } catch (e) {
       if (mounted) {
+        print(e);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(AppLocalizations.of(context)!.locationError(e)),
@@ -93,7 +95,7 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
         longitude: _longitude,
       );
 
-      // Refresh auth state
+      // Refresh auth state to get updated user info
       await ref.read(authProvider.notifier).checkAuthStatus();
 
       if (mounted) {
@@ -104,8 +106,11 @@ class _CompleteProfileScreenState extends ConsumerState<CompleteProfileScreen> {
           ),
         );
 
-        // Retourner à l'écran précédent
-        Navigator.of(context).pushReplacementNamed('/dashboard');
+        // Small delay to ensure UI updates properly
+        await Future.delayed(const Duration(milliseconds: 300));
+
+        // Retourner à l'écran précédent avec succès
+        Navigator.of(context).pop(true);
       }
     } catch (e) {
       if (mounted) {

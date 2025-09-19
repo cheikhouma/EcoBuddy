@@ -12,6 +12,7 @@ import '../../../shared/services/scan_cache_service.dart';
 import '../../../shared/services/tflite_service.dart';
 import '../data/scanner_service.dart';
 import '../domain/models/scan_result_model.dart';
+import 'scan_result_screen.dart';
 
 /// Modes de scanning unifiés
 enum ScanMode {
@@ -48,6 +49,7 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   List<ImageLabel> _detectedLabels = [];
   DateTime _lastDetectionTime = DateTime.now();
   String? _lastProcessedLabel;
+  bool _isImageProcessing = false; // Nouveau flag pour éviter la saturation
 
   // Animation controllers
   late AnimationController _scanAnimationController;
@@ -251,8 +253,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
       return;
 
     _cameraController!.startImageStream((CameraImage image) {
+      // Protection contre la saturation du buffer
       if (!_isProcessing &&
-          DateTime.now().difference(_lastDetectionTime).inMilliseconds > 3000) {
+          !_isImageProcessing &&
+          DateTime.now().difference(_lastDetectionTime).inMilliseconds > 5000) {
         _detectObjectsAR(image);
       }
     });
@@ -260,12 +264,18 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   void _stopImageStream() {
     _cameraController?.stopImageStream();
+    // Reset des flags pour éviter les conflits
+    _isImageProcessing = false;
+    _detectedLabels.clear();
   }
 
   Future<void> _detectObjectsAR(CameraImage cameraImage) async {
-    if (_isProcessing || _imageLabeler == null) return;
+    if (_isProcessing || _isImageProcessing || _imageLabeler == null) return;
 
-    setState(() => _isProcessing = true);
+    setState(() {
+      _isProcessing = true;
+      _isImageProcessing = true;
+    });
 
     try {
       final inputImage = _createInputImageFromCameraImage(cameraImage);
@@ -291,7 +301,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
     } finally {
       _lastDetectionTime = DateTime.now();
       if (mounted) {
-        setState(() => _isProcessing = false);
+        setState(() {
+          _isProcessing = false;
+          _isImageProcessing = false;
+        });
       }
     }
   }
@@ -340,9 +353,12 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   // ✅ NOUVEAU : Scan manuel AR amélioré
   Future<void> _scanAR() async {
-    if (_isProcessing || _imageLabeler == null) return;
+    if (_isProcessing || _isImageProcessing || _imageLabeler == null) return;
 
-    setState(() => _isProcessing = true);
+    setState(() {
+      _isProcessing = true;
+      _isImageProcessing = true;
+    });
 
     try {
       final XFile image = await _cameraController!.takePicture();
@@ -351,16 +367,20 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
       print('🔍 AR Scan - Labels détectés: ${labels.length}');
       print('📋 TOUS LES LABELS ML KIT:');
-      labels.forEach((label) =>
-        print('  - ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%')
+      labels.forEach(
+        (label) => print(
+          '  - ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%',
+        ),
       );
 
       print('🌱 LABELS ÉCOLOGIQUES FILTRÉS:');
       final ecoLabelsDebug = labels
           .where((label) => _isEcologicallyRelevant(label.label))
           .toList();
-      ecoLabelsDebug.forEach((label) =>
-        print('  ✅ ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%')
+      ecoLabelsDebug.forEach(
+        (label) => print(
+          '  ✅ ${label.label}: ${(label.confidence * 100).toStringAsFixed(1)}%',
+        ),
       );
 
       // ✅ FILTRAGE AMÉLIORÉ : Prendre le meilleur objet écologique
@@ -374,14 +394,21 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
       if (ecoLabels.isNotEmpty) {
         final bestLabel = ecoLabels.first;
-        print('✅ Meilleur objet détecté: ${bestLabel.label} (${(bestLabel.confidence * 100).toStringAsFixed(1)}%)');
+        print(
+          '✅ Meilleur objet détecté: ${bestLabel.label} (${(bestLabel.confidence * 100).toStringAsFixed(1)}%)',
+        );
 
         // ✅ NOUVEAU : Mapper le label vers un objet plus spécifique
         final mappedLabel = _mapLabelToSpecificObject(bestLabel.label, labels);
         print('🎯 Label mappé: ${bestLabel.label} → ${mappedLabel}');
 
         // ✅ DÉMO MODE : Afficher tous les détails avant traitement
-        _showDebugInfo(bestLabel.label, mappedLabel, bestLabel.confidence, labels);
+        _showDebugInfo(
+          bestLabel.label,
+          mappedLabel,
+          bestLabel.confidence,
+          labels,
+        );
 
         // Traiter avec le label mappé
         await _processDetectedObject(mappedLabel, bestLabel.confidence);
@@ -392,7 +419,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
           print('⚠️ Aucun objet écologique, test avec: ${bestOverall.label}');
 
           // Mapper aussi les objets non-écologiques
-          final mappedLabel = _mapLabelToSpecificObject(bestOverall.label, labels);
+          final mappedLabel = _mapLabelToSpecificObject(
+            bestOverall.label,
+            labels,
+          );
           await _processDetectedObject(mappedLabel, bestOverall.confidence);
         } else {
           _showErrorSnackBar('No object detected in image');
@@ -403,7 +433,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
       _showErrorSnackBar('AR scan error: $e');
     } finally {
       if (mounted) {
-        setState(() => _isProcessing = false);
+        setState(() {
+          _isProcessing = false;
+          _isImageProcessing = false;
+        });
       }
     }
   }
@@ -481,9 +514,13 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   // UI Helper methods
   void _showResultDialog(ScanResultModel result) {
-    showDialog(
-      context: context,
-      builder: (context) => _buildResultDialog(result),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ScanResultScreen(
+          result: result,
+          scanMode: _getModeDisplayName(),
+        ),
+      ),
     );
   }
 
@@ -507,9 +544,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       title: Text(
         'Scanner - ${_getModeDisplayName()}',
-        style: TextStyle(color: Colors.white),
+        style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
       ),
       backgroundColor: Color(AppConstants.primaryColor),
       foregroundColor: Colors.white,
@@ -731,12 +769,18 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
           ? const SizedBox(
               width: 20,
               height: 20,
-              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
             )
           : Icon(_getModeIcon(), color: Colors.white),
       label: Text(
         _getScanButtonLabel(),
-        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+        style: const TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
       ),
     );
   }
@@ -779,10 +823,12 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
     return Dialog(
       backgroundColor: Colors.transparent,
       child: Container(
-        constraints: const BoxConstraints(maxHeight: 600, maxWidth: 400),
+        constraints: const BoxConstraints(maxHeight: 600, maxWidth: 700),
         child: Card(
           elevation: 12,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -795,10 +841,14 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                     gradient: LinearGradient(
                       colors: [
                         _getImpactColor(result.environmentalImpact),
-                        _getImpactColor(result.environmentalImpact).withValues(alpha: 0.8),
+                        _getImpactColor(
+                          result.environmentalImpact,
+                        ).withValues(alpha: 0.8),
                       ],
                     ),
-                    borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(20),
+                    ),
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -825,7 +875,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                       const SizedBox(height: 8),
                       Text(
                         'Scanned with ${_getModeDisplayName()} • ${(result.confidence * 100).toStringAsFixed(1)}% confidence',
-                        style: const TextStyle(color: Colors.white70, fontSize: 13),
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
@@ -860,7 +913,9 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                         child: _buildStatCard(
                           'Recyclable',
                           result.recyclable == true ? 'Yes' : 'No',
-                          result.recyclable == true ? Icons.recycling : Icons.delete,
+                          result.recyclable == true
+                              ? Icons.recycling
+                              : Icons.delete,
                           result.recyclable == true ? Colors.green : Colors.red,
                         ),
                       ),
@@ -883,7 +938,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.info_outline, size: 18, color: Colors.blue),
+                            Icon(
+                              Icons.info_outline,
+                              size: 18,
+                              color: Colors.blue,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Environmental Impact',
@@ -958,7 +1017,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.lightbulb_outline, size: 18, color: Colors.orange),
+                            Icon(
+                              Icons.lightbulb_outline,
+                              size: 18,
+                              color: Colors.orange,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Recycling Tips',
@@ -971,21 +1034,31 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                           ],
                         ),
                         const SizedBox(height: 8),
-                        ...result.ecoTips!.split(',').map((tip) => Padding(
-                              padding: const EdgeInsets.only(bottom: 4),
-                              child: Row(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text('• ', style: TextStyle(color: Colors.orange)),
-                                  Expanded(
-                                    child: Text(
-                                      tip.trim(),
-                                      style: const TextStyle(fontSize: 14, height: 1.4),
+                        ...result.ecoTips!
+                            .split(',')
+                            .map(
+                              (tip) => Padding(
+                                padding: const EdgeInsets.only(bottom: 4),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text(
+                                      '• ',
+                                      style: TextStyle(color: Colors.orange),
                                     ),
-                                  ),
-                                ],
+                                    Expanded(
+                                      child: Text(
+                                        tip.trim(),
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            )),
+                            ),
                       ],
                     ),
                   ),
@@ -1007,7 +1080,11 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                       children: [
                         const Row(
                           children: [
-                            Icon(Icons.psychology, size: 18, color: Colors.purple),
+                            Icon(
+                              Icons.psychology,
+                              size: 18,
+                              color: Colors.purple,
+                            ),
                             SizedBox(width: 8),
                             Text(
                               'Did You Know?',
@@ -1055,9 +1132,14 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
                             Navigator.of(context).pop();
                           },
                           icon: const Icon(Icons.save, color: Colors.white),
-                          label: const Text('Save', style: TextStyle(color: Colors.white)),
+                          label: const Text(
+                            'Save',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: _getImpactColor(result.environmentalImpact),
+                            backgroundColor: _getImpactColor(
+                              result.environmentalImpact,
+                            ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
                         ),
@@ -1074,7 +1156,12 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   // ✅ HELPER METHODS FOR ENRICHED DIALOG
-  Widget _buildStatCard(String label, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    IconData icon,
+    Color color,
+  ) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -1096,10 +1183,7 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
           ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: Colors.grey.shade600,
-            ),
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
             textAlign: TextAlign.center,
           ),
         ],
@@ -1110,21 +1194,21 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   String _getObjectIcon(String objectType) {
     switch (objectType.toLowerCase()) {
       case 'plastic':
-        return '♻️';
+        return '';
       case 'metal':
-        return '🥤';
+        return '';
       case 'glass':
-        return '🍶';
+        return '';
       case 'paper':
-        return '📄';
+        return '';
       case 'electronic':
-        return '📱';
+        return '';
       case 'toxic':
-        return '🚬';
+        return '';
       case 'mixed':
-        return '☕';
+        return '';
       default:
-        return '📦';
+        return '';
     }
   }
 
@@ -1203,18 +1287,27 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   // ✅ NOUVEAU : Mapper les labels ML Kit vers des objets spécifiques
-  String _mapLabelToSpecificObject(String mlKitLabel, List<ImageLabel> allLabels) {
+  String _mapLabelToSpecificObject(
+    String mlKitLabel,
+    List<ImageLabel> allLabels,
+  ) {
     final lowerLabel = mlKitLabel.toLowerCase();
     final allLabelsText = allLabels.map((l) => l.label.toLowerCase()).toList();
 
-    print('🔍 Mapping ${mlKitLabel} avec contexte: ${allLabelsText.take(5).join(", ")}...');
+    print(
+      '🔍 Mapping ${mlKitLabel} avec contexte: ${allLabelsText.take(5).join(", ")}...',
+    );
 
     // 🍶 BOUTEILLES - Analyser le contexte pour déterminer le type
     if (lowerLabel.contains('bottle')) {
       // Chercher des indices sur le matériau dans les autres labels
-      if (allLabelsText.any((l) => l.contains('plastic') || l.contains('water'))) {
+      if (allLabelsText.any(
+        (l) => l.contains('plastic') || l.contains('water'),
+      )) {
         return 'bottle'; // Bouteille plastique (par défaut)
-      } else if (allLabelsText.any((l) => l.contains('glass') || l.contains('wine') || l.contains('beer'))) {
+      } else if (allLabelsText.any(
+        (l) => l.contains('glass') || l.contains('wine') || l.contains('beer'),
+      )) {
         return 'glass'; // Bouteille en verre
       }
       return 'bottle'; // Par défaut
@@ -1222,7 +1315,10 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
     // 🥤 CANETTES vs BOUTEILLES
     if (lowerLabel.contains('can')) {
-      if (allLabelsText.any((l) => l.contains('aluminum') || l.contains('drink') || l.contains('soda'))) {
+      if (allLabelsText.any(
+        (l) =>
+            l.contains('aluminum') || l.contains('drink') || l.contains('soda'),
+      )) {
         return 'can'; // Canette métallique
       }
       return 'can';
@@ -1230,9 +1326,14 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
     // 🛍️ SACS - Différencier plastique vs tissu
     if (lowerLabel.contains('bag')) {
-      if (allLabelsText.any((l) => l.contains('plastic') || l.contains('shopping'))) {
+      if (allLabelsText.any(
+        (l) => l.contains('plastic') || l.contains('shopping'),
+      )) {
         return 'bag'; // Sac plastique
-      } else if (allLabelsText.any((l) => l.contains('fabric') || l.contains('cloth') || l.contains('canvas'))) {
+      } else if (allLabelsText.any(
+        (l) =>
+            l.contains('fabric') || l.contains('cloth') || l.contains('canvas'),
+      )) {
         return 'fabric'; // Sac en tissu
       }
       return 'bag'; // Par défaut plastique
@@ -1240,9 +1341,13 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
 
     // ☕ TASSES ET GOBELETS
     if (lowerLabel.contains('cup') || lowerLabel.contains('mug')) {
-      if (allLabelsText.any((l) => l.contains('paper') || l.contains('disposable'))) {
+      if (allLabelsText.any(
+        (l) => l.contains('paper') || l.contains('disposable'),
+      )) {
         return 'cup'; // Gobelet jetable
-      } else if (allLabelsText.any((l) => l.contains('ceramic') || l.contains('porcelain'))) {
+      } else if (allLabelsText.any(
+        (l) => l.contains('ceramic') || l.contains('porcelain'),
+      )) {
         return 'glass'; // Tasse réutilisable
       }
       return 'cup'; // Par défaut jetable
@@ -1283,9 +1388,15 @@ class _UnifiedScannerScreenState extends ConsumerState<UnifiedScannerScreen>
   }
 
   // ✅ NOUVEAU : Afficher les infos de debug pour comprendre les erreurs
-  void _showDebugInfo(String originalLabel, String mappedLabel, double confidence, List<ImageLabel> allLabels) {
+  void _showDebugInfo(
+    String originalLabel,
+    String mappedLabel,
+    double confidence,
+    List<ImageLabel> allLabels,
+  ) {
     // En mode debug, afficher une SnackBar avec les détails
-    final debugMessage = '''
+    final debugMessage =
+        '''
 🔍 ML Kit Original: $originalLabel (${(confidence * 100).toStringAsFixed(1)}%)
 🎯 Mappé vers: $mappedLabel
 📋 Contexte: ${allLabels.take(3).map((l) => l.label).join(", ")}

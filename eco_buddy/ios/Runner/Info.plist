@@ -45,5 +45,11 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+
+	<!-- Location permissions -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Cette app a besoin d'accéder à votre localisation pour compléter votre profil avec votre ville et pays.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Cette app a besoin d'accéder à votre localisation pour compléter votre profil avec votre ville et pays.</string>
 </dict>
 </plist>
