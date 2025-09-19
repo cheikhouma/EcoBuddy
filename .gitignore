@@ -33,3 +33,8 @@ build/
 .vscode/
 
 /ecobuddy-backend/.env
+
+# My files
+PROJECT_DESCRIPTION.md
+test_gemini.py
+test_challenges.md
