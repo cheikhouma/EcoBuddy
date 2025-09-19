@@ -2,8 +2,8 @@ import requests
 import json
 
 # Test direct de l'API Gemini pour comprendre le problème
-api_key = "AIzaSyCmQGNH3zHUCxD6e1IVlxS-tq9unAlqvUs"
-url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={api_key}"
+api_key = ""
+url = ""
 
 # Test du prompt pour histoire de départ
 prompt_start = """Tu es un conteur d'histoires interactives sur le thème écologique. 
